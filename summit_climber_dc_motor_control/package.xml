@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>summit_climber_DC_motor_control</name>
+  <name>summit_climber_dc_motor_control</name>
   <version>0.0.0</version>
   <description>The summit_climber_DC_motor_control package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="tschmitz@todo.todo">tschmitz</maintainer>
+  <maintainer email="tschmitz@andrew.cmu.edu">Tom Schmitz</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
