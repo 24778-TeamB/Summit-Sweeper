@@ -28,10 +28,13 @@ def callback_listener(msg: Int8):
     # 2: loop toggle (test purposes only)
 
     if data < 0 or data > 2:
-        #put error message here
+        rospy.logerr(f'{data} is an invalid input')
         return
 
     if data < 2:
+        if testMode:
+            rospy.logerr('Currently in test mode. Please disable test mode')
+            return
         toggleVacuum(bool(data))
         return
     testMode = not testMode
@@ -42,11 +45,14 @@ def main():
     initVacuums()
     rospy.init_node('summit_climber_vacuum_controller')
     rospy.Subscriber('vacuum_control', Int8, callback_listener)
+    rospy.loginfo('Starting vacuum controller.\nUsage: 0: Turn off\n1: Turn on\n2: toggle test mode')
     while not rospy.is_shutdown():
         if testMode:
             rospy.Rate(1).sleep()
+            rospy.logdebug('Vacuums on')
             toggleVacuum(True)
             rospy.Rate(1).sleep()
+            rospy.logdebug('Vacuums off')
             toggleVacuum(False)
         rospy.Rate(10).sleep()
 
