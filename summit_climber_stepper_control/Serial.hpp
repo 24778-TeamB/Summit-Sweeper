@@ -11,7 +11,7 @@
 #include <string>
 #include <memory>
 
-namespace sc
+namespace ss
 {
 	typedef enum {
 		baud_9600,
@@ -24,9 +24,9 @@ namespace sc
 		~Serial();
 		uint8_t Open(const char *port_name, baud_rate_t baud);
 		uint8_t Close();
-		uint8_t Write(uint8_t *buf, uint32_t numBytes);
-		uint8_t Read(uint8_t *buf, uint32_t numBytes);
-		uint8_t QueryBuffer();
+		int32_t Write(uint8_t *buf, uint32_t numBytes);
+		int32_t Read(uint8_t *buf, uint32_t numBytes);
+		int32_t QueryBuffer();
 		uint8_t Flush();
 	private:
 		void Configure(baud_rate_t baud);
@@ -35,6 +35,6 @@ namespace sc
 		std::string port_name;
 		bool isOpen;
 	};
-}
+};
 
 #endif // !__SERIAL_HPP__
