@@ -18,6 +18,7 @@ namespace ss
 		baud_9600,
 		baud_115200
 	} baud_rate_t;
+
 	class Serial
 	{
 	public:
