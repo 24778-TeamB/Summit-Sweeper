@@ -1,4 +1,5 @@
 #ifndef __SERIAL_HPP__
+#define __SERIAL_HPP__
 
 #include <fcntl.h>
 #include <termios.h>
