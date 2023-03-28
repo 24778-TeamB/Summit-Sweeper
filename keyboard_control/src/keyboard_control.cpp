@@ -1,8 +1,10 @@
 #include "ros/ros.h"
+#include "std_msgs/Int8.h"
 #include <termios.h>
 #include <vector>
 #include <ostream>
 #include <cstdint>
+#include <cctype>
 
 using std::vector;
 
@@ -18,16 +20,18 @@ std::ostream& operator<<(std::ostream &os, vector<uint8_t> v)
 
 uint8_t getKey(void)
 {
-	return fgetc(stdin);
+	char key;
+	int count = read(fileno(stdin), &key, 1);
+	return count != 0 ? key : 255;
 }
 
 void PrintHelp()
 {
-	std::cout << "ArrowUp -> forward\n"
-		"ArrowDown -> reverse\n"
-		"ArrowLeft -> left\n"
-		"ArrowRight -> right\n"
-		"Press ? to see this message again" << std:endl;
+	std::cout << "W -> forward\n"
+		"S -> reverse\n"
+		"A -> left\n"
+		"D -> right\n"
+		"Press ? to see this message again" << std::endl;
 }
 
 int main(int argc, char **argv)
@@ -38,7 +42,8 @@ int main(int argc, char **argv)
 
 	ros::Publisher pubHorizontal = nh.advertise<std_msgs::Int8>("horizontal_control", 1);
 
-	std_msgs::Int8 base_movement = 4;
+	std_msgs::Int8 base_movement;
+	base_movement.data = 1;
 
 	struct termios attr_backup;
 	tcgetattr(fileno(stdin), &attr_backup);
@@ -65,31 +70,26 @@ int main(int argc, char **argv)
 			keys.push_back(key);
 		} while (255 != key);
 
+		printf("%d\n", key);
+
 		tcflush(fileno(stdin), TCIFLUSH);
 
-		ROS_DEBUG_STREAM(keys);
-
-		switch(keys[0])
+		switch(toupper(key))
 		{
 			case '?':
 				PrintHelp();
 				break;
-			case 27:
-				switch(keys[2])
-				{
-					case 'A': // Up key
-						movement = 2;
-						break;
-					case 'B': // down key
-						movement = 3;
-						break;
-					case 'C': // right key
-						movement = 1;
-						break;
-					case 'D': // left key
-						movement = 0;
-						break;
-				}
+			case 'W':
+				movement.data = 3;
+				break;
+			case 'S':
+				movement.data = 4;
+				break;
+			case 'A':
+				movement.data = 1;
+				break;
+			case 'D':
+				movement.data = 2;
 				break;
 		}
 
