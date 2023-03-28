@@ -10,7 +10,23 @@
 #define BAUD 9600
 
 // Pin Definitions
+#define RIGHT_EN_A 3
+#define RIGHT_IN1_A 4
+#define RIGHT_IN2_A 7
 
+#define RIGHT_EN_B 9
+#define RIGHT_IN1_B 2
+#define RIGHT_IN2_B 8
+
+#define LEFT_EN_A 5
+#define LEFT_IN1_A 24
+#define LEFT_IN2_A 25
+
+#define LEFT_EN_B 10
+#define LEFT_IN1_B 26
+#define LEFT_IN2_B 27
+
+// Events
 #define E_NO_EVENT 0x00000000
 #define E_SERIAL_ACTIVE 0x00000001
 #define E_VALID_MASK (E_SERIAL_ACTIVE)
