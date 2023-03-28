@@ -16,66 +16,27 @@ else:
 
 
 msg = """
-Reading from the keyboard  and Publishing to Twist!
----------------------------
-Moving around:
-   u    i    o
-   j    k    l
-   m    ,    .
-For Holonomic mode (strafing), hold down the shift key:
----------------------------
-   U    I    O
-   J    K    L
-   M    <    >
-t : up (+z)
-b : down (-z)
-anything else : stop
-q/z : increase/decrease max speeds by 10%
-w/x : increase/decrease only linear speed by 10%
-e/c : increase/decrease only angular speed by 10%
+W -> Forward
+S -> Reverse
+A -> Left
+D -> Right
+anything else -> stop
+
 CTRL-C to quit
 """
 
 moveBindings = {
-        'i':(1,0,0,0),
-        'o':(1,0,0,-1),
-        'j':(0,0,0,1),
-        'l':(0,0,0,-1),
-        'u':(1,0,0,1),
-        ',':(-1,0,0,0),
-        '.':(-1,0,0,1),
-        'm':(-1,0,0,-1),
-        'O':(1,-1,0,0),
-        'I':(1,0,0,0),
-        'J':(0,1,0,0),
-        'L':(0,-1,0,0),
-        'U':(1,1,0,0),
-        '<':(-1,0,0,0),
-        '>':(-1,-1,0,0),
-        'M':(-1,1,0,0),
-        't':(0,0,1,0),
-        'b':(0,0,-1,0),
-    }
-
-speedBindings={
-        'q':(1.1,1.1),
-        'z':(.9,.9),
-        'w':(1.1,1),
-        'x':(.9,1),
-        'e':(1,1.1),
-        'c':(1,.9),
-    }
+    'w': 3,
+    's': 4,
+    'a': 1,
+    'd': 2
+}
 
 class PublishThread(threading.Thread):
     def __init__(self, rate):
         super(PublishThread, self).__init__()
-        self.publisher = rospy.Publisher('cmd_vel', Int8, queue_size = 1)
-        self.x = 0.0
-        self.y = 0.0
-        self.z = 0.0
-        self.th = 0.0
-        self.speed = 0.0
-        self.turn = 0.0
+        self.publisher = rospy.Publisher('horizontal_control', Int8, queue_size = 1)
+        self.state = 0
         self.condition = threading.Condition()
         self.done = False
 
@@ -99,21 +60,17 @@ class PublishThread(threading.Thread):
         if rospy.is_shutdown():
             raise Exception("Got shutdown request before subscribers connected")
 
-    def update(self, x, y, z, th, speed, turn):
+    def update(self, movement):
         self.condition.acquire()
-        self.x = x
-        self.y = y
-        self.z = z
-        self.th = th
-        self.speed = speed
-        self.turn = turn
         # Notify publish thread that we have a new message.
-        self.condition.notify()
+        if self.state != movement:
+            self.state = movement
+            self.condition.notify()
         self.condition.release()
 
     def stop(self):
         self.done = True
-        self.update(0, 0, 0, 0, 0, 0)
+        self.update(0)
         self.join()
 
     def run(self):
@@ -158,9 +115,6 @@ def restoreTerminalSettings(old_settings):
         return
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
-def vels(speed, turn):
-    return "currently:\tspeed %s\tturn %s " % (speed,turn)
-
 if __name__=="__main__":
     settings = saveTerminalSettings()
 
@@ -168,49 +122,26 @@ if __name__=="__main__":
 
     pub_thread = PublishThread(repeat)
 
-    x = 0
-    y = 0
-    z = 0
-    th = 0
-    status = 0
+    movement = 0
 
     try:
         pub_thread.wait_for_subscribers()
-        pub_thread.update(x, y, z, th, speed, turn)
+        pub_thread.update(movement)
 
         print(msg)
-        print(vels(speed,turn))
         while(1):
             key = getKey(settings, key_timeout)
             if key in moveBindings.keys():
-                x = moveBindings[key][0]
-                y = moveBindings[key][1]
-                z = moveBindings[key][2]
-                th = moveBindings[key][3]
-            elif key in speedBindings.keys():
-                speed = min(speed_limit, speed * speedBindings[key][0])
-                turn = min(turn_limit, turn * speedBindings[key][1])
-                if speed == speed_limit:
-                    print("Linear speed limit reached!")
-                if turn == turn_limit:
-                    print("Angular speed limit reached!")
-                print(vels(speed,turn))
-                if (status == 14):
-                    print(msg)
-                status = (status + 1) % 15
+                movement = moveBindings[key]
             else:
                 # Skip updating cmd_vel if key timeout and robot already
                 # stopped.
-                if key == '' and x == 0 and y == 0 and z == 0 and th == 0:
+                if key == '' and movement == 0:
                     continue
-                x = 0
-                y = 0
-                z = 0
-                th = 0
                 if (key == '\x03'):
                     break
 
-            pub_thread.update(x, y, z, th, speed, turn)
+            pub_thread.update(movement)
 
     except Exception as e:
         print(e)
