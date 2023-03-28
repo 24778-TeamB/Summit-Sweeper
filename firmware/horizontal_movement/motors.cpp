@@ -53,10 +53,28 @@ void moveReverse()
 
 void moveLeft()
 {
+	digitalWrite(RIGHT_IN1_A, HIGH);
+	digitalWrite(RIGHT_IN2_A, LOW);
+	digitalWrite(LEFT_IN1_B, HIGH);
+	digitalWrite(LEFT_IN2_B, LOW);
+
+	digitalWrite(RIGHT_IN1_B, HIGH);
+	digitalWrite(RIGHT_IN2_B, LOW);
+	digitalWrite(LEFT_IN1_A, HIGH);
+	digitalWrite(LEFT_IN2_A, LOW);
 }
 
 void moveRight()
 {
+	digitalWrite(RIGHT_IN1_A, LOW);
+	digitalWrite(RIGHT_IN2_A, HIGH);
+	digitalWrite(LEFT_IN1_B, LOW);
+	digitalWrite(LEFT_IN2_B, HIGH);
+
+	digitalWrite(RIGHT_IN1_B, LOW);
+	digitalWrite(RIGHT_IN2_B, HIGH);
+	digitalWrite(LEFT_IN1_A, LOW);
+	digitalWrite(LEFT_IN2_A, HIGH);
 }
 
 void moveStop()
