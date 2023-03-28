@@ -62,30 +62,33 @@ class PublishThread(threading.Thread):
 
     def update(self, movement):
         self.condition.acquire()
-        # Notify publish thread that we have a new message.
-        if self.state != movement:
-            self.state = movement
-            self.condition.notify()
+        self.state = movement
+        self.condition.notify()
         self.condition.release()
 
     def stop(self):
         self.done = True
-        self.update(0)
         self.join()
 
     def run(self):
         pubValue = Int8()
         pubValue.data = 0
+        prevData = 1
         while not self.done:
             self.condition.acquire()
             # Wait for a new message or timeout.
             self.condition.wait(self.timeout)
 
+            pubValue.data = self.state
+
             self.condition.release()
 
             # Publish.
-            self.publisher.publish(pubValue)
+            if prevData != pubValue.data:
+                self.publisher.publish(pubValue)
+            prevData = pubValue.data
 
+        pubValue.data = 0
         # Publish stop message when thread exits.
         self.publisher.publish(pubValue)
 
@@ -120,7 +123,7 @@ if __name__=="__main__":
 
     rospy.init_node('teleop_twist_keyboard')
 
-    pub_thread = PublishThread(repeat)
+    pub_thread = PublishThread(1)
 
     movement = 0
 
@@ -130,9 +133,11 @@ if __name__=="__main__":
 
         print(msg)
         while(1):
-            key = getKey(settings, key_timeout)
+            key = getKey(settings, 1)
             if key in moveBindings.keys():
                 movement = moveBindings[key]
+            elif movement != 0 and key == '':
+                movement = 0
             else:
                 # Skip updating cmd_vel if key timeout and robot already
                 # stopped.
