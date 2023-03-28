@@ -3,6 +3,7 @@
 #include "CommandInterface.h"
 #include "ProjectDef.h"
 #include "utils.h"
+#include "motors.h"
 #include <stdio.h>
 
 const struct cmd_str Cmd_Array[] = {
@@ -35,18 +36,23 @@ int8_t CmdMotor(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const
 	switch (token)
 	{
 	case OPTLEFT:
+		moveLeft();
 		retVal = RET_OK;
 		break;
 	case OPTRIGHT:
+		moveRight();
 		retVal = RET_OK;
 		break;
 	case OPTFORWARD:
+		moveForward();
 		retVal = RET_OK;
 		break;
 	case OPTREVERSE:
+		moveReverse();
 		retVal = RET_OK;
 		break;
 	case OPTSTOP:
+		moveStop();
 		retVal = RET_OK;
 		break;
 	}
