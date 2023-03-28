@@ -23,6 +23,7 @@ extern const struct cmd_str Cmd_Array[];
 #define OPTRIGHT 0x1551  // -right
 #define OPTFORWARD 0x7ACD  // -forward
 #define OPTREVERSE 0x9B71  // -reverse
+#define OPTSTOP 0x04FE  // -stop
 
 #define RET_OK 0
 #define RET_ERROR 1
@@ -32,5 +33,7 @@ extern const struct cmd_str Cmd_Array[];
 
 int8_t CmdShow(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv);
 int8_t CmdMotor(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv);
+int8_t CmdRotate(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv);
+int8_t CmdSet(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv);
 
 #endif
