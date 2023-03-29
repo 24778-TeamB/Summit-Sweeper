@@ -5,9 +5,7 @@
 
 // Configuration routines
 void setupMotors();
-#if SPEED_TESTING
-void setSpeed(uint32_t speed);
-#endif
+void setMotorSpeed(uint8_t Speed);
 
 // Movements
 void moveForward();

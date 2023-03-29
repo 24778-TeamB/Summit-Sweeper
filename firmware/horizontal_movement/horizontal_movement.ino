@@ -2,6 +2,7 @@
 #include "ProjectDef.h"
 #include "Commands.h"
 #include "CommandInterface.h"
+#include "motors.h"
 
 volatile uint32_t gEvents;
 uint16_t transfer_status;
@@ -13,6 +14,8 @@ void setup(void)
   CIClear();
   
   // Configure motors
+  setupMotors();
+  setMotorSpeed(255);
 
   gEvents = E_NO_EVENT;
 }

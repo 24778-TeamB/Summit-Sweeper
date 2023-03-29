@@ -3,78 +3,105 @@
 #include "ProjectDef.h"
 #include <stdint.h>
 
+uint8_t curSpeed;
+
 void setupMotors()
 {
 	// Configure right
 	pinMode(RIGHT_EN_A, OUTPUT);
 	pinMode(RIGHT_EN_B, OUTPUT);
-	pinMode(RIGHT_IN1_A, OUTPUT);
-	pinMode(RIGHT_IN2_A, OUTPUT);
-	pinMode(RIGHT_IN1_B, OUTPUT);
-	pinMode(RIGHT_IN2_B, OUTPUT);
+	pinMode(RIGHT_IN1, OUTPUT);
+	pinMode(RIGHT_IN2, OUTPUT);
+	pinMode(RIGHT_IN3, OUTPUT);
+	pinMode(RIGHT_IN4, OUTPUT);
 
 	// Configure Left
 	pinMode(LEFT_EN_A, OUTPUT);
 	pinMode(LEFT_EN_B, OUTPUT);
-	pinMode(LEFT_IN1_A, OUTPUT);
-	pinMode(LEFT_IN2_A, OUTPUT);
-	pinMode(LEFT_IN1_B, OUTPUT);
-	pinMode(LEFT_IN2_B, OUTPUT);
+	pinMode(LEFT_IN1, OUTPUT);
+	pinMode(LEFT_IN2, OUTPUT);
+	pinMode(LEFT_IN3, OUTPUT);
+	pinMode(LEFT_IN4, OUTPUT);
+
+  curSpeed = 255;
 
 	// Set initial state
 	moveStop();
 }
 
+static void updateSpeed()
+{
+  analogWrite(RIGHT_EN_A, curSpeed);
+  analogWrite(RIGHT_EN_B, curSpeed);
+  analogWrite(LEFT_EN_A, curSpeed);
+  analogWrite(LEFT_EN_B, curSpeed);
+}
+
+void setMotorSpeed(uint8_t Speed)
+{
+  moveStop();
+
+  curSpeed = Speed;
+}
+
 void moveForward()
 {
-	digitalWrite(RIGHT_IN1_A, HIGH);
-	digitalWrite(RIGHT_IN2_A, LOW);
-	digitalWrite(RIGHT_IN2_A, LOW);
-	digitalWrite(RIGHT_IN2_B, HIGH);
+  updateSpeed();
+  
+	digitalWrite(RIGHT_IN1, HIGH);
+	digitalWrite(RIGHT_IN2, LOW);
+	digitalWrite(RIGHT_IN3, LOW);
+	digitalWrite(RIGHT_IN4, HIGH);
 
-	digitalWrite(LEFT_IN1_B, HIGH);
-	digitalWrite(LEFT_IN2_B, LOW);
-	digitalWrite(LEFT_IN1_A, LOW);
-	digitalWrite(LEFT_IN2_A, HIGH);
+	digitalWrite(LEFT_IN3, HIGH);
+	digitalWrite(LEFT_IN4, LOW);
+	digitalWrite(LEFT_IN1, LOW);
+	digitalWrite(LEFT_IN2, HIGH);
 }
 
 void moveReverse()
 {
-	digitalWrite(RIGHT_IN1_A, LOW);
-	digitalWrite(RIGHT_IN2_A, HIGH);
-	digitalWrite(RIGHT_IN2_A, HIGH);
-	digitalWrite(RIGHT_IN2_B, LOW);
+  updateSpeed();
+  
+	digitalWrite(RIGHT_IN1, LOW);
+	digitalWrite(RIGHT_IN2, HIGH);
+	digitalWrite(RIGHT_IN3, HIGH);
+	digitalWrite(RIGHT_IN4, LOW);
 
-	digitalWrite(LEFT_IN1_B, LOW);
-	digitalWrite(LEFT_IN2_B, HIGH);
-	digitalWrite(LEFT_IN1_A, HIGH);
-	digitalWrite(LEFT_IN2_A, LOW);
+	digitalWrite(LEFT_IN3, LOW);
+	digitalWrite(LEFT_IN4, HIGH);
+	digitalWrite(LEFT_IN1, HIGH);
+	digitalWrite(LEFT_IN2, LOW);
 }
 
 void moveLeft()
 {
-	digitalWrite(RIGHT_IN1_A, HIGH);
-	digitalWrite(RIGHT_IN2_A, LOW);
-	digitalWrite(LEFT_IN1_B, HIGH);
-	digitalWrite(LEFT_IN2_B, LOW);
+  updateSpeed();
+  
+	digitalWrite(RIGHT_IN1, HIGH);
+	digitalWrite(RIGHT_IN2, LOW);
+	digitalWrite(LEFT_IN3, HIGH);
+	digitalWrite(LEFT_IN4, LOW);
 
-	digitalWrite(RIGHT_IN1_B, HIGH);
-	digitalWrite(RIGHT_IN2_B, LOW);
-	digitalWrite(LEFT_IN1_A, HIGH);
-	digitalWrite(LEFT_IN2_A, LOW);
+	digitalWrite(RIGHT_IN3, HIGH);
+	digitalWrite(RIGHT_IN4, LOW);
+	digitalWrite(LEFT_IN1, HIGH);
+	digitalWrite(LEFT_IN2, LOW);
 }
 
 void moveRight()
 {
-	digitalWrite(RIGHT_IN1_A, LOW);
-	digitalWrite(RIGHT_IN2_A, HIGH);
-	digitalWrite(LEFT_IN1_B, LOW);
-	digitalWrite(LEFT_IN2_B, HIGH);
+  updateSpeed();
+  
+	digitalWrite(RIGHT_IN1, LOW);
+	digitalWrite(RIGHT_IN2, HIGH);
+	digitalWrite(LEFT_IN3, LOW);
+	digitalWrite(LEFT_IN4, HIGH);
 
-	digitalWrite(RIGHT_IN1_B, LOW);
-	digitalWrite(RIGHT_IN2_B, HIGH);
-	digitalWrite(LEFT_IN1_A, LOW);
-	digitalWrite(LEFT_IN2_A, HIGH);
+	digitalWrite(RIGHT_IN3, LOW);
+	digitalWrite(RIGHT_IN4, HIGH);
+	digitalWrite(LEFT_IN1, LOW);
+	digitalWrite(LEFT_IN2, HIGH);
 }
 
 void moveStop()
@@ -84,13 +111,13 @@ void moveStop()
 	analogWrite(LEFT_EN_A, 0);
 	analogWrite(LEFT_EN_B, 0);
 
-	digitalWrite(RIGHT_IN1_A, LOW);
-	digitalWrite(RIGHT_IN2_A, LOW);
-	digitalWrite(RIGHT_IN2_A, LOW);
-	digitalWrite(RIGHT_IN2_B, LOW);
+	digitalWrite(RIGHT_IN1, LOW);
+	digitalWrite(RIGHT_IN2, LOW);
+	digitalWrite(RIGHT_IN3, LOW);
+	digitalWrite(RIGHT_IN4, LOW);
 
-	digitalWrite(LEFT_IN1_B, LOW);
-	digitalWrite(LEFT_IN2_B, LOW);
-	digitalWrite(LEFT_IN1_A, LOW);
-	digitalWrite(LEFT_IN2_A, LOW);
+	digitalWrite(LEFT_IN1, LOW);
+	digitalWrite(LEFT_IN2, LOW);
+	digitalWrite(LEFT_IN3, LOW);
+	digitalWrite(LEFT_IN4, LOW);
 }
