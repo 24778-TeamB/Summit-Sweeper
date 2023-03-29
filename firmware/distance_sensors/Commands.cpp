@@ -3,7 +3,7 @@
 #include "CommandInterface.h"
 #include "ProjectDef.h"
 #include "utils.h"
-#include "motors.h"
+#include "ultrasonic.h"
 #include <stdio.h>
 
 const struct cmd_str Cmd_Array[] = {
