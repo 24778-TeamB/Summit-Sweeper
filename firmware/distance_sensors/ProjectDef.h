@@ -10,19 +10,7 @@
 #define BAUD 9600
 
 // Pin Definitions
-#define RIGHT_EN_A 3
-#define RIGHT_EN_B 9
-#define RIGHT_IN1 4
-#define RIGHT_IN2 7
-#define RIGHT_IN3 2
-#define RIGHT_IN4 8
 
-#define LEFT_EN_A 5
-#define LEFT_EN_B 10
-#define LEFT_IN1 24
-#define LEFT_IN2 25
-#define LEFT_IN3 26
-#define LEFT_IN4 27
 
 // Events
 #define E_NO_EVENT 0x00000000
@@ -30,7 +18,7 @@
 #define E_VALID_MASK (E_SERIAL_ACTIVE)
 
 const char projectClass[] = "Carnegie Mellon Mechatronics";
-const char projectName[] = "Horizontal Movement";
+const char projectName[] = "Distance Sensors";
 const char projectTeam[] = "Team B";
 
 #define MAJOR_VER 0

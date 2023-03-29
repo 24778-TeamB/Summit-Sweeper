@@ -13,17 +13,13 @@ extern const struct cmd_str Cmd_Array[];
 
 #define CMDINVALID 0xFFFF
 #define CMDSHOW 0x068E  // show
-#define CMDMOTOR 0x15F4  // motor
-#define CMDROTATE 0x2479  // rotate
-#define CMDSET 0x0152  // set
+#define CMDDIST 0x0603  // dist
 
 #define OPTINVALID 0xFFFF
-#define OPTSPEED 0x048E  // -speed
+#define OPTFRONT 0x1769  // -front
 #define OPTLEFT 0x052B  // -left
 #define OPTRIGHT 0x1551  // -right
-#define OPTFORWARD 0x7ACD  // -forward
-#define OPTREVERSE 0x9B71  // -reverse
-#define OPTSTOP 0x04FE  // -stop
+#define OPTDOWN 0x04DB  // -down
 
 #define RET_OK 0
 #define RET_ERROR 1
@@ -32,8 +28,6 @@ extern const struct cmd_str Cmd_Array[];
 #define RET_NO_PROMPT 4
 
 int8_t CmdShow(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv);
-int8_t CmdMotor(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv);
-int8_t CmdRotate(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv);
-int8_t CmdSet(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv);
+int8_t CmdDist(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv);
 
 #endif

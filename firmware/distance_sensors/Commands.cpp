@@ -8,9 +8,7 @@
 
 const struct cmd_str Cmd_Array[] = {
 	{CMDSHOW, CmdShow},
-	{CMDMOTOR, CmdMotor},
-	{CMDROTATE, CmdRotate},
-	{CMDSET, CmdSet},
+	{CMDDIST, CmdDist},
 	{OPTINVALID, NULL}
 };
 
@@ -21,14 +19,15 @@ int8_t CmdShow(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const 
 	return RET_QUIET;
 }
 
-int8_t CmdMotor(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv)
+int8_t CmdDist(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv)
 {
-	uint16_t token;
 	int8_t retVal = RET_ERROR;
+	uint16_t token = OPTINVALID;
+	String floatBuffer;
 
 	if (argc < 2)
 	{
-		return RET_ERROR;
+		return retVal;
 	}
 
 	token = TokenToNum(argv[1]);
@@ -36,73 +35,12 @@ int8_t CmdMotor(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const
 	switch (token)
 	{
 	case OPTLEFT:
-		moveLeft();
-		retVal = RET_OK;
 		break;
 	case OPTRIGHT:
-		moveRight();
-		retVal = RET_OK;
 		break;
-	case OPTFORWARD:
-		moveForward();
-		retVal = RET_OK;
+	case OPTFRONT:
 		break;
-	case OPTREVERSE:
-		moveReverse();
-		retVal = RET_OK;
-		break;
-	case OPTSTOP:
-		moveStop();
-		retVal = RET_OK;
-		break;
-	}
-
-	return retVal;
-}
-
-int8_t CmdRotate(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv)
-{
-	float rotation;
-	int8_t retVal = RET_ERROR;
-
-	if (argc < 2)
-	{
-		return RET_ERROR;
-	}
-
-	if (!isFloat(argv[1]))
-	{
-		return RET_ERROR;
-	}
-
-	// run rotate
-	retVal = RET_UNSUPPORTED;
-
-	return retVal;
-}
-
-int8_t CmdSet(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *argv)
-{
-	int8_t retVal = RET_ERROR;
-	uint16_t token;
-
-	if (argc < 3)
-	{
-		return retVal;
-	}
-	if (!isInteger(argv[2]))
-	{
-		return retVal;
-	}
-
-	token = TokenToNum(argv[1]);
-
-	switch (token)
-	{
-	case OPTSPEED:
-    uint8_t Speed = (uint8_t)atoi(argv[2]);
-    setMotorSpeed(Speed);
-		retVal = RET_OK;
+	case OPTDOWN:
 		break;
 	}
 
