@@ -26,7 +26,7 @@ def issueMovement(msg: Int8):
         if port is None:
             rospy.logerr('Unable to write to motor controller: port is closed!')
             return
-        port.write(f'motor {MOVEMENT[movement]}'.encode('UTF-8'))
+        port.write(f'motor {MOVEMENT[movement]}\r\n'.encode('UTF-8'))
     except serial.SerialTimeoutException:
         rospy.logerr('Horizontal Motor Controller Timed out!')
     return
