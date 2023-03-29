@@ -2,7 +2,7 @@
 #define __DISTANCE__
 
 typedef struct {
-	float frontModule;
+	float headModule;
 	float middleModule;
 	float tailModule;
 } ultrasonic_t;
