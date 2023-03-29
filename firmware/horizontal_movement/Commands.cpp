@@ -100,7 +100,8 @@ int8_t CmdSet(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *
 	switch (token)
 	{
 	case OPTSPEED:
-		retVal = RET_UNSUPPORTED;
+    uint8_t Speed = atoi(argv[2]);
+		retVal = RET_OK;
 		break;
 	}
 
