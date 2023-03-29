@@ -8,7 +8,89 @@
 
 void init_ultrasonic()
 {
+	pinMode(HEAD_LEFT_EN, OUTPUT);
+	pinMode(HEAD_LEFT_TRIGGER, OUTPUT);
+	pinMode(HEAD_LEFT_ECHO, INPUT);
 
+	pinMode(HEAD_RIGHT_EN, OUTPUT);
+	pinMode(HEAD_RIGHT_TRIGGER, OUTPUT);
+	pinMode(HEAD_RIGHT_ECHO, INPUT);
+
+	pinMode(HEAD_FRONT_EN, OUTPUT);
+	pinMode(HEAD_FRONT_TRIGGER, OUTPUT);
+	pinMode(HEAD_FRONT_ECHO, INPUT);
+
+	pinMode(HEAD_DOWN_EN, OUTPUT);
+	pinMode(HEAD_DOWN_TRIGGER, OUTPUT);
+	pinMode(HEAD_DOWN_ECHO, INPUT);
+
+	pinMode(MID_LEFT_EN, OUTPUT);
+	pinMode(MID_LEFT_TRIGGER, OUTPUT);
+	pinMode(MID_LEFT_ECHO, INPUT);
+
+	pinMode(MID_RIGHT_EN, OUTPUT);
+	pinMode(MID_RIGHT_TRIGGER, OUTPUT);
+	pinMode(MID_RIGHT_ECHO, INPUT);
+
+	pinMode(MID_FRONT_EN, OUTPUT);
+	pinMode(MID_FRONT_TRIGGER, OUTPUT);
+	pinMode(MID_FRONT_ECHO, INPUT);
+
+	pinMode(MID_DOWN_EN, OUTPUT);
+	pinMode(MID_DOWN_TRIGGER, OUTPUT);
+	pinMode(MID_DOWN_ECHO, INPUT);
+
+	pinMode(TAIL_LEFT_EN, OUTPUT);
+	pinMode(TAIL_LEFT_TRIGGER, OUTPUT);
+	pinMode(TAIL_LEFT_ECHO, INPUT);
+
+	pinMode(TAIL_RIGHT_EN, OUTPUT);
+	pinMode(TAIL_RIGHT_TRIGGER, OUTPUT);
+	pinMode(TAIL_RIGHT_ECHO, INPUT);
+
+	pinMode(TAIL_FRONT_EN, OUTPUT);
+	pinMode(TAIL_FRONT_TRIGGER, OUTPUT);
+	pinMode(TAIL_FRONT_ECHO, INPUT);
+
+	pinMode(TAIL_DOWN_EN, OUTPUT);
+	pinMode(TAIL_DOWN_TRIGGER, OUTPUT);
+	pinMode(TAIL_DOWN_ECHO, INPUT);
+
+	digitalWrite(HEAD_LEFT_EN, LOW);
+	digitalWrite(HEAD_LEFT_TRIGGER, LOW);
+
+	digitalWrite(HEAD_RIGHT_EN, LOW);
+	digitalWrite(HEAD_RIGHT_TRIGGER, LOW);
+
+	digitalWrite(HEAD_FRONT_EN, LOW);
+	digitalWrite(HEAD_FRONT_TRIGGER, LOW);
+
+	digitalWrite(HEAD_DOWN_EN, LOW);
+	digitalWrite(HEAD_DOWN_TRIGGER, LOW);
+
+	digitalWrite(MID_LEFT_EN, LOW);
+	digitalWrite(MID_LEFT_TRIGGER, LOW);
+
+	digitalWrite(MID_RIGHT_EN, LOW);
+	digitalWrite(MID_RIGHT_TRIGGER, LOW);
+
+	digitalWrite(MID_FRONT_EN, LOW);
+	digitalWrite(MID_FRONT_TRIGGER, LOW);
+
+	digitalWrite(MID_DOWN_EN, LOW);
+	digitalWrite(MID_DOWN_TRIGGER, LOW);
+
+	digitalWrite(TAIL_LEFT_EN, LOW);
+	digitalWrite(TAIL_LEFT_TRIGGER, LOW);
+
+	digitalWrite(TAIL_RIGHT_EN, LOW);
+	digitalWrite(TAIL_RIGHT_TRIGGER, LOW);
+
+	digitalWrite(TAIL_FRONT_EN, LOW);
+	digitalWrite(TAIL_FRONT_TRIGGER, LOW);
+
+	digitalWrite(TAIL_DOWN_EN, LOW);
+	digitalWrite(TAIL_DOWN_TRIGGER, LOW);
 }
 
 static float getDistance(uint8_t enablePin, uint8_t triggerPin, uint8_t echoPin)
