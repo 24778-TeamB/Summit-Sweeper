@@ -8,18 +8,33 @@ def main():
     pub = rospy.Publisher('ultra-sonic', std_msgs.msg.Float32MultiArray, queue_size=8)
     pub_msg = std_msgs.msg.Float32MultiArray(data=randArray)
     pub.publish(pub_msg)
+    waitBuf = rospy.Rate(1000)
     while not rospy.is_shutdown():
         port.write('dist left\r\n'.encode('UTF-8'))
-        # Read data here
+        leftData = port.read_until()
+        waitBuf.sleep()
+        port.reset_input_buffer()
         port.write('dist right\r\n'.encode('UTF-8'))
-        # Read and append data
+        rightData = port.read_until()
+        waitBuf.sleep()
+        port.reset_input_buffer()
         port.write('dist forward\r\n'.encode('UTF-8'))
-        # Read and append data
+        port.read_until()
+        waitBuf.sleep()
+        forwardData = port.reset_input_buffer()
         port.write('dist down\r\n'.encode('UTF-8'))
-        # Read and append data
-        data = []  # TODO: convert data into list of floats
-        pub_msg = std_msgs.msg.Float32MultiArray(data=data)
-        pub.publish(pub_msg)
+        downData = port.read_until()
+        waitBuf.sleep()
+        port.reset_input_buffer()
+        data = leftData.decode('UTF-8').split(', ') + rightData.decode('UTF-8').split(', ') + forwardData.decode(
+            'UTF-8').split(', ') + downData.decode('UTF-8').split(', ')
+        try:
+            data = [float(d) for d in data]
+            pub_msg = std_msgs.msg.Float32MultiArray(data=data)
+            pub.publish(pub_msg)
+        except ValueError:
+            rospy.logerr('Tried publishing non-float value. Skipping this publish. If this continues to happen, '
+                         'please check Arduino.')
         rospy.Rate(10).sleep()
 
 
