@@ -124,42 +124,58 @@ void updateTail()
 		tail_index = 0;
 }
 
+static float averageData(float *arr)
+{
+	float avg = 0.0;
+	
+	for (uint8_t i = 0; i < SENSOR_BUF_SIZE; i++)
+	{
+		avg += arr[i];
+	}
+
+	return avg / (float)SENSOR_BUF_SIZE;
+}
+
 ultrasonic_t getLeft()
 {
-	ultrasonic_t data;
-	data.headModule = getDistance(HEAD_LEFT_TRIGGER, HEAD_LEFT_ECHO);
-	data.middleModule = getDistance(MID_LEFT_TRIGGER, MID_LEFT_ECHO);
-	data.tailModule = getDistance(TAIL_LEFT_TRIGGER, TAIL_LEFT_ECHO);
+	ultrasonic_t leftData;
+	
+	leftData.headModule = averageData(head_left_avg);
+	leftData.middleModule = averageData(middle_left_avg);
+	leftData.tailModule = averageData(tail_left_avg);
 
-	return data;
+	return leftData;
 }
 
 ultrasonic_t getRight()
 {
-	ultrasonic_t data;
-	data.headModule = getDistance(HEAD_RIGHT_TRIGGER, HEAD_RIGHT_ECHO);
-	data.middleModule = getDistance(MID_RIGHT_TRIGGER, MID_RIGHT_ECHO);
-	data.tailModule = getDistance(TAIL_RIGHT_TRIGGER, TAIL_RIGHT_ECHO);
+	ultrasonic_t rightData;
 
-	return data;
+	rightData.headModule = averageData(head_right_avg);
+	rightData.middleModule = averageData(middle_right_avg);
+	rightData.tailModule = averageData(tail_right_avg);
+
+	return rightData;
 }
 
 ultrasonic_t getFront()
 {
-	ultrasonic_t data;
-	data.headModule = getDistance(HEAD_FRONT_TRIGGER, HEAD_FRONT_ECHO);
-	data.middleModule = getDistance(MID_FRONT_TRIGGER, MID_FRONT_ECHO);
-	data.tailModule = getDistance(TAIL_FRONT_TRIGGER, TAIL_FRONT_ECHO);
+	ultrasonic_t frontData;
 
-	return data;
+	frontData.headModule = averageData(head_front_avg);
+	frontData.middleModule = averageData(middle_front_avg);
+	frontData.tailModule = averageData(tail_front_avg);
+
+	return frontData;
 }
 
 ultrasonic_t getDown()
 {
-	ultrasonic_t data;
-	data.headModule = getDistance(HEAD_DOWN_TRIGGER, HEAD_DOWN_ECHO);
-	data.middleModule = getDistance(MID_DOWN_TRIGGER, MID_DOWN_ECHO);
-	data.tailModule = getDistance(TAIL_DOWN_TRIGGER, TAIL_DOWN_ECHO);
+	ultrasonic_t downData;
+	
+	downData.headModule = averageData(head_down_avg);
+	downData.middleModule = averageData(middle_down_avg);
+	downData.tailModule = averageData(tail_down_avg);
 
-	return data;
+	return downData;
 }
