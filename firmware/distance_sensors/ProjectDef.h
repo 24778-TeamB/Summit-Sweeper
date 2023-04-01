@@ -9,7 +9,7 @@
 
 #define BAUD 9600
 
-#define SENSOR_BUF_SIZE 8
+#define SENSOR_BUF_SIZE 64
 
 // Pin Definitions
 #define HEAD_FRONT_TRIGGER 6
@@ -66,6 +66,7 @@
 // Events
 #define E_NO_EVENT 0x00000000
 #define E_SERIAL_ACTIVE 0x00000001
+#define E_TIMER1 0x00000002
 #define E_VALID_MASK (E_SERIAL_ACTIVE)
 
 const char projectClass[] = "Carnegie Mellon Mechatronics";

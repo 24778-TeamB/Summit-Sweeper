@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <TimerOne.h>
 #include "ProjectDef.h"
 #include "Commands.h"
 #include "CommandInterface.h"
@@ -16,11 +17,20 @@ void setup(void)
   // Configure sensors
   init_ultrasonic();
 
+  Timer1.initialize(10000000);
+  Timer1.attachInterrupt(timerInterrupt);
+
   gEvents = E_NO_EVENT;
 }
 
 void loop(void)
 {
+  if (gEvents & E_TIMER1)
+  {
+    updateHead();
+    updateMiddle();
+    updateTail();
+  }
   if (gEvents & E_SERIAL_ACTIVE)
   {
     transfer_status = GetCommand();
@@ -43,4 +53,9 @@ void serialEvent(void)
   {
     gEvents |= E_SERIAL_ACTIVE;
   }
+}
+
+void timerInterrupt(void)
+{
+  gEvents |= E_TIMER1;
 }
