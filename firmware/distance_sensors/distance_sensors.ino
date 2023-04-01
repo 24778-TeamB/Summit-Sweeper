@@ -30,6 +30,7 @@ void loop(void)
     updateHead();
     updateMiddle();
     updateTail();
+    gEvents &= ~E_TIMER1;
   }
   if (gEvents & E_SERIAL_ACTIVE)
   {
