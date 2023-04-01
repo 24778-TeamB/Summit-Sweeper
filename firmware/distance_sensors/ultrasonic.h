@@ -9,6 +9,10 @@ typedef struct {
 
 void init_ultrasonic();
 
+void updateHead();
+void updateMiddle();
+void updateTail();
+
 ultrasonic_t getLeft();
 ultrasonic_t getRight();
 ultrasonic_t getFront();

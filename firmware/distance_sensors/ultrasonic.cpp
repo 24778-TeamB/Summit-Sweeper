@@ -6,6 +6,25 @@
 #define HIGH_TIME 10
 #define LOW_TIME 2
 
+float head_right_avg[SENSOR_BUF_SIZE] = { 0 };
+float head_left_avg[SENSOR_BUF_SIZE] = { 0 };
+float head_front_avg[SENSOR_BUF_SIZE] = { 0 };
+float head_down_avg[SENSOR_BUF_SIZE] = { 0 };
+
+float middle_right_avg[SENSOR_BUF_SIZE] = { 0 };
+float middle_left_avg[SENSOR_BUF_SIZE] = { 0 };
+float middle_front_avg[SENSOR_BUF_SIZE] = { 0 };
+float middle_down_avg[SENSOR_BUF_SIZE] = { 0 };
+
+float tail_right_avg[SENSOR_BUF_SIZE] = { 0 };
+float tail_left_avg[SENSOR_BUF_SIZE] = { 0 };
+float tail_front_avg[SENSOR_BUF_SIZE] = { 0 };
+float tail_down_avg[SENSOR_BUF_SIZE] = { 0 };
+
+uint8_t head_index = 0;
+uint8_t middle_index = 0;
+uint8_t tail_index = 0;
+
 void init_ultrasonic()
 {
 	pinMode(HEAD_LEFT_TRIGGER, OUTPUT);
@@ -70,6 +89,39 @@ static float getDistance(uint8_t triggerPin, uint8_t echoPin)
 	duration = pulseIn(echoPin, HIGH);
 
 	return ((float)duration / 2) / V_SOUND_INV;
+}
+
+void updateHead()
+{
+	head_left_avg[head_index] = getDistance(HEAD_LEFT);
+	head_right_avg[head_index] = getDistance(HEAD_RIGHT);
+	head_down_avg[head_index] = getDistance(HEAD_DOWN);
+	head_front_avg[head_index++] = getDistance(HEAD_FRONT);
+
+	if (head_index >= SENSOR_BUF_SIZE)
+		head_index = 0;
+}
+
+void updateMiddle()
+{
+	middle_left_avg[middle_index] = getDistance(MID_LEFT);
+	middle_right_avg[middle_index] = getDistance(MID_RIGHT);
+	middle_down_avg[middle_index] = getDistance(MID_DOWN);
+	middle_front_avg[middle_index++] = getDistance(MID_FRONT);
+
+	if (middle_index >= SENSOR_BUF_SIZE)
+		middle_index = 0;
+}
+
+void updateTail()
+{
+	tail_left_avg[tail_index] = getDistance(TAIL_LEFT);
+	tail_right_avg[tail_index] = getDistance(TAIL_RIGHT);
+	tail_down_avg[tail_index] = getDistance(TAIL_DOWN);
+	tail_front_avg[tail_index++] = getDistance(TAIL_FRONT);
+
+	if (tail_index >= SENSOR_BUF_SIZE)
+		tail_index = 0;
 }
 
 ultrasonic_t getLeft()
