@@ -15,7 +15,8 @@ namespace ss
 		~TicDriver();
 
 		int init(Serial *port, int initial_position);
-		int set(int32_t position);
+		int setPosition(int32_t position);
+		int getPosition(int32_t *position);
 
 	private:
 		bool isInitialized;
@@ -53,6 +54,7 @@ namespace ss
 		};
 
 		int setPort(Serial *port);
+		int getVariable(uint8_t offset, uint8_t *buf, uint32_t length);
 	};
 };
 
