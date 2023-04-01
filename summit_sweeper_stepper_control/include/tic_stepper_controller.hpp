@@ -51,6 +51,8 @@ namespace ss
 			Reinitialize = 0x10,
 			StartBootloader = 0xFF
 		};
+
+		int setPort(Serial *port);
 	};
 };
 
