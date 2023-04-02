@@ -24,7 +24,7 @@ namespace ss
 
 	int TicDriver::setPort(Serial *port)
 	{
-		uint8_t detectByte = 0xAA
+		uint8_t detectByte = 0xAA;
 		_port = port;
 		if (_port == nullptr)
 		{

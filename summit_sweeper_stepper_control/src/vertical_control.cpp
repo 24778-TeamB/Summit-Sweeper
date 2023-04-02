@@ -45,29 +45,29 @@ int main(int argc, char **argv)
 	ros::Publisher pub2 = n.advertise<std_msgs::Int32>("vertical_position2", 4);
 
 	// get serial ports
-	port1.Open("somePort", baud_9600);
-	port2.Open("somePort", baud_9600);
+	port1.Open("/dev/bus/usb/001/004", baud_9600);
+	//port2.Open("somePort", baud_9600);
 
 	ticController1.init(&port1, 0);
-	ticController2.init(&port2, 0);
+	//ticController2.init(&port2, 0);
 
 	ros::Rate rate(10);
 
 	while (ros::ok())
 	{
 		std_msgs::Int32 pos1_msg, pos2_msg;
-		int32_t pos1, pos2;
+		int32_t pos1, pos2 = 0;
 
 		m1.lock();
 		ticController1.getPosition(&pos1);
 		m1.unlock();
 
-		m2.lock();
-		ticController2.getPosition(&pos2);
-		m2.unlock();
+		//m2.lock();
+		//ticController2.getPosition(&pos2);
+		//m2.unlock();
 
 		pos1_msg.data = pos1;
-		pos2_msg.data = pos2;
+		//pos2_msg.data = pos2;
 
 		pub1.publish(pos1_msg);
 		pub2.publish(pos2_msg);
