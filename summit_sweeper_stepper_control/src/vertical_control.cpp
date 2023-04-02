@@ -15,17 +15,17 @@ TicDriver ticController2;
 std::mutex m1;
 std::mutex m2;
 
-void setStepperPosition1(/* Something that goes here */)
+void setStepperPosition1(std_msgs::Int32 position)
 {
 	m1.lock();
-	ticController1.setPosition(/* Some data that goes here */); 
+	ticController1.setPosition(position.data);
 	m1.unlock();
 }
 
-void setStepperPosition2(/* Something that goes here */)
+void setStepperPosition2(std_msgs::Int32 position)
 {
 	m2.lock();
-	ticController2.setPosition(/* Some data that goes here */);
+	ticController2.setPosition(position.data);
 	m2.unlock();
 }
 
