@@ -1,4 +1,5 @@
 #include <ros/ros.h>
+#include "std_msgs/Int32.h"
 #include "Serial.hpp"
 #include "tic_stepper_controller.hpp"
 #include <string>
@@ -40,8 +41,8 @@ int main(int argc, char **argv)
 	ros::NodeHandle n;
 	ros::Subscriber sub1 = n.subscribe("vertical_control1", 1, setStepperPosition1);
 	ros::Subscriber sub2 = n.subscribe("vertical_control2", 1, setStepperPosition2);
-	ros::Publisher pub1 = n.publish("vertical_position1", /*Something else*/);
-	ros::Publisher pub2 = n.publish("vertical_position2", /*Something else*/);
+	ros::Publisher pub1 = n.advertise<std_msgs::Int32>("vertical_position1", 4);
+	ros::Publisher pub2 = n.advertise<std_msgs::Int32>("vertical_position2", 4);
 
 	// get serial ports
 	port1.Open("somePort", baud_9600);
@@ -50,9 +51,28 @@ int main(int argc, char **argv)
 	ticController1.init(&port1, 0);
 	ticController2.init(&port2, 0);
 
-	while (!ros::is_shutdown())
+	ros::Rate rate(10);
+
+	while (ros::ok())
 	{
-		// publish current positions...
+		std_msgs::Int32 pos1_msg, pos2_msg;
+		int32_t pos1, pos2;
+
+		m1.lock();
+		ticController1.getPosition(&pos1);
+		m1.unlock();
+
+		m2.lock();
+		ticController2.getPosition(&pos2);
+		m2.unlock();
+
+		pos1_msg.data = pos1;
+		pos2_msg.data = pos2;
+
+		pub1.publish(pos1_msg);
+		pub2.publish(pos2_msg);
+
+		rate.sleep();
 	}
 
 	resetPositions();
