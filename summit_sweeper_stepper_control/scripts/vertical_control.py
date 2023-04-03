@@ -1,7 +1,7 @@
 import rospy
 import std_msgs
 import threading
-from ticlib import TicUSB, TIC36v4
+from ticlib import TicUSB, TIC_36v4
 from time import sleep
 import signal
 import logging
@@ -9,8 +9,8 @@ import logging
 mtx1 = threading.Lock()
 mtx2 = threading.Lock()
 
-frontTic = TicUSB(product=TIC36v4, serial_number='00414637')
-# rearTic = TicUSB(product=TIC36v4, serial_number=None)
+frontTic = TicUSB(product=TIC_36v4, serial_number='00414637')
+# rearTic = TicUSB(product=TIC_36v4, serial_number=None)
 
 
 # https://stackoverflow.com/a/21919644/11854714
@@ -62,10 +62,10 @@ def main():
     # rearTic.exit_safe_start()
 
     rospy.init_node('summit_sweeper_vertical_control')
-    frontPub = rospy.Publisher('front-tic', std_msgs.msg.Int32, queue_size=4)
-    rearPub = rospy.Publisher('rear-tic', std_msgs.msg.Int32, queue_size=4)
-    rospy.Subscriber('front-vert-control', std_msgs.msg.Int32, callbackSetPos1)
-    rospy.Subscriber('rear-vert-control', std_msgs.msg.Int32, callbackSetPos2)
+    frontPub = rospy.Publisher('front_tic', std_msgs.msg.Int32, queue_size=4)
+    rearPub = rospy.Publisher('rear_tic', std_msgs.msg.Int32, queue_size=4)
+    rospy.Subscriber('front_vert_control', std_msgs.msg.Int32, callbackSetPos1)
+    rospy.Subscriber('rear_vert_control', std_msgs.msg.Int32, callbackSetPos2)
     rospy.loginfo('Starting vertical control')
 
     while not rospy.is_shutdown():
