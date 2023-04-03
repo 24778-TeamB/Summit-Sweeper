@@ -30,7 +30,8 @@ T -> Rear Up
 G -> Rear Down
 
 Vacuum Control:
-Space -> On
+V -> On
+B -> Off
 
 Press nothing -> stop
 
@@ -44,13 +45,20 @@ moveBindings = {
     'd': 2
 }
 
+vacuumBindings = {
+        'b': 0,
+        'v': 1
+}
+
 class PublishThread(threading.Thread):
     def __init__(self, rate):
         super(PublishThread, self).__init__()
         self.publisher = rospy.Publisher('horizontal_control', Int8, queue_size = 1)
+        self.vacuum_publisher = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
         self.state = 0
         self.condition = threading.Condition()
         self.done = False
+        self.vacuum_state = 0
 
         # Set timeout to None if rate is 0 (causes new_message to wait forever
         # for new data to publish)
@@ -63,18 +71,22 @@ class PublishThread(threading.Thread):
 
     def wait_for_subscribers(self):
         i = 0
-        while not rospy.is_shutdown() and self.publisher.get_num_connections() == 0:
-            if i == 4:
+        while not rospy.is_shutdown() and (self.publisher.get_num_connections() == 0 or self.vacuum_publisher.get_num_connections() == 0):
+            if i == 4 and self.publisher.get_num_connections() == 0:
                 print("Waiting for subscriber to connect to {}".format(self.publisher.name))
+            if i == 4 and self.vacuum_publisher.get_num_connections() == 0:
+                print("Wating for subscriber to connect to {}".format(self.vacuum_publisher.name))
             rospy.sleep(0.5)
             i += 1
             i = i % 5
         if rospy.is_shutdown():
             raise Exception("Got shutdown request before subscribers connected")
 
-    def update(self, movement):
+    def update(self, movement, vacuum = None):
         self.condition.acquire()
         self.state = movement
+        if vacuum is not None:
+            self.vacuum_state = vacuum
         self.condition.notify()
         self.condition.release()
 
@@ -84,25 +96,34 @@ class PublishThread(threading.Thread):
 
     def run(self):
         pubValue = Int8()
+        vacValue = Int8()
         pubValue.data = 0
+        vacValue.data = 0
         prevData = 1
+        prevVac = 1
         while not self.done:
             self.condition.acquire()
             # Wait for a new message or timeout.
             self.condition.wait(self.timeout)
 
             pubValue.data = self.state
+            vacValue.data = self.vacuum_state
 
             self.condition.release()
 
             # Publish.
             if prevData != pubValue.data:
                 self.publisher.publish(pubValue)
+            if prevVac != vacValue.data:
+                self.vacuum_publisher.publish(vacValue)
             prevData = pubValue.data
+            prevVac = vacValue.data
 
         pubValue.data = 0
+        vacValue.data = 0
         # Publish stop message when thread exits.
         self.publisher.publish(pubValue)
+        self.vacuum_publisher.publish(vacValue)
 
 
 def getKey(settings, timeout):
@@ -145,9 +166,12 @@ if __name__=="__main__":
 
         print(msg)
         while(1):
+            vacuumEn = None
             key = getKey(settings, 1)
             if key in moveBindings.keys():
                 movement = moveBindings[key]
+            if key in vacuumBindings.keys():
+                vacuumEn = vacuumBindings[key]
             elif movement != 0 and key == '':
                 movement = 0
             else:
@@ -158,7 +182,7 @@ if __name__=="__main__":
                 if (key == '\x03'):
                     break
 
-            pub_thread.update(movement)
+            pub_thread.update(movement, vacuumEn)
 
     except Exception as e:
         print(e)

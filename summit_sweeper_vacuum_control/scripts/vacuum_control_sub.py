@@ -35,6 +35,7 @@ def callback_listener(msg: Int8):
         if testMode:
             rospy.logerr('Currently in test mode. Please disable test mode')
             return
+        rospy.loginfo(f'Received a {data}')
         toggleVacuum(bool(data))
         return
     testMode = not testMode
