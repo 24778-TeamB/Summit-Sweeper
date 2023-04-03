@@ -1,3 +1,4 @@
+# Based off of: https://github.com/ros-teleop/teleop_twist_keyboard/blob/master/teleop_twist_keyboard.py
 #!/usr/bin/env python
 
 from __future__ import print_function
@@ -16,11 +17,22 @@ else:
 
 
 msg = """
+Horizontal Movement:
 W -> Forward
 S -> Reverse
 A -> Left
 D -> Right
-anything else -> stop
+
+Vertical Movement:
+R -> Front Up
+F -> Front Down
+T -> Rear Up
+G -> Rear Down
+
+Vacuum Control:
+Space -> On
+
+Press nothing -> stop
 
 CTRL-C to quit
 """
@@ -121,7 +133,7 @@ def restoreTerminalSettings(old_settings):
 if __name__=="__main__":
     settings = saveTerminalSettings()
 
-    rospy.init_node('teleop_twist_keyboard')
+    rospy.init_node('summit_climber_teleop')
 
     pub_thread = PublishThread(1)
 
