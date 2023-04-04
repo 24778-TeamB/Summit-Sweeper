@@ -111,22 +111,19 @@ def main():
     # Cleanup
     with DelayedKeyboardInterrupt():
         mtx1.acquire()  # Lock mutex just in case
+        mtx2.acquire()
         print('Resetting stepper motors')
         frontTic.set_target_position(0)
-        while frontTic.get_current_position() != frontTic.get_target_position():
+        rearTic.set_target_position(0)
+        while ((frontTic.get_current_position() != frontTic.get_target_position()) or (rearTic.get_current_position() != rearTic.get_target_position())):
             sleep(0.1)
 
         frontTic.deenergize()
         frontTic.enter_safe_start()
-        mtx1.release()
-
-        mtx2.acquire()
-        rearTic.set_target_position(0)
-        while rearTic.get_current_position() != rearTic.get_target_position():
-            sleep(0.1)
 
         rearTic.deenergize()
         rearTic.enter_safe_start()
+        mtx1.release()
         mtx2.release()
 
 
