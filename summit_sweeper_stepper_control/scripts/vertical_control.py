@@ -9,8 +9,8 @@ import logging
 mtx1 = threading.Lock()
 mtx2 = threading.Lock()
 
-frontTic = TicUSB(product=TIC_36v4, serial_number='00414637')
-# rearTic = TicUSB(product=TIC_36v4, serial_number=None)
+frontTic = TicUSB(serial_number='00414637')
+rearTic = TicUSB(serial_number='00414631')
 
 
 # https://stackoverflow.com/a/21919644/11854714
@@ -40,9 +40,9 @@ def callbackSetPos1(pos: std_msgs.msg.Int32):
 
 def callbackSetPos2(pos: std_msgs.msg.Int32):
     global mtx2
-    # global rearTic
+    global rearTic
     mtx2.acquire()
-    # rearTic.set_target_position(pos.data)
+    rearTic.set_target_position(pos.data)
     mtx2.release()
 
 
@@ -50,16 +50,16 @@ def main():
     global mtx1
     global mtx2
     global frontTic
-    # global rearTic
+    global rearTic
 
     # Initialize TICs
     frontTic.halt_and_set_position(0)
     frontTic.energize()
     frontTic.exit_safe_start()
 
-    # rearTic.halt_and_set_position(0)
-    # rearTic.energize()
-    # rearTic.exit_safe_start()
+    rearTic.halt_and_set_position(0)
+    rearTic.energize()
+    rearTic.exit_safe_start()
 
     rospy.init_node('summit_sweeper_vertical_control')
     frontPub = rospy.Publisher('front_tic', std_msgs.msg.Int32, queue_size=4)
@@ -74,7 +74,7 @@ def main():
             frontPos = frontTic.get_current_position()
             mtx1.release()
             mtx2.acquire()
-            rearPos = 0  # rearTic.get_current_position()
+            rearPos = rearTic.get_current_position()
             mtx2.release()
 
             front = std_msgs.msg.Int32()
@@ -107,12 +107,12 @@ def main():
         mtx1.release()
 
         mtx2.acquire()
-        # rearTic.set_target_position(0)
-        # while rearTic.get_current_position() != rearTic.get_target_position():
-        #     sleep(0.1)
+        rearTic.set_target_position(0)
+        while rearTic.get_current_position() != rearTic.get_target_position():
+            sleep(0.1)
 
-        # rearTic.deenergize()
-        # rearTic.enter_safe_start()
+        rearTic.deenergize()
+        rearTic.enter_safe_start()
         mtx2.release()
 
 
