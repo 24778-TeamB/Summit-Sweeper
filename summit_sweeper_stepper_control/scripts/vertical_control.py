@@ -64,6 +64,8 @@ def main():
     rospy.init_node('summit_sweeper_vertical_control')
     frontPub = rospy.Publisher('front_tic', std_msgs.msg.Int32, queue_size=4)
     rearPub = rospy.Publisher('rear_tic', std_msgs.msg.Int32, queue_size=4)
+    frontTargetPub = rospy.Publisher('front_target', std_msgs.msg.Int32, queue_size=4)
+    rearTargetPub = rospy.Publisher('rear_target', std_msgs.msg.Int32, queue_size=4)
     rospy.Subscriber('front_vert_control', std_msgs.msg.Int32, callbackSetPos1)
     rospy.Subscriber('rear_vert_control', std_msgs.msg.Int32, callbackSetPos2)
     rospy.loginfo('Starting vertical control')
@@ -72,20 +74,32 @@ def main():
         try:
             mtx1.acquire()
             frontPos = frontTic.get_current_position()
+            frontTarget = frontTic.get_target_position()
             mtx1.release()
             mtx2.acquire()
             rearPos = rearTic.get_current_position()
+            rearTarget = rearTic.get_target_position()
             mtx2.release()
 
             front = std_msgs.msg.Int32()
             rear = std_msgs.msg.Int32()
-
+            frontTargetVal = std_msgs.msg.Int32()
+            rearTargetVal = std_msgs.msg.Int32()
+            
             if frontPos is not None:
                 front.data = frontPos
                 frontPub.publish(front)
+                rospy.loginfo(f'Front Position: {frontPos}')
+            if frontTarget is not None:
+                frontTargetVal.data = frontTarget
+                frontTargetPub.publish(frontTargetVal)
             if rearPos is not None:
                 rear.data = rearPos
                 rearPub.publish(rear)
+                rospy.loginfo(f'Rear Position: {rearPos}')
+            if rearTarget is not None:
+                rearTargetVal.data = rearTarget
+                rearTargetPub.publish(rearTargetVal)
             
             rospy.Rate(10).sleep()
         except KeyboardInterrupt:
