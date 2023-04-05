@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "Serial.hpp"
 #include "ros/ros.h"
 #include "ros/console.h"
@@ -20,11 +21,11 @@ namespace ss
 	{
 		ros::WallDuration(.1).sleep();
 
-		this->port_fd = ::open(port, O_RDWR | O_NO_CTTY | O_ASYNC | O_NDELAY);
+		this->port_fd = ::open(port, O_RDWR | O_NOCTTY | O_ASYNC | O_NDELAY);
 		this->port_name = port;
 		if (this->port_fd < 0)
 		{
-			ROS_FATAL("Could not open port: %s", port_name);
+			ROS_FATAL("Could not open port: %s", port);
 			exit(1);
 		}
 
@@ -97,7 +98,7 @@ namespace ss
 			while (QueryBuffer() == 0 && now < exit_time)
 			{
 				ros::WallDuration(0.02).sleep();
-				now = ros::WallTime.now();
+				now = ros::WallTime::now();
 			}
 
 			if (now > exit_time)
@@ -116,7 +117,7 @@ namespace ss
 			{
 				i += bytes;
 			}
-			ussleep((numBytes - i) << 3);
+			usleep((numBytes - i) << 3);
 		}
 
 		return bytes;
@@ -150,7 +151,7 @@ namespace ss
 
 		options.c_iflag = 0;
 		options.c_oflag = 0;
-		options.C_cflag = (options.c_cflag & ~CSIZE) | CS8;
+		options.c_cflag = (options.c_cflag & ~CSIZE) | CS8;
 		options.c_cflag |= CLOCAL | CREAD;
 
 		cfmakeraw(&options);
