@@ -17,7 +17,7 @@ void setup(void)
   // Configure sensors
   init_ultrasonic();
 
-  Timer1.initialize(10000000);
+  Timer1.initialize(1000);
   Timer1.attachInterrupt(timerInterrupt);
 
   gEvents = E_NO_EVENT;
