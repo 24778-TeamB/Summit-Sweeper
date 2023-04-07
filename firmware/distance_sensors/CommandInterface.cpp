@@ -88,7 +88,11 @@ int8_t ProcessCmdLine(char *cmdBuf, uint16_t bufSize)
 			break;
 		}
 	}
-	strcat(cmdBuf, strPrompt);
+
+ if (retVal != RET_NO_PROMPT)
+ {
+  strcat(cmdBuf, strPrompt);
+ }
 
 	return retVal;
 }

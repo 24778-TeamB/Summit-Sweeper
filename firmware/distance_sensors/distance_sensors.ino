@@ -27,9 +27,21 @@ void loop(void)
 {
   if (gEvents & E_TIMER1)
   {
+    ultrasonic_t left, right, front, down;
+    // Serial.println("1");
     updateHead();
     updateMiddle();
     updateTail();
+    // Serial.println("2");
+
+    left = getLeft();
+    right = getRight();
+    front = getFront();
+    down = getDown();
+    // Serial.println("3");
+
+    // Serial.println(String(left.headModule, 2) + String(",") + String(left.middleModule, 2) + String(",") + String(left.tailModule, 2) + String(",") + String(right.headModule, 2) + String(",") + String(right.middleModule, 2) + String(",") + String(right.tailModule, 2) + String(",") + String(front.headModule, 2) + String(",") + String(front.middleModule, 2) + String(",") + String(front.tailModule, 2) + String(",") + String(down.headModule, 2) + String(",") + String(down.middleModule, 2) + String(",") + String(down.tailModule, 2));
+    
     gEvents &= ~E_TIMER1;
   }
   if (gEvents & E_SERIAL_ACTIVE)

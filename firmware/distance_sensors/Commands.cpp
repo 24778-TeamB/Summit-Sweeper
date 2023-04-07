@@ -55,7 +55,7 @@ int8_t CmdDist(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const 
 	floatBuffer[0] = String(data.headModule, 2);
 	floatBuffer[1] = String(data.middleModule, 2);
 	floatBuffer[2] = String(data.tailModule, 2);
-	snprintf(cmdBuf, bufSize, "%s, %s, %s", floatBuffer[0].c_str(), floatBuffer[1].c_str(), floatBuffer[2].c_str());
+	snprintf(cmdBuf, bufSize, "%s, %s, %s\r\n", floatBuffer[0].c_str(), floatBuffer[1].c_str(), floatBuffer[2].c_str());
 	retVal = RET_NO_PROMPT;
 
 	return retVal;

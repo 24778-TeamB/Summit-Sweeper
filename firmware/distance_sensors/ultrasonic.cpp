@@ -86,7 +86,7 @@ static float getDistance(uint8_t triggerPin, uint8_t echoPin)
 	digitalWrite(triggerPin, HIGH);
 	delayMicroseconds(HIGH_TIME);
 	digitalWrite(triggerPin, LOW);
-	duration = pulseIn(echoPin, HIGH);
+	duration = pulseIn(echoPin, HIGH, 23325);
 
 	return ((float)duration / 2) / V_SOUND_INV;
 }
