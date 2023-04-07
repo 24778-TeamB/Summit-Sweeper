@@ -197,7 +197,7 @@ def restoreTerminalSettings(old_settings):
 if __name__=="__main__":
     settings = saveTerminalSettings()
 
-    rospy.init_node('summit_climber_teleop')
+    rospy.init_node('summit_sweeper_teleop')
 
     pub_thread = PublishThread(1)
 
