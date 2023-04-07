@@ -67,7 +67,7 @@
 #define E_NO_EVENT 0x00000000
 #define E_SERIAL_ACTIVE 0x00000001
 #define E_TIMER1 0x00000002
-#define E_VALID_MASK (E_SERIAL_ACTIVE)
+#define E_VALID_MASK (E_SERIAL_ACTIVE | E_TIMER1)
 
 const char projectClass[] = "Carnegie Mellon Mechatronics";
 const char projectName[] = "Distance Sensors";
