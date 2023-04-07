@@ -77,6 +77,4 @@ const char projectTeam[] = "Team B";
 #define MINOR_VER 0
 #define BUILD 0
 
-extern volatile uint32_t gEvents;
-
 #endif // !PROJECT_DEF_H
