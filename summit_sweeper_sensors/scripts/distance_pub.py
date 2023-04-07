@@ -3,10 +3,10 @@ import serial
 import std_msgs
 
 def main():
-    port = serial.Serial('/dev/ttyACM0', 9600, timeout=5)
+    port = serial.Serial('/dev/ttyACM0', 115200, timeout=5)
     rospy.init_node('summit_sweeper_distance_sensors')
     pub = rospy.Publisher('ultra_sonic', std_msgs.msg.Float32MultiArray, queue_size=8)
-    waitBuf = rospy.Rate(1000)
+    waitBuf = rospy.Rate(10)
     while not rospy.is_shutdown():
         port.write(b'dist left\r\n')
         leftData = port.readline()
@@ -15,12 +15,17 @@ def main():
         rightData = port.readline()
         waitBuf.sleep()
         port.write(b'dist forward\r\n')
-        port.readline()
+        frontData = port.readline()
         waitBuf.sleep()
         port.write(b'dist down\r\n')
         downData = port.readline()
         waitBuf.sleep()
-        data = leftData.decode('UTF-8')[:-2].split(', ') + rightData.decode('UTF-8')[:-2].split(', ') + forwardData.decode('UTF-8')[:-2].split(', ') + downData.decode('UTF-8')[:-2].split(', ')
+        print(leftData)
+        print(rightData)
+        print(frontData)
+        print(downData)
+        data = leftData.decode('UTF-8')[:-2].split(', ') + rightData.decode('UTF-8')[:-2].split(', ') + frontData.decode('UTF-8')[:-2].split(', ') + downData.decode('UTF-8')[:-2].split(', ')
+        print(data)
         try:
             data = [float(d) for d in data]
             pub_msg = std_msgs.msg.Float32MultiArray(data=data)
