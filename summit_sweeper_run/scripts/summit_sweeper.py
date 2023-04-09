@@ -1,6 +1,7 @@
 import rospy
 from std_msgs.msg import Float32MultiArray, Int8, Int32
 import threading
+import copy
 
 
 mtx = threading.Lock()
@@ -44,6 +45,15 @@ def sensor_callback(data: Float32MultiArray):
     mtx.acquire()
     SENSOR_READINGS = data.data
     mtx.release()
+    return
+
+
+def clean_down(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub):
+    pass
+
+
+def clean_up(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub):
+    pass
 
 
 def main():
@@ -52,5 +62,27 @@ def main():
     rospy.init_node('summit_sweeper_main_run')
     rospy.Subscriber('ultra_sonic', Float32MultiArray, sensor_callback)
     vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
+    horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size = 8)
+    vert_movement1 = rospy.Publisher('front_vert_control', Int32, queue_size = 8)
+    vert_movement2 = rospy.Publisher('rear_vert_control', Int32, queue_size = 8)
+    wait_for_subscribers(horizontal_pub, vert_movement1, vert_movement2, vacuum_pub)
+    readings = []
 
+    while not rospy.is_shutdown():
+        mtx.acquire()
+        readings = copy.deepcopy(SENSOR_READINGS)
+        mtx.release()
 
+        # Move forward and check front and downward facing sensors
+        # Detect step
+        # Turn on vacuums
+        # if top
+        #   Move left
+        #   Move right
+        # else
+        #   Move right
+        #   Move left
+        # climb
+        #
+
+        rospy.Rate(10).sleep()
