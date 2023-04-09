@@ -2,6 +2,7 @@ import rospy
 from std_msgs.msg import Float32MultiArray, Int8, Int32
 import threading
 import copy
+import enum
 
 
 mtx = threading.Lock()
@@ -20,6 +21,13 @@ VACUUM = {
         'off': 0,
         'test': 2
         }
+
+
+class currentState(enum.Enum):
+    INITIALIZATION = 0x0
+    CLEAN_UP = 0x1
+    CLEAN_DOWN = 0x2
+    FINISHED = 0x3
 
 
 def wait_for_subscribers(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub):
@@ -48,11 +56,11 @@ def sensor_callback(data: Float32MultiArray):
     return
 
 
-def clean_down(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub):
+def clean_down(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub, readings):
     pass
 
 
-def clean_up(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub):
+def clean_up(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub, readings):
     pass
 
 
@@ -66,23 +74,33 @@ def main():
     vert_movement1 = rospy.Publisher('front_vert_control', Int32, queue_size = 8)
     vert_movement2 = rospy.Publisher('rear_vert_control', Int32, queue_size = 8)
     wait_for_subscribers(horizontal_pub, vert_movement1, vert_movement2, vacuum_pub)
-    readings = []
+    state = currentState.INITIALIZATION
 
     while not rospy.is_shutdown():
+        # Copy the readings to prevent blocking
         mtx.acquire()
         readings = copy.deepcopy(SENSOR_READINGS)
         mtx.release()
 
-        # Move forward and check front and downward facing sensors
-        # Detect step
-        # Turn on vacuums
-        # if top
-        #   Move left
-        #   Move right
-        # else
-        #   Move right
-        #   Move left
-        # climb
-        #
+        if state == currentState.CLEAN_UP:
+            clean_up(horizontal_pub, vert_movement1, vert_movement2, vacuum_pub, readings)
+            # check if job is finished here
+        elif state == currentState.CLEAN_DOWN:
+            clean_down(horizontal_pub, vert_movement1, vert_movement2, vacuum_pub, readings)
+            # Check if job is finished here
+        elif state == currentState.FINISHED:
+            vacuum_pub.publish(Int8(data=VACUUM['off']))
+            vert_movement1.publish(Int32(data=0))
+            vert_movement2.publish(Int32(data=0))
+            horizontal_pub.publish(Int8(data=DC_MOTOR['stop']))
+            # Possibly move forward a little bit before stopping
+            break
+        elif state == currentState.INITIALIZATION:
+            pass # Decide whether to clean up or down here
 
         rospy.Rate(10).sleep()
+        del readings
+
+
+if __name__ == '__main__':
+    main()
