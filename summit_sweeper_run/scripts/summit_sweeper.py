@@ -22,6 +22,16 @@ VACUUM = {
         'test': 2
         }
 
+CLEAN_STATE = {
+        'no-state': -1
+        'left': 0,
+        'right': 1,
+        'step': 2
+        }
+
+
+current_state = CLEAN_STATE['no-state']
+
 
 class currentState(enum.Enum):
     INITIALIZATION = 0x0
@@ -57,11 +67,27 @@ def sensor_callback(data: Float32MultiArray):
 
 
 def clean_down(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub, readings):
-    pass
+    global current_state
+    if current_state == CLEAN_STATE['left']:
+        pass
+    elif current_state == CLEAN_STATE['right']:
+        pass
+    elif current_state == CLEAN_STATE['step']:
+        pass
+    elif current_state == CLEAN_STATE['no-state']:
+        pass
 
 
 def clean_up(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub, readings):
-    pass
+    global current_state
+    if current_state == CLEAN_STATE['left']:
+        pass
+    elif current_state == CLEAN_STATE['right']:
+        pass
+    elif current_state == CLEAN_STATE['step']:
+        pass
+    elif current_state == CLEAN_STATE['no-state']:
+        pass
 
 
 def main():
@@ -99,7 +125,7 @@ def main():
         elif state == currentState.INITIALIZATION:
             pass # Decide whether to clean up or down here
 
-        rospy.Rate(10).sleep()
+        rospy.Rate(100).sleep()
         del readings
 
 
