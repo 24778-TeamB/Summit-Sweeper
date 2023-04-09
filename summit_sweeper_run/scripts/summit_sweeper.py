@@ -151,26 +151,28 @@ def sensor_callback(data: Float32MultiArray):
     return
 
 
-def clean_down(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub, readings, front, rear):
+def clean_down(horizontal_pub, step_state_machine, vacuum_pub, readings):
     global current_state
     if current_state == CLEAN_STATE['left']:
         pass
     elif current_state == CLEAN_STATE['right']:
         pass
     elif current_state == CLEAN_STATE['step']:
-        pass
+        done = step_state_machine.next(readings, False)
+        # TODO check done
     elif current_state == CLEAN_STATE['no-state']:
         pass
 
 
-def clean_up(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub, readings, front, rear):
+def clean_up(horizontal_pub, step_state_machine, vacuum_pub, readings):
     global current_state
     if current_state == CLEAN_STATE['left']:
         pass
     elif current_state == CLEAN_STATE['right']:
         pass
     elif current_state == CLEAN_STATE['step']:
-        pass
+        done = step_state_machine.next(readings, True)
+        # TODO check done
     elif current_state == CLEAN_STATE['no-state']:
         pass
 
@@ -182,9 +184,8 @@ def main():
     rospy.Subscriber('ultra_sonic', Float32MultiArray, sensor_callback)
     vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
     horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size = 8)
-    vert_movement1 = rospy.Publisher('front_vert_control', Int32, queue_size = 8)
-    vert_movement2 = rospy.Publisher('rear_vert_control', Int32, queue_size = 8)
-    wait_for_subscribers(horizontal_pub, vert_movement1, vert_movement2, vacuum_pub)
+    steps = stepStateMachine(horizontal_pub, frontH=100, rearH=100)
+    wait_for_subscribers(horizontal_pub, steps.vert_movement1, steps.vert_movement2, vacuum_pub)
     state = currentState.INITIALIZATION
 
     while not rospy.is_shutdown():
