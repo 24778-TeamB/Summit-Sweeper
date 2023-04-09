@@ -53,7 +53,7 @@ class stepStateMachine:
         LIFT_REAR = 0X4
         FORWARD2 = 0X5
 
-    def __init__(self, frontL = 0, rearL = 0, frontH = 1, rearH = 1):
+    def __init__(self, dc_motor_pub, frontL = 0, rearL = 0, frontH = 1, rearH = 1):
         self.frontTargets['low'] = Int32(data=frontL)
         self.frontTargets['high'] = Int32(data=frontH)
         self.rearTargets['low'] = Int32(data=rearL)
@@ -68,6 +68,7 @@ class stepStateMachine:
         self.vert_movement2 = rospy.Publisher('rear_vert_control', Int32, queue_size=8)
         rospy.Subscriber('front_stepper', Int32, self._stepper1_position)
         rospy.Subscriber('rear_stepper', Int32, self._stepper2_position)
+        self.dc_pub = dc_motor_pub
         return
 
     @staticmethod
@@ -98,10 +99,11 @@ class stepStateMachine:
                     self.currentState = self.climbState.FORWARD1
             elif self.currentState == self.climbState.FORWARD1:
                 if True:  # TODO: check sensor readings here
+                    self.dc_pub.publish(Int32(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.LIFT_FRONT
                     self.vert_movement1.publish(self.frontTargets['high'])
                 else:
-                    pass  # TODO: Tell motors to move forward
+                    self.dc_pub.publish(Int32(data=DC_MOTOR['forward']))
             elif self.currentState == self.climbState.LIFT_FRONT:
                 if self.frontPos == self.frontTargets['high'].data:
                     self.currentState = self.climbState.LIFT_REAR
@@ -111,10 +113,11 @@ class stepStateMachine:
                     self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
                 if True:  # TODO: check sensor
+                    self.dc_pub.publish(Int32(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.CLEAN
                     finished = True
                 else:
-                    pass  # TODO: Tell motors to move forward
+                    self.dc_pub.publish(Int32(data=DC_MOTOR['forward']))
         else:
             pass # State machine for down
         self.mtx1.release()
