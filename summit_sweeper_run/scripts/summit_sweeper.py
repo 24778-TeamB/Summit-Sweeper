@@ -119,7 +119,7 @@ class stepStateMachine:
                 else:
                     self.dc_pub.publish(Int32(data=DC_MOTOR['forward']))
         else:
-            pass # State machine for down
+            rospy.logerr('Not implemented')
         self.mtx1.release()
         self.mtx2.release()
         return finished
