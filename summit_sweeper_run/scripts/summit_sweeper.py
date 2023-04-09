@@ -92,8 +92,9 @@ def main():
             vacuum_pub.publish(Int8(data=VACUUM['off']))
             vert_movement1.publish(Int32(data=0))
             vert_movement2.publish(Int32(data=0))
+            horizontal_pub.publish(Int8(data=DC_MOTOR['forward']))
+            rospy.Rate(1).sleep()
             horizontal_pub.publish(Int8(data=DC_MOTOR['stop']))
-            # Possibly move forward a little bit before stopping
             break
         elif state == currentState.INITIALIZATION:
             pass # Decide whether to clean up or down here
