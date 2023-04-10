@@ -48,12 +48,12 @@ def callbackSetPos2(pos: std_msgs.msg.Int32):
 
 def enableTic(tic: TicUSB):
     errors = tic.get_error_status()
-    errors = errors[1][1]
-    while errors & 4:
+    errors = errors[0]
+    while bool(errors & 4):
         rospy.logerr('Low Vin. Please apply power')
-        rospy.Rate(10).sleep()
+        rospy.Rate(1).sleep()
         errors = tic.get_error_status()
-        errors = errors[1][1]
+        errors = errors[0]
     tic.energize()
     tic.exit_safe_start()
 
@@ -66,10 +66,7 @@ def main():
 
     # Initialize TICs
     frontTic.halt_and_set_position(0)
-    enableTic(frontTic)
-
     rearTic.halt_and_set_position(0)
-    enableTic(rearTic)
 
     rospy.init_node('summit_sweeper_vertical_control')
     frontPub = rospy.Publisher('front_tic', std_msgs.msg.Int32, queue_size=4)
