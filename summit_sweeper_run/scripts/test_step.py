@@ -107,6 +107,7 @@ def wait_for_subscribers(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pu
 
 
 def main():
+    rospy.init_node('step_test')
     vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
     horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size = 8)
     step = stepStateMachine(horizontal_pub, vacuum_pub, frontL = -16700, rearL = -16700, frontH=0, rearH=0)
