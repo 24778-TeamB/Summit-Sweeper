@@ -7,7 +7,7 @@ DC_MOTOR = {
         'forward': 3,
         'reverse': 4,
         'left': 1,
-        'right': 2
+        'right': 2,
         'stop': 0
         }
 
@@ -18,7 +18,7 @@ VACUUM = {
         }
 
 CLEAN_STATE = {
-        'no-state': -1
+        'no-state': -1,
         'left': 0,
         'right': 1,
         'step': 2
@@ -48,21 +48,20 @@ class stepStateMachine:
 
         self.vert_movement1 = rospy.Publisher('front_vert_control', Int32, queue_size=8)
         self.vert_movement2 = rospy.Publisher('rear_vert_control', Int32, queue_size=8)
-        rospy.Subscriber('front_stepper', Int32, self._stepper1_position)
-        rospy.Subscriber('rear_stepper', Int32, self._stepper2_position)
+        rospy.Subscriber('front_tic', Int32, self._stepper1_position)
+        rospy.Subscriber('rear_tic', Int32, self._stepper2_position)
         self.dc_pub = dc_motor_pub
         self.vacuum = vacuum
         return
 
-    @staticmethod
-    def _stepper1_position(data: Int32):
+    def _stepper1_position(self, data: Int32):
+        rospy.loginfo('front callback')
         self.mtx1.acquire()
         self.frontPos = data.data
         self.mtx1.release()
         return
 
-    @staticmethod
-    def _stepper2_position(data: Int32):
+    def _stepper2_position(self, data: Int32):
         self.mtx2.acquire()
         self.rearPos = data.data
         self.mtx2.release()
@@ -79,30 +78,38 @@ class stepStateMachine:
                 self.vert_movement1.publish(self.frontTargets['low'])
                 self.vert_movement2.publish(self.rearTargets['low'])
             elif self.currentState == self.climbState.LIFT_MIDDLE:
+                rospy.loginfo(f'Lifing middle module. {self.rearPos}, {self.frontPos}')
                 if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
                     self.currentState = self.climbState.FORWARD1
+                    rospy.loginfo('Finished lifting middle')
             elif self.currentState == self.climbState.FORWARD1:
+                rospy.loginfo('Moving forward')
                 if True:  # TODO: check sensor readings here
-                    self.dc_pub.publish(Int32(data=DC_MOTOR['stop']))
+                    rospy.loginfo('Finished moving forward')
+                    self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.LIFT_FRONT
                     self.vert_movement1.publish(self.frontTargets['high'])
                 else:
-                    self.dc_pub.publish(Int32(data=DC_MOTOR['forward']))
+                    self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
             elif self.currentState == self.climbState.LIFT_FRONT:
+                rospy.loginfo('Lifing front module')
                 if self.frontPos == self.frontTargets['high'].data:
+                    rospy.loginfo('Finished lifing front module')
                     self.currentState = self.climbState.LIFT_REAR
                     self.vert_movement2.publish(self.rearTargets['high'])
             elif self.currentState == self.climbState.LIFT_REAR:
+                rospy.loginfo('Lifing rear module')
                 if self.rearPos == self.rearTargets['high'].data:
+                    rospy.loginfo('Finished lifing rear module')
                     self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
                 if True:  # TODO: check sensor
-                    self.dc_pub.publish(Int32(data=DC_MOTOR['stop']))
+                    self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.CLEAN
                     self.vacuum.publish(Int8(data=VACUUM['on']))
                     finished = True
                 else:
-                    self.dc_pub.publish(Int32(data=DC_MOTOR['forward']))
+                    self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
         else:
             rospy.logerr('Not implemented')
         self.mtx1.release()
@@ -134,9 +141,10 @@ def main():
     step = stepStateMachine(horizontal_pub, vacuum_pub, frontL = -16700, rearL = -16700, frontH=0, rearH=0)
     wait_for_subscribers(horizontal_pub, step.vert_movement1, step.vert_movement2, vacuum_pub)
     done = False
-    while not done:
+    while not done and not rospy.is_shutdown():
         done = step.next([])
         rospy.Rate(10).sleep()
+    rospy.spin()
 
 
 if __name__ == '__main__':
