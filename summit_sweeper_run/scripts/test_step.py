@@ -1,5 +1,7 @@
 import rospy
 from std_msgs.msg import Int32, Int8, Float32MultiArray
+import enum
+import threading
 
 class stepStateMachine:
     class climbState(enum.Enum):
@@ -11,6 +13,8 @@ class stepStateMachine:
         FORWARD2 = 0X5
 
     def __init__(self, dc_motor_pub, vacuum, frontL = 0, rearL = 0, frontH = 1, rearH = 1):
+        self.frontTargets = {}
+        self.rearTargets = {}
         self.frontTargets['low'] = Int32(data=frontL)
         self.frontTargets['high'] = Int32(data=frontH)
         self.rearTargets['low'] = Int32(data=rearL)
