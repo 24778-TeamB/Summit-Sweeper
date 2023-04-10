@@ -46,6 +46,18 @@ def callbackSetPos2(pos: std_msgs.msg.Int32):
     mtx2.release()
 
 
+def enableTic(tic: TicUSB):
+    errors = tic.get_error_status()
+    errors = errors[1][1]
+    while errors & 4:
+        rospy.logerr('Low Vin. Please apply power')
+        rospy.Rate(10).sleep()
+        errors = tic.get_error_status()
+        errors = errors[1][1]
+    tic.energize()
+    tic.exit_safe_start()
+
+
 def main():
     global mtx1
     global mtx2
@@ -54,12 +66,10 @@ def main():
 
     # Initialize TICs
     frontTic.halt_and_set_position(0)
-    frontTic.energize()
-    frontTic.exit_safe_start()
+    enableTic(frontTic)
 
     rearTic.halt_and_set_position(0)
-    rearTic.energize()
-    rearTic.exit_safe_start()
+    enableTic(rearTic)
 
     rospy.init_node('summit_sweeper_vertical_control')
     frontPub = rospy.Publisher('front_tic', std_msgs.msg.Int32, queue_size=4)
@@ -75,10 +85,12 @@ def main():
             mtx1.acquire()
             frontPos = frontTic.get_current_position()
             frontTarget = frontTic.get_target_position()
+            enableTic(frontTic)
             mtx1.release()
             mtx2.acquire()
             rearPos = rearTic.get_current_position()
             rearTarget = rearTic.get_target_position()
+            enableTic(rearTic)
             mtx2.release()
 
             front = std_msgs.msg.Int32()
@@ -117,6 +129,8 @@ def main():
         rearTic.set_target_position(0)
         while ((frontTic.get_current_position() != frontTic.get_target_position()) or (rearTic.get_current_position() != rearTic.get_target_position())):
             sleep(0.1)
+            enableTic(frontTic)
+            enableTic(rearTic)
 
         frontTic.deenergize()
         frontTic.enter_safe_start()
