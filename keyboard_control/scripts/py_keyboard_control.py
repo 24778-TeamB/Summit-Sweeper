@@ -112,11 +112,11 @@ class PublishThread(threading.Thread):
             self.vacuum_state = vacuum
         if front is not None:
             self.frontTarget += front
-            if self.frontTarget < 0:
+            if self.frontTarget < 0 and False:
                 self.frontTarget = 0
         if rear is not None:
             self.rearTarget += rear
-            if self.rearTarget < 0:
+            if self.rearTarget < 0 and False:
                 self.rearTarget = 0
         self.condition.notify()
         self.condition.release()

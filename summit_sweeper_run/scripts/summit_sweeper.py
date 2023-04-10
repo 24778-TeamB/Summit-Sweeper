@@ -93,9 +93,9 @@ class stepStateMachine:
             if self.currentState == self.climbState.CLEAN:
                 self.currentState = self.climbState.LIFT_MIDDLE
                 self.vert_movement1.publish(self.frontTargets['low'])
-                self.vert_movement2.publish(self.rearTargets['high'])
+                self.vert_movement2.publish(self.rearTargets['low'])
             elif self.currentState == self.climbState.LIFT_MIDDLE:
-                if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['high'].data:
+                if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
                     self.currentState = self.climbState.FORWARD1
             elif self.currentState == self.climbState.FORWARD1:
                 if True:  # TODO: check sensor readings here
@@ -107,9 +107,9 @@ class stepStateMachine:
             elif self.currentState == self.climbState.LIFT_FRONT:
                 if self.frontPos == self.frontTargets['high'].data:
                     self.currentState = self.climbState.LIFT_REAR
-                    self.vert_movement2.publish(self.rearTargets['low'])
+                    self.vert_movement2.publish(self.rearTargets['high'])
             elif self.currentState == self.climbState.LIFT_REAR:
-                if self.rearPos == self.rearTargets['low'].data:
+                if self.rearPos == self.rearTargets['high'].data:
                     self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
                 if True:  # TODO: check sensor
@@ -166,6 +166,7 @@ def clean_down(horizontal_pub, step_state_machine, vacuum_pub, readings):
 
 def clean_up(horizontal_pub, step_state_machine, vacuum_pub, readings):
     global current_state
+    current_state = CLEAN_STATE['step']
     if current_state == CLEAN_STATE['left']:
         pass
     elif current_state == CLEAN_STATE['right']:
@@ -173,6 +174,8 @@ def clean_up(horizontal_pub, step_state_machine, vacuum_pub, readings):
     elif current_state == CLEAN_STATE['step']:
         done = step_state_machine.next(readings, True)
         # TODO check done
+        if done:
+            exit()
     elif current_state == CLEAN_STATE['no-state']:
         pass
 
@@ -184,7 +187,7 @@ def main():
     rospy.Subscriber('ultra_sonic', Float32MultiArray, sensor_callback)
     vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
     horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size = 8)
-    steps = stepStateMachine(horizontal_pub, frontH=100, rearH=100)
+    steps = stepStateMachine(horizontal_pub, frontL = -16700, rearL = -16700, frontH=0, rearH=0)
     wait_for_subscribers(horizontal_pub, steps.vert_movement1, steps.vert_movement2, vacuum_pub)
     state = currentState.INITIALIZATION
 
@@ -215,7 +218,8 @@ def main():
             horizontal_pub.publish(Int8(data=DC_MOTOR['stop']))
             break
         elif state == currentState.INITIALIZATION:
-            pass # Decide whether to clean up or down here
+            state = currentState.CLEAN_UP
+            #pass # Decide whether to clean up or down here
 
         rospy.Rate(100).sleep()
         del readings
