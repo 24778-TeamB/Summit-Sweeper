@@ -114,7 +114,7 @@ def main():
     wait_for_subscribers(horizontal_pub, step.vert_movement1, step.vert_movement2, vacuum_pub)
     done = False
     while not done:
-        done = step([])
+        done = step.next([])
         rospy.Rate(10).sleep()
 
 
