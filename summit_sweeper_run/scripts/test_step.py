@@ -3,6 +3,27 @@ from std_msgs.msg import Int32, Int8, Float32MultiArray
 import enum
 import threading
 
+DC_MOTOR = {
+        'forward': 3,
+        'reverse': 4,
+        'left': 1,
+        'right': 2
+        'stop': 0
+        }
+
+VACUUM = {
+        'on': 1,
+        'off': 0,
+        'test': 2
+        }
+
+CLEAN_STATE = {
+        'no-state': -1
+        'left': 0,
+        'right': 1,
+        'step': 2
+        }
+
 class stepStateMachine:
     class climbState(enum.Enum):
         CLEAN = 0X0
