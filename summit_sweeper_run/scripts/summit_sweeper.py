@@ -53,7 +53,7 @@ class stepStateMachine:
         LIFT_REAR = 0X4
         FORWARD2 = 0X5
 
-    def __init__(self, dc_motor_pub, frontL = 0, rearL = 0, frontH = 1, rearH = 1):
+    def __init__(self, dc_motor_pub, vacuum, frontL = 0, rearL = 0, frontH = 1, rearH = 1):
         self.frontTargets['low'] = Int32(data=frontL)
         self.frontTargets['high'] = Int32(data=frontH)
         self.rearTargets['low'] = Int32(data=rearL)
@@ -69,6 +69,7 @@ class stepStateMachine:
         rospy.Subscriber('front_stepper', Int32, self._stepper1_position)
         rospy.Subscriber('rear_stepper', Int32, self._stepper2_position)
         self.dc_pub = dc_motor_pub
+        self.vacuum = vacuum
         return
 
     @staticmethod
@@ -91,6 +92,7 @@ class stepStateMachine:
         self.mtx2.acquire()
         if up:
             if self.currentState == self.climbState.CLEAN:
+                self.vacuum.publish(Int8(data=VACUUM['off']))
                 self.currentState = self.climbState.LIFT_MIDDLE
                 self.vert_movement1.publish(self.frontTargets['low'])
                 self.vert_movement2.publish(self.rearTargets['low'])
@@ -115,6 +117,7 @@ class stepStateMachine:
                 if True:  # TODO: check sensor
                     self.dc_pub.publish(Int32(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.CLEAN
+                    self.vacuum.publish(Int8(data=VACUUM['on']))
                     finished = True
                 else:
                     self.dc_pub.publish(Int32(data=DC_MOTOR['forward']))
