@@ -84,6 +84,24 @@ class stepStateMachine:
         self.mtx2.release()
         return finished
 
+
+def wait_for_subscribers(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub):
+    i = 0
+    while not rospy.is_shutdown() and (horizontal_pub.get_num_connections() == 0 or vertical_pub1.get_num_connections() == 0 or vertical_pub2.get_num_connections() == 0 or vacuum_pub.get_num_connections() == 0):
+        if i == 4:
+            if horizontal_pub.get_num_connections() == 0:
+                rospy.loginfo(f'Waiting for subscriber to connect to {horizontal_pub.name}')
+                rospy.loginfo(f'Waiting for subscriber to connect to {vertical_pub1.name}')
+                rospy.loginfo(f'Waiting for subscriber to connect to {vertical_pub2.name}')
+                rospy.loginfo(f'Waiting for subscriber to connect to {vacuum_pub.name}')
+        rospy.Rate(10).sleep()
+        i += 1
+        i %= 5
+    if rospy.is_shutdown():
+        raise Exception('Got shutdown request before subscribers could connect')
+    return
+
+
 def main():
     vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
     horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size = 8)
