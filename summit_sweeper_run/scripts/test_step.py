@@ -110,7 +110,7 @@ def main():
     vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
     horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size = 8)
     step = stepStateMachine(horizontal_pub, vacuum_pub, frontL = -16700, rearL = -16700, frontH=0, rearH=0)
-    wait_for_subscribers(horizontal_pub, steps.vert_movement1, steps.vert_movement2, vacuum_pub)
+    wait_for_subscribers(horizontal_pub, step.vert_movement1, step.vert_movement2, vacuum_pub)
     done = False
     while not done:
         done = step([])
