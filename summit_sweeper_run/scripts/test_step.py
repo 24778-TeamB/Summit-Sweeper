@@ -55,7 +55,6 @@ class stepStateMachine:
         return
 
     def _stepper1_position(self, data: Int32):
-        rospy.loginfo('front callback')
         self.mtx1.acquire()
         self.frontPos = data.data
         self.mtx1.release()
@@ -78,29 +77,21 @@ class stepStateMachine:
                 self.vert_movement1.publish(self.frontTargets['low'])
                 self.vert_movement2.publish(self.rearTargets['low'])
             elif self.currentState == self.climbState.LIFT_MIDDLE:
-                rospy.loginfo(f'Lifing middle module. {self.rearPos}, {self.frontPos}')
                 if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
                     self.currentState = self.climbState.FORWARD1
-                    rospy.loginfo('Finished lifting middle')
             elif self.currentState == self.climbState.FORWARD1:
-                rospy.loginfo('Moving forward')
                 if True:  # TODO: check sensor readings here
-                    rospy.loginfo('Finished moving forward')
                     self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.LIFT_FRONT
                     self.vert_movement1.publish(self.frontTargets['high'])
                 else:
                     self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
             elif self.currentState == self.climbState.LIFT_FRONT:
-                rospy.loginfo('Lifing front module')
                 if self.frontPos == self.frontTargets['high'].data:
-                    rospy.loginfo('Finished lifing front module')
                     self.currentState = self.climbState.LIFT_REAR
                     self.vert_movement2.publish(self.rearTargets['high'])
             elif self.currentState == self.climbState.LIFT_REAR:
-                rospy.loginfo('Lifing rear module')
                 if self.rearPos == self.rearTargets['high'].data:
-                    rospy.loginfo('Finished lifing rear module')
                     self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
                 if True:  # TODO: check sensor
