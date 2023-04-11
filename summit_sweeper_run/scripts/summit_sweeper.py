@@ -6,17 +6,13 @@ import enum
 
 
 mtx = threading.Lock()
-s_mtx1 = threading.Lock()
-s_mtx2 = threading.Lock()
 SENSOR_READINGS = []
-step1_pos = 0
-step2_pos = 0
 
 DC_MOTOR = {
         'forward': 3,
         'reverse': 4,
         'left': 1,
-        'right': 2
+        'right': 2,
         'stop': 0
         }
 
@@ -27,7 +23,7 @@ VACUUM = {
         }
 
 CLEAN_STATE = {
-        'no-state': -1
+        'no-state': -1,
         'left': 0,
         'right': 1,
         'step': 2
@@ -54,6 +50,8 @@ class stepStateMachine:
         FORWARD2 = 0X5
 
     def __init__(self, dc_motor_pub, vacuum, frontL = 0, rearL = 0, frontH = 1, rearH = 1):
+        self.frontTargets = {}
+        self.rearTargets = {}
         self.frontTargets['low'] = Int32(data=frontL)
         self.frontTargets['high'] = Int32(data=frontH)
         self.rearTargets['low'] = Int32(data=rearL)
@@ -66,21 +64,19 @@ class stepStateMachine:
 
         self.vert_movement1 = rospy.Publisher('front_vert_control', Int32, queue_size=8)
         self.vert_movement2 = rospy.Publisher('rear_vert_control', Int32, queue_size=8)
-        rospy.Subscriber('front_stepper', Int32, self._stepper1_position)
-        rospy.Subscriber('rear_stepper', Int32, self._stepper2_position)
+        rospy.Subscriber('front_tic', Int32, self._stepper1_position)
+        rospy.Subscriber('rear_tic', Int32, self._stepper2_position)
         self.dc_pub = dc_motor_pub
         self.vacuum = vacuum
         return
 
-    @staticmethod
-    def _stepper1_position(data: Int32):
+    def _stepper1_position(self, data: Int32):
         self.mtx1.acquire()
         self.frontPos = data.data
         self.mtx1.release()
         return
 
-    @staticmethod
-    def _stepper2_position(data: Int32):
+    def _stepper2_position(self, data: Int32):
         self.mtx2.acquire()
         self.rearPos = data.data
         self.mtx2.release()
@@ -101,11 +97,11 @@ class stepStateMachine:
                     self.currentState = self.climbState.FORWARD1
             elif self.currentState == self.climbState.FORWARD1:
                 if True:  # TODO: check sensor readings here
-                    self.dc_pub.publish(Int32(data=DC_MOTOR['stop']))
+                    self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.LIFT_FRONT
                     self.vert_movement1.publish(self.frontTargets['high'])
                 else:
-                    self.dc_pub.publish(Int32(data=DC_MOTOR['forward']))
+                    self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
             elif self.currentState == self.climbState.LIFT_FRONT:
                 if self.frontPos == self.frontTargets['high'].data:
                     self.currentState = self.climbState.LIFT_REAR
@@ -115,12 +111,12 @@ class stepStateMachine:
                     self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
                 if True:  # TODO: check sensor
-                    self.dc_pub.publish(Int32(data=DC_MOTOR['stop']))
+                    self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.CLEAN
                     self.vacuum.publish(Int8(data=VACUUM['on']))
                     finished = True
                 else:
-                    self.dc_pub.publish(Int32(data=DC_MOTOR['forward']))
+                    self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
         else:
             rospy.logerr('Not implemented')
         self.mtx1.release()
