@@ -4,6 +4,7 @@ import rospy
 
 
 VACUUM_PIN = 10
+LED_PIN = 12
 testMode = False
 
 
@@ -11,12 +12,14 @@ def initVacuums():
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(VACUUM_PIN, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup(LED_PIN, GPIO.OUT, initial=GPIO.LOW)
     return
 
 
 def toggleVacuum(turnOn: bool):
     polarity = GPIO.HIGH if turnOn else GPIO.LOW
     GPIO.output(VACUUM_PIN, polarity)
+    GPIO.output(LED_PIN, polarity)
     return
 
 
