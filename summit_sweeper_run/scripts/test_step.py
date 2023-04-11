@@ -1,12 +1,7 @@
 import rospy
-from std_msgs.msg import Float32MultiArray, Int8, Int32
-import threading
-import copy
+from std_msgs.msg import Int32, Int8, Float32MultiArray
 import enum
-
-
-mtx = threading.Lock()
-SENSOR_READINGS = []
+import threading
 
 DC_MOTOR = {
         'forward': 3,
@@ -28,17 +23,6 @@ CLEAN_STATE = {
         'right': 1,
         'step': 2
         }
-
-
-current_state = CLEAN_STATE['no-state']
-
-
-class currentState(enum.Enum):
-    INITIALIZATION = 0x0
-    CLEAN_UP = 0x1
-    CLEAN_DOWN = 0x2
-    FINISHED = 0x3
-
 
 class stepStateMachine:
     class climbState(enum.Enum):
@@ -141,88 +125,19 @@ def wait_for_subscribers(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pu
     return
 
 
-def sensor_callback(data: Float32MultiArray):
-    global mtx
-    global SENSOR_READINGS
-    mtx.acquire()
-    SENSOR_READINGS = data.data
-    mtx.release()
-    return
-
-
-def clean_down(horizontal_pub, step_state_machine, vacuum_pub, readings):
-    global current_state
-    if current_state == CLEAN_STATE['left']:
-        pass
-    elif current_state == CLEAN_STATE['right']:
-        pass
-    elif current_state == CLEAN_STATE['step']:
-        done = step_state_machine.next(readings, False)
-        # TODO check done
-    elif current_state == CLEAN_STATE['no-state']:
-        pass
-
-
-def clean_up(horizontal_pub, step_state_machine, vacuum_pub, readings):
-    global current_state
-    current_state = CLEAN_STATE['step']
-    if current_state == CLEAN_STATE['left']:
-        pass
-    elif current_state == CLEAN_STATE['right']:
-        pass
-    elif current_state == CLEAN_STATE['step']:
-        done = step_state_machine.next(readings, True)
-        # TODO check done
-        if done:
-            exit()
-    elif current_state == CLEAN_STATE['no-state']:
-        pass
-
-
 def main():
-    global mtx
-    global SENSOR_READINGS
-    rospy.init_node('summit_sweeper_main_run')
-    rospy.Subscriber('ultra_sonic', Float32MultiArray, sensor_callback)
+    rospy.init_node('step_test')
     vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
     horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size = 8)
-    steps = stepStateMachine(horizontal_pub, frontL = -16700, rearL = -16700, frontH=0, rearH=0)
-    wait_for_subscribers(horizontal_pub, steps.vert_movement1, steps.vert_movement2, vacuum_pub)
-    state = currentState.INITIALIZATION
-
-    while not rospy.is_shutdown():
-        # Copy the readings to prevent blocking
-        mtx.acquire()
-        readings = copy.deepcopy(SENSOR_READINGS)
-        mtx.release()
-        s_mtx1.acquire()
-        front = step1_pos
-        s_mtx1.release()
-        s_mtx2.acquire()
-        rear = step2_pos
-        s_mtx2.release()
-
-        if state == currentState.CLEAN_UP:
-            clean_up(horizontal_pub, vert_movement1, vert_movement2, vacuum_pub, readings, front, rear)
-            # check if job is finished here
-        elif state == currentState.CLEAN_DOWN:
-            clean_down(horizontal_pub, vert_movement1, vert_movement2, vacuum_pub, readings, front, rear)
-            # Check if job is finished here
-        elif state == currentState.FINISHED:
-            vacuum_pub.publish(Int8(data=VACUUM['off']))
-            vert_movement1.publish(Int32(data=0)) # Initialize one of these to -15170
-            vert_movement2.publish(Int32(data=0))
-            horizontal_pub.publish(Int8(data=DC_MOTOR['forward']))
-            rospy.Rate(1).sleep()
-            horizontal_pub.publish(Int8(data=DC_MOTOR['stop']))
-            break
-        elif state == currentState.INITIALIZATION:
-            state = currentState.CLEAN_UP
-            #pass # Decide whether to clean up or down here
-
-        rospy.Rate(100).sleep()
-        del readings
+    step = stepStateMachine(horizontal_pub, vacuum_pub, frontL = -16700, rearL = -16700, frontH=0, rearH=0)
+    wait_for_subscribers(horizontal_pub, step.vert_movement1, step.vert_movement2, vacuum_pub)
+    done = False
+    while not done and not rospy.is_shutdown():
+        done = step.next([])
+        rospy.Rate(10).sleep()
+    rospy.spin()
 
 
 if __name__ == '__main__':
     main()
+
