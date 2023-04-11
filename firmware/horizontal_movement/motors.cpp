@@ -78,21 +78,6 @@ void moveLeft()
 {
   updateSpeed();
   
-	digitalWrite(RIGHT_IN1, HIGH);
-	digitalWrite(RIGHT_IN2, LOW);
-	digitalWrite(LEFT_IN3, HIGH);
-	digitalWrite(LEFT_IN4, LOW);
-
-	digitalWrite(RIGHT_IN3, HIGH);
-	digitalWrite(RIGHT_IN4, LOW);
-	digitalWrite(LEFT_IN1, HIGH);
-	digitalWrite(LEFT_IN2, LOW);
-}
-
-void moveRight()
-{
-  updateSpeed();
-  
 	digitalWrite(RIGHT_IN1, LOW);
 	digitalWrite(RIGHT_IN2, HIGH);
 	digitalWrite(LEFT_IN3, LOW);
@@ -102,6 +87,21 @@ void moveRight()
 	digitalWrite(RIGHT_IN4, HIGH);
 	digitalWrite(LEFT_IN1, LOW);
 	digitalWrite(LEFT_IN2, HIGH);
+}
+
+void moveRight()
+{
+  updateSpeed();
+  
+	digitalWrite(RIGHT_IN1, HIGH);
+	digitalWrite(RIGHT_IN2, LOW);
+	digitalWrite(LEFT_IN3, HIGH);
+	digitalWrite(LEFT_IN4, LOW);
+
+	digitalWrite(RIGHT_IN3, HIGH);
+	digitalWrite(RIGHT_IN4, LOW);
+	digitalWrite(LEFT_IN1, HIGH);
+	digitalWrite(LEFT_IN2, LOW);
 }
 
 void moveStop()

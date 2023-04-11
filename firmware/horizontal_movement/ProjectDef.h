@@ -10,19 +10,19 @@
 #define BAUD 9600
 
 // Pin Definitions
-#define RIGHT_EN_A 3
-#define RIGHT_EN_B 9
-#define RIGHT_IN1 4
-#define RIGHT_IN2 7
-#define RIGHT_IN3 2
-#define RIGHT_IN4 8
+#define RIGHT_EN_A 4
+#define RIGHT_EN_B 5
+#define RIGHT_IN1 26
+#define RIGHT_IN2 27
+#define RIGHT_IN3 28
+#define RIGHT_IN4 29
 
-#define LEFT_EN_A 5
-#define LEFT_EN_B 10
-#define LEFT_IN1 24
-#define LEFT_IN2 25
-#define LEFT_IN3 26
-#define LEFT_IN4 27
+#define LEFT_EN_A 3
+#define LEFT_EN_B 2
+#define LEFT_IN1 23
+#define LEFT_IN2 22
+#define LEFT_IN3 24
+#define LEFT_IN4 25
 
 // Events
 #define E_NO_EVENT 0x00000000
