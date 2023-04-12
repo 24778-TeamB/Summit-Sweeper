@@ -24,6 +24,13 @@
 #define LEFT_IN3 24
 #define LEFT_IN4 25
 
+#define FRONT_EN_A 8
+#define FRONT_EN_B 7
+#define FRONT_IN1 32
+#define FRONT_IN2 33
+#define FRONT_IN3 30
+#define FRONT_IN4 31
+
 // Events
 #define E_NO_EVENT 0x00000000
 #define E_SERIAL_ACTIVE 0x00000001

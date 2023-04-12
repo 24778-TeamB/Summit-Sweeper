@@ -23,6 +23,14 @@ void setupMotors()
 	pinMode(LEFT_IN3, OUTPUT);
 	pinMode(LEFT_IN4, OUTPUT);
 
+	// Configure Front
+	pinMode(FRONT_EN_A, OUTPUT);
+	pinMode(FRONT_EN_B, OUTPUT);
+	pinMode(FRONT_IN1, OUTPUT);
+	pinMode(FRONT_IN2, OUTPUT);
+	pinMode(FRONT_IN3, OUTPUT);
+	pinMode(FRONT_IN4, OUTPUT);
+
   curSpeed = 255;
 
 	// Set initial state
