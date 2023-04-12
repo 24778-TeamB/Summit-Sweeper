@@ -87,6 +87,11 @@ void moveReverse()
 	digitalWrite(LEFT_IN4, HIGH);
 	digitalWrite(LEFT_IN1, HIGH);
 	digitalWrite(LEFT_IN2, LOW);
+
+	digitalWrite(FRONT_IN1, LOW);
+	digitalWrite(FRONT_IN2, HIGH);
+	digitalWrite(FRONT_IN3, LOW);
+	digitalWrite(FRONT_IN4, HIGH);
 }
 
 void moveLeft()
