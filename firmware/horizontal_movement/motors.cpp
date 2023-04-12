@@ -65,6 +65,11 @@ void moveForward()
 	digitalWrite(LEFT_IN4, LOW);
 	digitalWrite(LEFT_IN1, LOW);
 	digitalWrite(LEFT_IN2, HIGH);
+
+	digitalWrite(FRONT_IN1, HIGH);
+	digitalWrite(FRONT_IN2, LOW);
+	digitalWrite(FRONT_IN3, HIGH);
+	digitalWrite(FRONT_IN4, LOW);
 }
 
 void moveReverse()
