@@ -81,7 +81,7 @@ class stepStateMachine:
                     self.currentState = self.climbState.FORWARD1
             elif self.currentState == self.climbState.FORWARD1:
                 self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
-                rospy.Rate(1).sleep()
+                rospy.Rate(0.3).sleep()
                 if True:  # TODO: check sensor readings here
                     self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.LIFT_FRONT
@@ -97,7 +97,7 @@ class stepStateMachine:
                     self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
                 self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
-                rospy.Rate(1).sleep()
+                rospy.Rate(0.3).sleep()
                 if True:  # TODO: check sensor
                     self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.CLEAN
