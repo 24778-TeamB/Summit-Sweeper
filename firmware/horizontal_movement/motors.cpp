@@ -102,6 +102,13 @@ void moveLeft()
 void moveRight()
 {
   updateSpeed();
+
+  analogWrite(FRONT_EN_A, 0);
+  analogWrite(FRONT_EN_B, 0);
+  digitalWrite(FRONT_IN1, LOW);
+  digitalWrite(FRONT_IN2, LOW);
+  digitalWrite(FRONT_IN3, LOW);
+  digitalWrite(FRONT_IN4, LOW);
   
 	digitalWrite(RIGHT_IN1, HIGH);
 	digitalWrite(RIGHT_IN2, LOW);
@@ -120,6 +127,13 @@ void moveStop()
 	analogWrite(RIGHT_EN_B, 0);
 	analogWrite(LEFT_EN_A, 0);
 	analogWrite(LEFT_EN_B, 0);
+	analogWrite(FRONT_EN_A, 0);
+	analogWrite(FRONT_EN_B, 0);
+
+	digitalWrite(FRONT_IN1, LOW);
+	digitalWrite(FRONT_IN2, LOW);
+	digitalWrite(FRONT_IN3, LOW);
+	digitalWrite(FRONT_IN4, LOW);
 
 	digitalWrite(RIGHT_IN1, LOW);
 	digitalWrite(RIGHT_IN2, LOW);
