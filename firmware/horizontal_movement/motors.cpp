@@ -43,6 +43,8 @@ static void updateSpeed()
   analogWrite(RIGHT_EN_B, curSpeed);
   analogWrite(LEFT_EN_A, curSpeed);
   analogWrite(LEFT_EN_B, curSpeed);
+  analogWrite(FRONT_EN_A, curSpeed);
+  analogWrite(FRONT_EN_B, curSpeed);
 }
 
 void setMotorSpeed(uint8_t Speed)
