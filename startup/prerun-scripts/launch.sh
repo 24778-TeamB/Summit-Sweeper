@@ -5,7 +5,7 @@ if [ -f "/home/tschmitz/catkin_ws/src/startup/$1" ]; then
 	exit
 fi
 
-if [ -d /home/tschmitz/catkin_ws/src/firmware/distance_sensors/_build ]; then
+if ! [ -d /home/tschmitz/catkin_ws/src/firmware/distance_sensors/_build ]; then
 	echo "directory creation needed"
 	exit
 fi
@@ -20,5 +20,5 @@ sensors_port=$(map-ports sensors)
 /home/tschmitz/Downloads/arduino-1.8.19/hardware/tools/avr/bin/avrdude -C/home/tschmitz/Downloads/arduino-1.8.19/hardware/tools/avr/etc/avrdude.conf -v -patmega2560 -cwiring -P/dev/ttyACM0 -b115200 -D -Uflash:w:/home/tschmitz/catkin_ws/src/firmware/distance_sensors/_build/distance_sensors.ino.hex:i
 
 # Launch ros
-roslaunch startup "$1"
+#roslaunch startup "$1"
 
