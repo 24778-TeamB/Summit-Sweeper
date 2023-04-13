@@ -6,8 +6,11 @@ if [ -f "/home/tschmitz/catkin_ws/src/startup/$1" ]; then
 fi
 
 if ! [ -d /home/tschmitz/catkin_ws/src/firmware/distance_sensors/_build ]; then
-	echo "directory creation needed"
-	exit
+	mkdir /home/tschmitz/catkin_ws/src/firmware/distance_sensors/_build
+fi
+
+if ! [ -d /home/tschmitz/catkin_ws/src/firmware/horizontal_movement/_build ]; then
+	mkdir /home/tschmitz/catkin_ws/src/firmware/horizontal_movement/_build
 fi
 
 #movement_port=$(map-ports motors)
