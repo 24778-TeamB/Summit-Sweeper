@@ -13,7 +13,7 @@ if ! [ -d /home/tschmitz/catkin_ws/src/firmware/horizontal_movement/_build ]; th
 	mkdir /home/tschmitz/catkin_ws/src/firmware/horizontal_movement/_build
 fi
 
-#movement_port=$(map-ports motors)
+movement_port=$(map-ports motors)
 sensors_port=$(map-ports sensors)
 
 # Build and upload arduino code 
