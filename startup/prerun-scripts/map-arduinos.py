@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 from serial.tools.list_ports import comports
 
@@ -14,7 +16,7 @@ def find_port(FTDI_SN: str) -> str:
     for port in ports:
         sn = parse_serial_number(port.hwid)
         if sn == FTDI_SN:
-            return port.name
+            return port.device
     raise Exception(f'Port not found for {FTDI_SN}')
 
 def print_usage() -> None:
