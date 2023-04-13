@@ -2,6 +2,7 @@ import rospy
 from std_msgs.msg import Int32, Int8, Float32MultiArray
 import enum
 import threading
+import time
 
 DC_MOTOR = {
         'forward': 3,
@@ -81,7 +82,8 @@ class stepStateMachine:
                     self.currentState = self.climbState.FORWARD1
             elif self.currentState == self.climbState.FORWARD1:
                 self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
-                rospy.Rate(0.3).sleep()
+                #rospy.Rate(0.91).sleep()
+                time.sleep(1.2)
                 if True:  # TODO: check sensor readings here
                     self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.LIFT_FRONT
@@ -93,11 +95,13 @@ class stepStateMachine:
                     self.currentState = self.climbState.LIFT_REAR
                     self.vert_movement2.publish(self.rearTargets['high'])
             elif self.currentState == self.climbState.LIFT_REAR:
+                rospy.loginfo('Lifting rear')
                 if self.rearPos == self.rearTargets['high'].data:
-                    self.climbState.FORWARD2
+                    self.currentState = self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
                 self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
-                rospy.Rate(0.3).sleep()
+                #rospy.Rate(0.91).sleep()
+                time.sleep(1.2)
                 if True:  # TODO: check sensor
                     self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
                     self.currentState = self.climbState.CLEAN
