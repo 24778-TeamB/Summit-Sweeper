@@ -1,6 +1,7 @@
 import rospy
 from std_msgs.msg import Int8
 import serial
+import sys
 
 port = None
 
@@ -34,8 +35,18 @@ def issueMovement(msg: Int8):
 
 def main():
     global port
-    port = serial.Serial('/dev/ttyACM0', 9600, timeout=5)
     rospy.init_node('summit_sweeper_horizontal_movement')
+
+    port_name = rospy.get_param('~port', '/dev/ttyACM0')
+    baud = int(rospy.get_param('~baud', '9600'))
+
+    sys.argv = rospy.myargv(argv=sys.argv)
+    if len(sys.argv) >= 2:
+        port_name = sys.argv[1]
+
+    rospy.loginfo(f'Connecting to {port_name} with a baud of {baud}')
+    port = serial.Serial(port_name, baud, timeout=5)
+
     rospy.Subscriber('horizontal_control', Int8, issueMovement)
     rospy.loginfo('Starting horizontal control')
     rospy.spin()
