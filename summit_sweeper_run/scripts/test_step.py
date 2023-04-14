@@ -30,9 +30,8 @@ class stepStateMachine:
         CLEAN = 0X0
         LIFT_MIDDLE = 0X1
         FORWARD1 = 0X2
-        LIFT_FRONT = 0X3
-        LIFT_REAR = 0X4
-        FORWARD2 = 0X5
+        LIFT_ENDS = 0x3
+        FORWARD2 = 0X4
 
     def __init__(self, dc_motor_pub, vacuum, frontL = 0, rearL = 0, frontH = 1, rearH = 1):
         self.frontTargets = {}
@@ -82,25 +81,19 @@ class stepStateMachine:
                     self.currentState = self.climbState.FORWARD1
             elif self.currentState == self.climbState.FORWARD1:
                 self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
-                #rospy.Rate(0.91).sleep()
                 time.sleep(1.2)
                 if True:  # TODO: check sensor readings here
                     self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
-                    self.currentState = self.climbState.LIFT_FRONT
+                    self.currentState = self.climbState.LIFT_ENDS
                     self.vert_movement1.publish(self.frontTargets['high'])
+                    self.vert_movement2.publish(self.rearTargets['high'])
                 else:
                     self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
-            elif self.currentState == self.climbState.LIFT_FRONT:
-                if self.frontPos == self.frontTargets['high'].data:
-                    self.currentState = self.climbState.LIFT_REAR
-                    self.vert_movement2.publish(self.rearTargets['high'])
-            elif self.currentState == self.climbState.LIFT_REAR:
-                rospy.loginfo('Lifting rear')
-                if self.rearPos == self.rearTargets['high'].data:
+            elif self.currentState == self.climbState.LIFT_ENDS:
+                if self.frontPos == self.frontTargets['high'].data and self.rearPos == self.rearTargets['high'].data:
                     self.currentState = self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
                 self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
-                #rospy.Rate(0.91).sleep()
                 time.sleep(1.2)
                 if True:  # TODO: check sensor
                     self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
