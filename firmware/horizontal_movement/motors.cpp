@@ -3,7 +3,7 @@
 #include "ProjectDef.h"
 #include <stdint.h>
 
-uint8_t curSpeed;
+uint8_t left1_speed, left2_speed, left3_speed, right1_speed, right2_speed, right3_speed;
 
 void setupMotors()
 {
@@ -31,27 +31,50 @@ void setupMotors()
 	pinMode(FRONT_IN3, OUTPUT);
 	pinMode(FRONT_IN4, OUTPUT);
 
-  curSpeed = 255;
-
+ right1_speed = 255;
+ right2_speed = 255;
+ right3_speed = 255;
+ left1_speed = 255;
+ left2_speed = 255;
+ left3_speed = 255;
+ 
 	// Set initial state
 	moveStop();
 }
 
 static void updateSpeed()
 {
-  analogWrite(RIGHT_EN_A, curSpeed);
-  analogWrite(RIGHT_EN_B, curSpeed);
-  analogWrite(LEFT_EN_A, curSpeed);
-  analogWrite(LEFT_EN_B, curSpeed);
-  analogWrite(FRONT_EN_A, curSpeed);
-  analogWrite(FRONT_EN_B, curSpeed);
+  analogWrite(RIGHT_EN_A, right1_speed);
+  analogWrite(RIGHT_EN_B, right2_speed);
+  analogWrite(LEFT_EN_A, left1_speed);
+  analogWrite(LEFT_EN_B, left2_speed);
+  analogWrite(FRONT_EN_A, right3_speed);
+  analogWrite(FRONT_EN_B, left3_speed);
 }
 
-void setMotorSpeed(uint8_t Speed)
+bool setMotorSpeed(uint8_t motor, uint8_t Speed)
 {
+  bool success = true;
   moveStop();
 
-  curSpeed = Speed;
+  switch(motor)
+  {
+    case RIGHT_1: right1_speed = Speed;
+      break;
+    case RIGHT_2: right2_speed = Speed;
+      break;
+    case RIGHT_3: right3_speed = Speed;
+      break;
+    case LEFT_1: left1_speed = Speed;
+      break;
+    case LEFT_2: left1_speed = Speed;
+      break;
+    case LEFT_3: left1_speed = Speed;
+      break;
+    default: success = false;
+  }
+
+  return success;
 }
 
 void moveForward()

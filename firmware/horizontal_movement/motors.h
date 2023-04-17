@@ -2,10 +2,18 @@
 #define __MOTORS_H__
 
 #include <stdint.h>
+#include <stdbool.h>
+
+#define RIGHT_1 0x00
+#define RIGHT_2 0x01
+#define RIGHT_3 0x02
+#define LEFT_1 0x10
+#define LEFT_2 0x11
+#define LEFT_3 0x12
 
 // Configuration routines
 void setupMotors();
-void setMotorSpeed(uint8_t Speed);
+bool setMotorSpeed(uint8_t motor, uint8_t Speed);
 
 // Movements
 void moveForward();
