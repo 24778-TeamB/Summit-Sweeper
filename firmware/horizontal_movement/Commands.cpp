@@ -86,11 +86,7 @@ int8_t CmdSet(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *
 	int8_t retVal = RET_ERROR;
 	uint16_t token;
 
-	if (argc < 3)
-	{
-		return retVal;
-	}
-	if (!isInteger(argv[2]))
+	if (argc < 4)
 	{
 		return retVal;
 	}
@@ -100,9 +96,22 @@ int8_t CmdSet(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *
 	switch (token)
 	{
 	case OPTSPEED:
-    uint8_t Speed = (uint8_t)atoi(argv[2]);
-    setMotorSpeed(Speed);
-		retVal = RET_OK;
+    uint8_t motor, Speed;
+    bool success;
+      if (!isInteger(argv[3]))
+      {
+        return retVal;
+      }
+      if (tolower(argv[2][0]) != 'r' && tolower(argv[2][0]) != 'l')
+      {
+        return retVal;
+      }
+      motor = (tolower(argv[2][0]) == 'l') ? 0x10 : 0x00;
+      motor |= (uint8_t)(argv[2][1] - '1');
+      
+    Speed = (uint8_t)atoi(argv[2]);
+    success = setMotorSpeed(Speed);
+		retVal = success ? RET_OK : RET_ERROR;
 		break;
 	}
 
