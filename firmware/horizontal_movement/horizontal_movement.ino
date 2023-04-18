@@ -15,7 +15,7 @@ void setup(void)
   
   // Configure motors
   setupMotors();
-  setMotorSpeed(255);
+  //setMotorSpeed(255);
 
   gEvents = E_NO_EVENT;
 }
