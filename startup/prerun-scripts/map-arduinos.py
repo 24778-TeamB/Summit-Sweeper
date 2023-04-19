@@ -4,7 +4,7 @@ import sys
 from serial.tools.list_ports import comports
 
 MAPPINGS = {
-    'sensors': '7513131393235120F102',
+    'sensors': '7583435383035151F192',
     'motors': '95038303531351C05022'
 }
 
