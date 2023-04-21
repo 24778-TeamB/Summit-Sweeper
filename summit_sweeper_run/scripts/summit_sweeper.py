@@ -33,13 +33,6 @@ CLEAN_STATE = {
 current_state = CLEAN_STATE['no-state']
 
 
-class currentState(enum.Enum):
-    INITIALIZATION = 0x0
-    CLEAN_UP = 0x1
-    CLEAN_DOWN = 0x2
-    FINISHED = 0x3
-
-
 class stepStateMachine:
     class climbState(enum.Enum):
         CLEAN = 0X0
@@ -124,6 +117,50 @@ class stepStateMachine:
         return finished
 
 
+class cleanStateMachine:
+    class currentState(enum.Enum):
+        INITIALIZATION = 0x0
+        CLEAN_LEFT = 0x1
+        CLEAN_RIGHT = 0x2
+        STEP = 0x3
+        FINISHED = 0x4
+
+    def __init__(self, up: bool = True):
+        self.up = up
+        self.current_state = self.currentState.INITIALIZATION
+        self.SENSOR_INDEX = {
+            'center-left': 1,
+            'center-right': 0,
+            'rear-left': 3,
+            'rear-right': 2,
+            'side-left': 5,
+            'side-right': 4
+        }
+        self.step = stepStateMachine()
+
+    def _wait_for_subscribers(self):
+        i = 0
+        while not rospy.is_shutdown() and (
+                self.horizontal_pub.get_num_connections() == 0 or self.vertical_pub1.get_num_connections() == 0 or
+                self.vertical_pub2.get_num_connections() == 0 or self.vacuum_pub.get_num_connections() == 0):
+            if i == 4:
+                if self.horizontal_pub.get_num_connections() == 0:
+                    rospy.loginfo(f'Waiting for subscriber to connect to {self.horizontal_pub.name}')
+                if self.vertical_pub1.get_num_connections() == 0:
+                    rospy.loginfo(f'Waiting for subscriber to connect to {self.vertical_pub1.name}')
+                if self.vertical_pub2.get_num_connections() == 0:
+                    rospy.loginfo(f'Waiting for subscriber to connect to {self.vertical_pub2.name}')
+                if self.vacuum_pub.get_num_connections() == 0:
+                    rospy.loginfo(f'Waiting for subscriber to connect to {self.vacuum_pub.name}')
+            rospy.Rate(10).sleep()
+            i += 1
+            i %= 5
+        if rospy.is_shutdown():
+            raise Exception('Got shutdown request before subscribers could connect')
+        return
+
+
+
 def wait_for_subscribers(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub):
     i = 0
     while not rospy.is_shutdown() and (horizontal_pub.get_num_connections() == 0 or vertical_pub1.get_num_connections() == 0 or vertical_pub2.get_num_connections() == 0 or vacuum_pub.get_num_connections() == 0):
@@ -165,7 +202,6 @@ def clean_down(horizontal_pub, step_state_machine, vacuum_pub, readings):
 
 def clean_up(horizontal_pub, step_state_machine, vacuum_pub, readings):
     global current_state
-    current_state = CLEAN_STATE['step']
     if current_state == CLEAN_STATE['left']:
         pass
     elif current_state == CLEAN_STATE['right']:
