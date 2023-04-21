@@ -5,32 +5,19 @@ import copy
 import enum
 
 
-mtx = threading.Lock()
-SENSOR_READINGS = []
-
 DC_MOTOR = {
-        'forward': 3,
-        'reverse': 4,
-        'left': 1,
-        'right': 2,
-        'stop': 0
+        'forward': Int8(data=3),
+        'reverse': Int8(data=4),
+        'left': Int8(data=1),
+        'right': Int8(data=2),
+        'stop': Int8(data=0)
         }
 
 VACUUM = {
-        'on': 1,
-        'off': 0,
-        'test': 2
+        'on': Int8(data=1),
+        'off': Int8(data=0),
+        'test': Int8(data=2)
         }
-
-CLEAN_STATE = {
-        'no-state': -1,
-        'left': 0,
-        'right': 1,
-        'step': 2
-        }
-
-
-current_state = CLEAN_STATE['no-state']
 
 
 class stepStateMachine:
@@ -136,7 +123,18 @@ class cleanStateMachine:
             'side-left': 5,
             'side-right': 4
         }
-        self.step = stepStateMachine()
+
+        self.sensor_mtx = threading.Lock()
+        self.readings = []
+
+        rospy.Subscriber('ir_sensors', UInt8MultiArray, self._sensors_callback)
+        self.vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size=1)
+        self.horizontal_movement = rospy.Publisher('horizontal_control', Int8, queue_size=4)
+
+        self.step = stepStateMachine(self.vacuum_pub, self.horizontal_movement, frontL = -16700, rearL = -16700,
+                                     frontH=0, rearH=0)
+
+        self._wait_for_subscribers()
 
     def _wait_for_subscribers(self):
         i = 0
@@ -159,32 +157,24 @@ class cleanStateMachine:
             raise Exception('Got shutdown request before subscribers could connect')
         return
 
+    def _sensors_callback(self, data: UInt8MultiArray):
+        self.sensor_mtx.acquire()
+        self.readings = data.data
+        self.sensor_mtx.release()
+        return
 
+    def _clean_down(self):
+        pass
 
-def wait_for_subscribers(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub):
-    i = 0
-    while not rospy.is_shutdown() and (horizontal_pub.get_num_connections() == 0 or vertical_pub1.get_num_connections() == 0 or vertical_pub2.get_num_connections() == 0 or vacuum_pub.get_num_connections() == 0):
-        if i == 4:
-            if horizontal_pub.get_num_connections() == 0:
-                rospy.loginfo(f'Waiting for subscriber to connect to {horizontal_pub.name}')
-                rospy.loginfo(f'Waiting for subscriber to connect to {vertical_pub1.name}')
-                rospy.loginfo(f'Waiting for subscriber to connect to {vertical_pub2.name}')
-                rospy.loginfo(f'Waiting for subscriber to connect to {vacuum_pub.name}')
-        rospy.Rate(10).sleep()
-        i += 1
-        i %= 5
-    if rospy.is_shutdown():
-        raise Exception('Got shutdown request before subscribers could connect')
-    return
+    def _clean_up(self):
+        pass
 
-
-def sensor_callback(data: UInt8MultiArray):
-    global mtx
-    global SENSOR_READINGS
-    mtx.acquire()
-    SENSOR_READINGS = data.data
-    mtx.release()
-    return
+    def next():
+        if self.up:
+            self._clean_up()
+        else:
+            self._clean_down()
+        return
 
 
 def clean_down(horizontal_pub, step_state_machine, vacuum_pub, readings):
