@@ -1,5 +1,5 @@
 import rospy
-from std_msgs.msg import Float32MultiArray, Int8, Int32
+from std_msgs.msg import UInt8MultiArray, Int8, Int32
 import threading
 import copy
 import enum
@@ -183,7 +183,7 @@ def main():
     global mtx
     global SENSOR_READINGS
     rospy.init_node('summit_sweeper_main_run')
-    rospy.Subscriber('ultra_sonic', Float32MultiArray, sensor_callback)
+    rospy.Subscriber('ir_sensors', UInt8MultiArray, sensor_callback)
     vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
     horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size = 8)
     steps = stepStateMachine(horizontal_pub, frontL = -16700, rearL = -16700, frontH=0, rearH=0)
