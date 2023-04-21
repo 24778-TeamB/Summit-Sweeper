@@ -141,7 +141,7 @@ def wait_for_subscribers(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pu
     return
 
 
-def sensor_callback(data: Float32MultiArray):
+def sensor_callback(data: UInt8MultiArray):
     global mtx
     global SENSOR_READINGS
     mtx.acquire()
