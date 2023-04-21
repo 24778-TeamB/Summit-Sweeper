@@ -1,6 +1,8 @@
 #ifndef __DISTANCE__
 #define __DISTANCE__
 
+#if 0
+
 typedef struct {
 	float headModule;
 	float middleModule;
@@ -17,5 +19,7 @@ ultrasonic_t getLeft();
 ultrasonic_t getRight();
 ultrasonic_t getFront();
 ultrasonic_t getDown();
+
+#endif
 
 #endif

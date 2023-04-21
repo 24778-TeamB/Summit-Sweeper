@@ -2,6 +2,8 @@
 #include "ultrasonic.h"
 #include "ProjectDef.h"
 
+#if 0
+
 #define V_SOUND_INV 29.1
 #define HIGH_TIME 10
 #define LOW_TIME 2
@@ -179,3 +181,5 @@ ultrasonic_t getDown()
 
 	return downData;
 }
+
+#endif
