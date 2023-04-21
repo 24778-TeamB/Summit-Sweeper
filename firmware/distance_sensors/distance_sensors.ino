@@ -1,22 +1,22 @@
 #include <stdint.h>
 #include <ros.h>
-#include <std_msgs/Float32MultiArray.h>
+#include <std_msgs/UInt8MultiArray.h>
 #include "ProjectDef.h"
-#include "ultrasonic.h"
+#include "IRsensor.h"
 
-#define NUM_SENSORS 12
+#define NUM_SENSORS 6
 
 ros::NodeHandle nh;
 
-std_msgs::Float32MultiArray arr_msg;
-ros::Publisher dist("ultra_sonic", &arr_msg);
+std_msgs::UInt8MultiArray arr_msg;
+ros::Publisher dist("ir_sensor", &arr_msg);
 
-float distance[NUM_SENSORS] = { 0.0 };
+uint8_t distance[NUM_SENSORS] = { 0 };
 
 void setup(void)
 { 
   // Configure sensors
-  init_ultrasonic();
+  initIR();
 
   // Initialize ROS
   nh.initNode();
@@ -25,32 +25,13 @@ void setup(void)
 
 void loop(void)
 {
-  ultrasonic_t left, right, front, down;
-  
-  updateHead();
-  updateMiddle();
-  updateTail();
-
-  left = getLeft();
-  right = getRight();
-  front = getFront();
-  down = getDown();
-
-  distance[0] = left.headModule;
-  distance[1] = left.middleModule;
-  distance[2] = left.tailModule;
-  distance[3] = right.headModule;
-  distance[4] = right.middleModule;
-  distance[5] = right.tailModule;
-  distance[6] = front.headModule;
-  distance[7] = front.middleModule;
-  distance[8] = front.tailModule;
-  distance[9] = down.headModule;
-  distance[10] = down.middleModule;
-  distance[11] = down.tailModule;
+	
+  get_IR_readings(CENTER, &distance[0], &distance[1]);
+  get_IR_readings(REAR, &distance[2], &distance[3]);
+  get_IR_readings(SIDE, &distance[4], &distance[5]);
 
   arr_msg.data = distance;
-  arr_msg.data_length = 12;
+  arr_msg.data_length = NUM_SENSORS;
   dist.publish(&arr_msg);
   nh.spinOnce();
   delay(100);
