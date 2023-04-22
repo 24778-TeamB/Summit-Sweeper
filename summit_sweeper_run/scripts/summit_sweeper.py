@@ -115,6 +115,7 @@ class cleanStateMachine:
     def __init__(self, up: bool = True):
         self.up = up
         self.current_state = self.currentState.INITIALIZATION
+        self.lastRun = self.currentState.CLEAN_LEFT
         self.SENSOR_INDEX = {
             'center-left': 1,
             'center-right': 0,
@@ -164,12 +165,47 @@ class cleanStateMachine:
         return
 
     def _clean_down(self):
-        pass
+        self.sensor_mtx.acquire()
+        readings = copy.deepcopy(self.readings)
+        self.sensor_mtx.release()
+        # TODO: Run state machine
 
     def _clean_up(self):
-        pass
+        self.sensor_mtx.acquire()
+        readings = copy.deepcopy(self.readings)
+        self.sensor_mtx.release()
+        # TODO: Run state machine
 
     def next():
+        self.sensor_mtx.acquire()
+        readings = copy.deepcopy(self.readings)
+        self.sensor_mtx.release()
+
+        if self.current_state == self.currentState.INITIALIZATION:
+            self.current_state = self.currentState.CLEAN_LEFT # TODO figure out what goes here
+        if self.current_state == self.currentState.CLEAN_LEFT:
+            if not readings[self.SENSOR_INDEX['center-left']] or not readings[self.SENSOR_INDEX['center-right']]:
+                pass  # TODO: rotate or move forward
+            if readings[self.SENSOR_INDEX['side-left']]:
+                self.horizontal_movement.publish(DC_MOTOR['stop'])
+                self.current_state = self.currentState.STEP
+        if self.current_state == self.currentState.CLEAN_RIGHT:
+            if not readings[self.SENSOR_INDEX['center-left']] or not readings[self.SENSOR_INDEX['center-right']]:
+                pass  # TODO: rotate or move forward
+            if readings[self.SENSOR_INDEX['side-right']]:
+                self.horizontal_movement.publish(DC_MOTOR['stop'])
+                self.current_state = self.currentState.STEP
+        if self.current_state == self.currentState.STEP:
+            done = self.step.next(readings, self.up)
+            if done:
+                if self.lastRun == self.currentState.CLEAN_LEFT:
+                    self.current_state = self.currentState.CLEAN_RIGHT
+                else:
+                    self.current_state = self.currentState.CLEAN_LEFT
+                self.lastRun = self.currentState
+
+
+
         if self.up:
             self._clean_up()
         else:
@@ -209,12 +245,6 @@ def main():
     global mtx
     global SENSOR_READINGS
     rospy.init_node('summit_sweeper_main_run')
-    rospy.Subscriber('ir_sensors', UInt8MultiArray, sensor_callback)
-    vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
-    horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size = 8)
-    steps = stepStateMachine(horizontal_pub, frontL = -16700, rearL = -16700, frontH=0, rearH=0)
-    wait_for_subscribers(horizontal_pub, steps.vert_movement1, steps.vert_movement2, vacuum_pub)
-    state = currentState.INITIALIZATION
 
     while not rospy.is_shutdown():
         # Copy the readings to prevent blocking
