@@ -19,6 +19,15 @@ VACUUM = {
         'test': Int8(data=2)
         }
 
+SENSOR_INDEX = {
+            'center-left': 1,
+            'center-right': 0,
+            'rear-left': 3,
+            'rear-right': 2,
+            'side-left': 5,
+            'side-right': 4
+        }
+
 
 class stepStateMachine:
     class climbState(enum.Enum):
@@ -116,14 +125,6 @@ class cleanStateMachine:
         self.up = up
         self.current_state = self.currentState.INITIALIZATION
         self.lastRun = self.currentState.CLEAN_LEFT
-        self.SENSOR_INDEX = {
-            'center-left': 1,
-            'center-right': 0,
-            'rear-left': 3,
-            'rear-right': 2,
-            'side-left': 5,
-            'side-right': 4
-        }
 
         self.sensor_mtx = threading.Lock()
         self.readings = []
@@ -172,15 +173,15 @@ class cleanStateMachine:
         if self.current_state == self.currentState.INITIALIZATION:
             self.current_state = self.currentState.CLEAN_LEFT # TODO figure out what goes here
         if self.current_state == self.currentState.CLEAN_LEFT:
-            if not readings[self.SENSOR_INDEX['center-left']] or not readings[self.SENSOR_INDEX['center-right']]:
+            if not readings[SENSOR_INDEX['center-left']] or not readings[SENSOR_INDEX['center-right']]:
                 pass  # TODO: rotate or move forward
             if readings[self.SENSOR_INDEX['side-left']]:
                 self.horizontal_movement.publish(DC_MOTOR['stop'])
                 self.current_state = self.currentState.STEP
         if self.current_state == self.currentState.CLEAN_RIGHT:
-            if not readings[self.SENSOR_INDEX['center-left']] or not readings[self.SENSOR_INDEX['center-right']]:
+            if not readings[SENSOR_INDEX['center-left']] or not readings[SENSOR_INDEX['center-right']]:
                 pass  # TODO: rotate or move forward
-            if readings[self.SENSOR_INDEX['side-right']]:
+            if readings[SENSOR_INDEX['side-right']]:
                 self.horizontal_movement.publish(DC_MOTOR['stop'])
                 self.current_state = self.currentState.STEP
         if self.current_state == self.currentState.STEP:
