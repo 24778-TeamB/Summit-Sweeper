@@ -164,18 +164,6 @@ class cleanStateMachine:
         self.sensor_mtx.release()
         return
 
-    def _clean_down(self):
-        self.sensor_mtx.acquire()
-        readings = copy.deepcopy(self.readings)
-        self.sensor_mtx.release()
-        # TODO: Run state machine
-
-    def _clean_up(self):
-        self.sensor_mtx.acquire()
-        readings = copy.deepcopy(self.readings)
-        self.sensor_mtx.release()
-        # TODO: Run state machine
-
     def next():
         self.sensor_mtx.acquire()
         readings = copy.deepcopy(self.readings)
@@ -203,81 +191,22 @@ class cleanStateMachine:
                 else:
                     self.current_state = self.currentState.CLEAN_LEFT
                 self.lastRun = self.currentState
-
-
-
-        if self.up:
-            self._clean_up()
-        else:
-            self._clean_down()
-        return
-
-
-def clean_down(horizontal_pub, step_state_machine, vacuum_pub, readings):
-    global current_state
-    if current_state == CLEAN_STATE['left']:
-        pass
-    elif current_state == CLEAN_STATE['right']:
-        pass
-    elif current_state == CLEAN_STATE['step']:
-        done = step_state_machine.next(readings, False)
-        # TODO check done
-    elif current_state == CLEAN_STATE['no-state']:
-        pass
-
-
-def clean_up(horizontal_pub, step_state_machine, vacuum_pub, readings):
-    global current_state
-    if current_state == CLEAN_STATE['left']:
-        pass
-    elif current_state == CLEAN_STATE['right']:
-        pass
-    elif current_state == CLEAN_STATE['step']:
-        done = step_state_machine.next(readings, True)
-        # TODO check done
-        if done:
-            exit()
-    elif current_state == CLEAN_STATE['no-state']:
-        pass
+                # TODO: Figure out when finished
+        return self.current_state == self.currentState.FINISHED
 
 
 def main():
-    global mtx
-    global SENSOR_READINGS
     rospy.init_node('summit_sweeper_main_run')
+    clean = cleanStateMachine()
 
-    while not rospy.is_shutdown():
-        # Copy the readings to prevent blocking
-        mtx.acquire()
-        readings = copy.deepcopy(SENSOR_READINGS)
-        mtx.release()
-        s_mtx1.acquire()
-        front = step1_pos
-        s_mtx1.release()
-        s_mtx2.acquire()
-        rear = step2_pos
-        s_mtx2.release()
+    finished = False
 
-        if state == currentState.CLEAN_UP:
-            clean_up(horizontal_pub, vert_movement1, vert_movement2, vacuum_pub, readings, front, rear)
-            # check if job is finished here
-        elif state == currentState.CLEAN_DOWN:
-            clean_down(horizontal_pub, vert_movement1, vert_movement2, vacuum_pub, readings, front, rear)
-            # Check if job is finished here
-        elif state == currentState.FINISHED:
-            vacuum_pub.publish(Int8(data=VACUUM['off']))
-            vert_movement1.publish(Int32(data=0)) # Initialize one of these to -15170
-            vert_movement2.publish(Int32(data=0))
-            horizontal_pub.publish(Int8(data=DC_MOTOR['forward']))
-            rospy.Rate(1).sleep()
-            horizontal_pub.publish(Int8(data=DC_MOTOR['stop']))
-            break
-        elif state == currentState.INITIALIZATION:
-            state = currentState.CLEAN_UP
-            #pass # Decide whether to clean up or down here
-
+    while not rospy.is_shutdown() and not finished:
+        finished = clean.next()
         rospy.Rate(100).sleep()
-        del readings
+
+    rospy.loginfo('Summit Sweeper done cleaning')
+    rospy.spin()
 
 
 if __name__ == '__main__':
