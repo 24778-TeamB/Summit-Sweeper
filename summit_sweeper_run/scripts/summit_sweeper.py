@@ -84,28 +84,24 @@ class stepStateMachine:
                 if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
                     self.currentState = self.climbState.FORWARD1
             elif self.currentState == self.climbState.FORWARD1:
-                self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
-                time.sleep(1.2)
-                if True:  # TODO: check sensor readings here
-                    self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
+                if readings[SENSOR_INDEX['rear-right']] or readings[SENSOR_INDEX['rear-left']]:
+                    self.dc_pub.publish(DC_MOTOR['stop'])
                     self.currentState = self.climbState.LIFT_ENDS
                     self.vert_movement1.publish(self.frontTargets['high'])
                     self.vert_movement2.publish(self.rearTargets['high'])
                 else:
-                    self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
+                    self.dc_pub.publish(DC_MOTOR['forward'])
             elif self.currentState == self.climbState.LIFT_ENDS:
                 if self.frontPos == self.frontTargets['high'].data and self.rearPos == self.rearTargets['high'].data:
                     self.currentState = self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
-                self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
-                time.sleep(1.2)
-                if True:  # TODO: check sensor
-                    self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
+                if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
+                    self.dc_pub.publish(DC_MOTOR['stop'])
                     self.currentState = self.climbState.CLEAN
-                    self.vacuum.publish(Int8(data=VACUUM['on']))
+                    self.vacuum.publish(VACUUM['on'])
                     finished = True
                 else:
-                    self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
+                    self.dc_pub.publish(DC_MOTOR['forward'])
         else:
             rospy.logerr('Not implemented')
         self.mtx1.release()
@@ -165,7 +161,7 @@ class cleanStateMachine:
         self.sensor_mtx.release()
         return
 
-    def next():
+    def next(self):
         self.sensor_mtx.acquire()
         readings = copy.deepcopy(self.readings)
         self.sensor_mtx.release()
@@ -189,8 +185,10 @@ class cleanStateMachine:
             if done:
                 if self.lastRun == self.currentState.CLEAN_LEFT:
                     self.current_state = self.currentState.CLEAN_RIGHT
+                    self.horizontal_movement.publish(DC_MOTOR['right'])
                 else:
                     self.current_state = self.currentState.CLEAN_LEFT
+                    self.horizontal_movement.publish(DC_MOTOR['left'])
                 self.lastRun = self.currentState
                 # TODO: Figure out when finished
         return self.current_state == self.currentState.FINISHED
