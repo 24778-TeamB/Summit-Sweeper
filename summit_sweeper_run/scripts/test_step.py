@@ -82,28 +82,24 @@ class stepStateMachine:
                 if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
                     self.currentState = self.climbState.FORWARD1
             elif self.currentState == self.climbState.FORWARD1:
-                self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
-                time.sleep(1.2)
-                if True:  # TODO: check sensor readings here
-                    self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
+                if readings[SENSOR_INDEX['rear-right']] and readings[SENSOR_INDEX['rear-left']]:
+                    self.dc_pub.publish(DC_MOTOR['stop'])
                     self.currentState = self.climbState.LIFT_ENDS
                     self.vert_movement1.publish(self.frontTargets['high'])
                     self.vert_movement2.publish(self.rearTargets['high'])
                 else:
-                    self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
+                    self.dc_pub.publish(DC_MOTOR['forward'])
             elif self.currentState == self.climbState.LIFT_ENDS:
                 if self.frontPos == self.frontTargets['high'].data and self.rearPos == self.rearTargets['high'].data:
                     self.currentState = self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
-                self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
-                time.sleep(1.2)
-                if True:  # TODO: check sensor
-                    self.dc_pub.publish(Int8(data=DC_MOTOR['stop']))
+                if readings[SENSOR_INDEX['center-right']] and readings[SENSOR_INDEX['center-left']]:
+                    self.dc_pub.publish(DC_MOTOR['stop'])
                     self.currentState = self.climbState.CLEAN
-                    self.vacuum.publish(Int8(data=VACUUM['on']))
+                    self.vacuum.publish(VACUUM['on'])
                     finished = True
                 else:
-                    self.dc_pub.publish(Int8(data=DC_MOTOR['forward']))
+                    self.dc_pub.publish(DC_MOTOR['forward'])
         else:
             rospy.logerr('Not implemented')
         self.mtx1.release()
