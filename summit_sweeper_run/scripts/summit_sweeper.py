@@ -48,7 +48,7 @@ class stepStateMachine:
         self.mtx2 = threading.Lock()
         self.frontPos = 0
         self.rearPos = 0
-        self.currentState: self.climbState = self.climbState.CLEAN
+        self.currentState = self.climbState.CLEAN
 
         self.vert_movement1 = rospy.Publisher('front_vert_control', Int32, queue_size=8)
         self.vert_movement2 = rospy.Publisher('rear_vert_control', Int32, queue_size=8)
@@ -85,7 +85,6 @@ class stepStateMachine:
                     self.currentState = self.climbState.FORWARD1
             elif self.currentState == self.climbState.FORWARD1:
                 if readings[SENSOR_INDEX['rear-right']] and readings[SENSOR_INDEX['rear-left']]:
-                    # How do we know if we are touching the stair or not?
                     self.dc_pub.publish(DC_MOTOR['stop'])
                     self.currentState = self.climbState.LIFT_ENDS
                     self.vert_movement1.publish(self.frontTargets['high'])
@@ -96,7 +95,7 @@ class stepStateMachine:
                 if self.frontPos == self.frontTargets['high'].data and self.rearPos == self.rearTargets['high'].data:
                     self.currentState = self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
-                if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
+                if readings[SENSOR_INDEX['center-right']] and readings[SENSOR_INDEX['center-left']]:
                     self.dc_pub.publish(DC_MOTOR['stop'])
                     self.currentState = self.climbState.CLEAN
                     self.vacuum.publish(VACUUM['on'])
