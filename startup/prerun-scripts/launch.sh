@@ -2,6 +2,7 @@
 
 # Check argument
 if ! [ -f "/home/tschmitz/catkin_ws/src/startup/$1" ]; then
+	echo "Does not exist"
 	exit
 fi
 

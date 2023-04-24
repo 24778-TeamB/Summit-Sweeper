@@ -16,16 +16,16 @@ MOVEMENT = {
 FRONT_RIGHT_SPEEDS = {
     'right': 0,
     'left': 0,
-    'forward': 125,
-    'reverse': 125,
+    'forward': 100,
+    'reverse': 100,
     'stop': 0
 }
 
 FRONT_LEFT_SPEEDS = {
     'right': 0,
     'left': 0,
-    'forward': 125,
-    'reverse': 125,
+    'forward': 100,
+    'reverse': 100,
     'stop': 0
 }
 
