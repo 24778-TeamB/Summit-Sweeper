@@ -109,7 +109,7 @@ int8_t CmdSet(char *cmdBuf, uint16_t bufSize, uint16_t argc, char const *const *
       motor = (tolower(argv[2][0]) == 'l') ? 0x10 : 0x00;
       motor |= (uint8_t)(argv[2][1] - '1');
       
-    Speed = (uint8_t)atoi(argv[2]);
+    Speed = (uint8_t)atoi(argv[3]);
     success = setMotorSpeed(motor, Speed);
 		retVal = success ? RET_OK : RET_ERROR;
 		break;
