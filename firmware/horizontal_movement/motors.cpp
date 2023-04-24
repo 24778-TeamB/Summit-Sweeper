@@ -46,10 +46,10 @@ static void updateSpeed()
 {
   analogWrite(RIGHT_EN_A, right1_speed);
   analogWrite(RIGHT_EN_B, right2_speed);
-  analogWrite(LEFT_EN_A, left1_speed);
-  analogWrite(LEFT_EN_B, left2_speed);
-  analogWrite(FRONT_EN_A, right3_speed);
-  analogWrite(FRONT_EN_B, left3_speed);
+  analogWrite(LEFT_EN_B, left1_speed);
+  analogWrite(LEFT_EN_A, left2_speed);
+  analogWrite(FRONT_EN_B, right3_speed);
+  analogWrite(FRONT_EN_A, left3_speed);
 }
 
 bool setMotorSpeed(uint8_t motor, uint8_t Speed)
@@ -67,9 +67,9 @@ bool setMotorSpeed(uint8_t motor, uint8_t Speed)
       break;
     case LEFT_1: left1_speed = Speed;
       break;
-    case LEFT_2: left1_speed = Speed;
+    case LEFT_2: left2_speed = Speed;
       break;
-    case LEFT_3: left1_speed = Speed;
+    case LEFT_3: left3_speed = Speed;
       break;
     default: success = false;
   }
