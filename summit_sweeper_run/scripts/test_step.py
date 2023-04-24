@@ -1,5 +1,5 @@
 import rospy
-from std_msgs.msg import Int32, Int8, Float32MultiArray
+from std_msgs.msg import Int32, Int8, Float32MultiArray, UInt8MultiArray
 import enum
 import threading
 import time
@@ -25,6 +25,8 @@ CLEAN_STATE = {
         'step': 2
         }
 
+READINGS = []
+
 class stepStateMachine:
     class climbState(enum.Enum):
         CLEAN = 0X0
@@ -44,7 +46,7 @@ class stepStateMachine:
         self.mtx2 = threading.Lock()
         self.frontPos = 0
         self.rearPos = 0
-        self.currentState: self.climbState = self.climbState.CLEAN
+        self.currentState = self.climbState.CLEAN
 
         self.vert_movement1 = rospy.Publisher('front_vert_control', Int32, queue_size=8)
         self.vert_movement2 = rospy.Publisher('rear_vert_control', Int32, queue_size=8)
@@ -126,15 +128,24 @@ def wait_for_subscribers(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pu
     return
 
 
+def _sensors_callback(data: UInt8MultiArray):
+    global READINGS
+    #sensor_mtx.acquire()
+    READINGS = data.data
+    #sensor_mtx.release()
+    return
+
+
 def main():
     rospy.init_node('step_test')
     vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
     horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size = 8)
+    rospy.Subscriber('ir_sensors', UInt8MultiArray, self._sensors_callback)
     step = stepStateMachine(horizontal_pub, vacuum_pub, frontL = -16700, rearL = -16700, frontH=0, rearH=0)
     wait_for_subscribers(horizontal_pub, step.vert_movement1, step.vert_movement2, vacuum_pub)
     done = False
     while not done and not rospy.is_shutdown():
-        done = step.next([])
+        done = step.next(READINGS)
         rospy.Rate(10).sleep()
     rospy.spin()
 
