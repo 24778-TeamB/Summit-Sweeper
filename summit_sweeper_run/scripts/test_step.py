@@ -25,6 +25,15 @@ CLEAN_STATE = {
         'step': 2
         }
 
+SENSOR_INDEX = {
+            'center-left': 1,
+            'center-right': 0,
+            'rear-left': 3,
+            'rear-right': 2,
+            'side-left': 5,
+            'side-right': 4
+        }
+
 READINGS = []
 
 class stepStateMachine:
