@@ -125,7 +125,7 @@ class cleanStateMachine:
         self.sensor_mtx = threading.Lock()
         self.readings = []
 
-        rospy.Subscriber('ir_sensors', UInt8MultiArray, self._sensors_callback)
+        rospy.Subscriber('ir_sensor', UInt8MultiArray, self._sensors_callback)
         self.vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size=1)
         self.horizontal_movement = rospy.Publisher('horizontal_control', Int8, queue_size=4)
 
@@ -167,7 +167,7 @@ class cleanStateMachine:
         self.sensor_mtx.release()
 
         if self.current_state == self.currentState.INITIALIZATION:
-            self.current_state = self.currentState.CLEAN_LEFT # TODO figure out what goes here
+            self.current_state = self.currentState.CLEAN_LEFT  # TODO figure out what goes here
         if self.current_state == self.currentState.CLEAN_LEFT:
             if not readings[SENSOR_INDEX['center-left']] or not readings[SENSOR_INDEX['center-right']]:
                 pass  # TODO: rotate or move forward
