@@ -167,6 +167,7 @@ class cleanStateMachine:
         self.sensor_mtx.release()
 
         if self.current_state == self.currentState.INITIALIZATION:
+            if readings[SENSOR_INDEX['']]:
             self.current_state = self.currentState.CLEAN_LEFT  # TODO figure out what goes here
         if self.current_state == self.currentState.CLEAN_LEFT:
             if not readings[SENSOR_INDEX['center-left']] or not readings[SENSOR_INDEX['center-right']]:
