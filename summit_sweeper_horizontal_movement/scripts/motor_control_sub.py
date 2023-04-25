@@ -4,6 +4,7 @@ import serial
 import sys
 
 port = None
+lastState = 0
 
 MOVEMENT = {
         0: 'stop',
@@ -71,6 +72,7 @@ REAR_LEFT_SPEED = 125
 
 def issueMovement(msg: Int8):
     global port
+    global lastState
     movement = msg.data
     try:
         rospy.loginfo(f'Moving {MOVEMENT[movement]}')
@@ -83,13 +85,15 @@ def issueMovement(msg: Int8):
             rospy.logerr('Unable to write to motor controller: port is closed!')
             return
         Movement = MOVEMENT[movement]
-        port.write(f'set speed r1 {MID_RIGHT_SPEEDS[Movement]}\r\n')
-        port.write(f'set speed r2 {REAR_RIGHT_SPEEDS[Movement]}\r\n')
-        port.write(f'set speed r3 {FRONT_RIGHT_SPEEDS[Movement]}\r\n')
-        port.write(f'set speed l1 {MID_LEFT_SPEEDS[Movement]}\r\n')
-        port.write(f'set speed l2 {REAR_LEFT_SPEEDS[Movement]}\r\n')
-        port.write(f'set speed l3 {FRONT_LEFT_SPEEDS[Movement]}\r\n')
-        port.write(f'motor {Movement}\r\n'.encode('UTF-8'))
+        if lastState != movement:
+            port.write(f'set speed r1 {MID_RIGHT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed r2 {REAR_RIGHT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed r3 {FRONT_RIGHT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed l1 {MID_LEFT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed l2 {REAR_LEFT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed l3 {FRONT_LEFT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
+            port.write(f'motor {Movement}\r\n'.encode('UTF-8'))
+        lastState = movement
     except serial.SerialTimeoutException:
         rospy.logerr('Horizontal Motor Controller Timed out!')
     return
@@ -119,6 +123,7 @@ def main():
     rospy.Subscriber('horizontal_control', Int8, issueMovement)
     rospy.loginfo('Starting horizontal control')
     rospy.spin()
+    port.write(b'motor stop\r\n')
     return
 
 
