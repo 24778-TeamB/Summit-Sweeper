@@ -83,12 +83,12 @@ def issueMovement(msg: Int8):
             rospy.logerr('Unable to write to motor controller: port is closed!')
             return
         Movement = MOVEMENT[movement]
-        port.write(f'set speed r1 {MID_RIGHT_SPEED[Movement]}')
-        port.write(f'set speed r2 {REAR_RIGHT_SPEED[Movement]}')
-        port.write(f'set speed r3 {FRONT_RIGHT_SPEED[Movement]}')
-        port.write(f'set speed l1 {MID_LEFT_SPEED[Movement]}')
-        port.write(f'set speed l2 {REAR_LEFT_SPEED[Movement]}')
-        port.write(f'set speed l3 {FRONT_LEFT_SPEED[Movement]}')
+        port.write(f'set speed r1 {MID_RIGHT_SPEEDS[Movement]}\r\n')
+        port.write(f'set speed r2 {REAR_RIGHT_SPEEDS[Movement]}\r\n')
+        port.write(f'set speed r3 {FRONT_RIGHT_SPEEDS[Movement]}\r\n')
+        port.write(f'set speed l1 {MID_LEFT_SPEEDS[Movement]}\r\n')
+        port.write(f'set speed l2 {REAR_LEFT_SPEEDS[Movement]}\r\n')
+        port.write(f'set speed l3 {FRONT_LEFT_SPEEDS[Movement]}\r\n')
         port.write(f'motor {Movement}\r\n'.encode('UTF-8'))
     except serial.SerialTimeoutException:
         rospy.logerr('Horizontal Motor Controller Timed out!')
