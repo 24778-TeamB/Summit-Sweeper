@@ -167,10 +167,13 @@ class cleanStateMachine:
         self.sensor_mtx.release()
 
         if self.current_state == self.currentState.INITIALIZATION:
-            self.current_state = self.currentState.CLEAN_LEFT  # TODO figure out what goes here
+            if not readings[SENSOR_INDEX['side-left']]:
+                self.current_state = self.currentState.CLEAN_RIGHT
+            else:
+                self.current_state = self.currentState.CLEAN_LEFT
         if self.current_state == self.currentState.CLEAN_LEFT:
-            if not readings[SENSOR_INDEX['center-left']] or not readings[SENSOR_INDEX['center-right']]:
-                pass  # TODO: rotate or move forward
+            # CHeck forward facing sensors
+            if
             if readings[self.SENSOR_INDEX['side-left']]:
                 self.horizontal_movement.publish(DC_MOTOR['stop'])
                 self.current_state = self.currentState.STEP
