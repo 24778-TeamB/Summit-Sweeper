@@ -14,9 +14,9 @@ DC_MOTOR = {
         }
 
 VACUUM = {
-        'on': Int8(data=1),
-        'off': Int8(data=0),
-        'test': Int8(data=2)
+        'on': 1,
+        'off': 0,
+        'test': 2
         }
 
 SENSOR_INDEX = {
@@ -71,12 +71,13 @@ class stepStateMachine:
         return
 
     def next(self, readings, up: bool = True) -> bool:
+        rospy.loginfo(readings)
         finished = False
         self.mtx1.acquire()
         self.mtx2.acquire()
         if up:
             if self.currentState == self.climbState.CLEAN:
-                self.vacuum.publish(VACUUM['off'])
+                self.vacuum.publish(Int8(data=VACUUM['off']))
                 self.currentState = self.climbState.LIFT_MIDDLE
                 self.vert_movement1.publish(self.frontTargets['low'])
                 self.vert_movement2.publish(self.rearTargets['low'])
@@ -98,7 +99,7 @@ class stepStateMachine:
                 if not readings[SENSOR_INDEX['center-right']] and not readings[SENSOR_INDEX['center-left']]:
                     self.dc_pub.publish(DC_MOTOR['stop'])
                     self.currentState = self.climbState.CLEAN
-                    self.vacuum.publish(VACUUM['on'])
+                    self.vacuum.publish(Int8(data=VACUUM['on']))
                     finished = True
                 else:
                     self.dc_pub.publish(DC_MOTOR['forward'])
@@ -194,7 +195,7 @@ class cleanStateMachine:
         if self.current_state == self.currentState.INITIALIZATION:
             result = self._moveLeft(readings)
             if result:
-                self.vacuum_pub.publish(VACUUM['on'])
+                self.vacuum_pub.publish(Int8(data=VACUUM['on']))
                 self.current_state = self.currentState.CLEAN_RIGHT
                 self.lastRun = self.currentState.CLEAN_RIGHT
         elif self.current_state == self.currentState.CLEAN_LEFT:
