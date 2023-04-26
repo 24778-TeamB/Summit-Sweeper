@@ -61,6 +61,7 @@ def main():
     global Readings
     global ir_mutex
     rospy.Subscriber('ir_sensor', UInt8MultiArray, _sensor_callback)
+    time.sleep(1)
     horizontal_movement = rospy.Publisher('horizontal_control', Int8, queue_size=4)
     cleanRight(Readings, horizontal_movement)
     state = True
