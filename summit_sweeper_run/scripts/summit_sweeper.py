@@ -24,8 +24,8 @@ SENSOR_INDEX = {
             'center-right': 0,
             'rear-left': 3,
             'rear-right': 2,
-            'side-left': 5,
-            'side-right': 4
+            'side-left': 4,
+            'side-right': 5
         }
 
 
@@ -84,7 +84,7 @@ class stepStateMachine:
                 if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
                     self.currentState = self.climbState.FORWARD1
             elif self.currentState == self.climbState.FORWARD1:
-                if readings[SENSOR_INDEX['rear-right']] and readings[SENSOR_INDEX['rear-left']]:
+                if not readings[SENSOR_INDEX['rear-right']] and not readings[SENSOR_INDEX['rear-left']]:
                     self.dc_pub.publish(DC_MOTOR['stop'])
                     self.currentState = self.climbState.LIFT_ENDS
                     self.vert_movement1.publish(self.frontTargets['high'])
@@ -95,7 +95,7 @@ class stepStateMachine:
                 if self.frontPos == self.frontTargets['high'].data and self.rearPos == self.rearTargets['high'].data:
                     self.currentState = self.climbState.FORWARD2
             elif self.currentState == self.climbState.FORWARD2:
-                if readings[SENSOR_INDEX['center-right']] and readings[SENSOR_INDEX['center-left']]:
+                if not readings[SENSOR_INDEX['center-right']] and not readings[SENSOR_INDEX['center-left']]:
                     self.dc_pub.publish(DC_MOTOR['stop'])
                     self.currentState = self.climbState.CLEAN
                     self.vacuum.publish(VACUUM['on'])
@@ -161,40 +161,63 @@ class cleanStateMachine:
         self.sensor_mtx.release()
         return
 
+    def _moveRight(self, readings) -> bool:
+        # TODO: Figure out better way to hug riser
+        finished = False
+        if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
+            self.horizontal_movement.publish(DC_MOTOR['forward'])
+        elif not readings[SENSOR_INDEX['side-right']]:
+            self.horizontal_movement.publish(DC_MOTOR['stop'])
+            finished = True
+        else:
+            self.horizontal_movement.publish(DC_MOTOR['right'])
+        return finished
+
+    def _moveLeft(self, readings) -> bool:
+        # TODO: Figure out better way to hug riser
+        finished = False
+        if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
+            self.horizontal_movement.publish(DC_MOTOR['forward'])
+        elif not readings[SENSOR_INDEX['side-left']]:
+            self.horizontal_movement.publish(DC_MOTOR['stop'])
+            finished = True
+        else:
+            self.horizontal_movement.publish(DC_MOTOR['right'])
+        return finished
+
     def next(self):
+        refreshRate = 2
         self.sensor_mtx.acquire()
         readings = copy.deepcopy(self.readings)
         self.sensor_mtx.release()
 
         if self.current_state == self.currentState.INITIALIZATION:
-            if not readings[SENSOR_INDEX['side-left']]:
+            result = self._moveLeft(readings)
+            if result:
+                self.vacuum_pub.publish(VACUUM['on'])
                 self.current_state = self.currentState.CLEAN_RIGHT
-            else:
-                self.current_state = self.currentState.CLEAN_LEFT
-        if self.current_state == self.currentState.CLEAN_LEFT:
-            # CHeck forward facing sensors
-            if
-            if readings[self.SENSOR_INDEX['side-left']]:
-                self.horizontal_movement.publish(DC_MOTOR['stop'])
+                self.lastRun = self.currentState.CLEAN_RIGHT
+        elif self.current_state == self.currentState.CLEAN_LEFT:
+            finished = self._moveLeft(readings)
+            if finished:
+                self.lastRun = self.currentState.CLEAN_RIGHT
                 self.current_state = self.currentState.STEP
-        if self.current_state == self.currentState.CLEAN_RIGHT:
-            if not readings[SENSOR_INDEX['center-left']] or not readings[SENSOR_INDEX['center-right']]:
-                pass  # TODO: rotate or move forward
-            if readings[SENSOR_INDEX['side-right']]:
-                self.horizontal_movement.publish(DC_MOTOR['stop'])
+        elif self.current_state == self.currentState.CLEAN_RIGHT:
+            finished = self._moveRight(readings)
+            if finished:
+                self.lastRun = self.currentState.CLEAN_RIGHT
                 self.current_state = self.currentState.STEP
-        if self.current_state == self.currentState.STEP:
+        elif self.current_state == self.currentState.STEP:
             done = self.step.next(readings, self.up)
             if done:
                 if self.lastRun == self.currentState.CLEAN_LEFT:
                     self.current_state = self.currentState.CLEAN_RIGHT
-                    self.horizontal_movement.publish(DC_MOTOR['right'])
                 else:
                     self.current_state = self.currentState.CLEAN_LEFT
-                    self.horizontal_movement.publish(DC_MOTOR['left'])
-                self.lastRun = self.currentState
+            else:
+                refreshRate = 10
                 # TODO: Figure out when finished
-        return self.current_state == self.currentState.FINISHED
+        return refreshRate, self.current_state == self.currentState.FINISHED
 
 
 def main():
@@ -204,8 +227,8 @@ def main():
     finished = False
 
     while not rospy.is_shutdown() and not finished:
-        finished = clean.next()
-        rospy.Rate(100).sleep()
+        refresh, finished = clean.next()
+        rospy.Rate(refresh).sleep()
 
     rospy.loginfo('Summit Sweeper done cleaning')
     rospy.spin()
