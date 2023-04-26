@@ -121,7 +121,7 @@ class cleanStateMachine:
     def __init__(self, up: bool = True):
         self.up = up
         self.current_state = self.currentState.STEP
-        self.lastRun = self.currentState.CLEAN_RIGHT
+        self.lastRun = self.currentState.CLEAN_LEFT
 
         self.sensor_mtx = threading.Lock()
         self.readings = []
@@ -183,7 +183,7 @@ class cleanStateMachine:
             self.horizontal_movement.publish(DC_MOTOR['stop'])
             finished = True
         else:
-            self.horizontal_movement.publish(DC_MOTOR['right'])
+            self.horizontal_movement.publish(DC_MOTOR['left'])
         return finished
 
     def next(self):
