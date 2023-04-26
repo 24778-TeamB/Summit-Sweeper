@@ -4,7 +4,7 @@ import rospy
 
 
 VACUUM_PIN = 10
-LED_PIN = 40
+LED_PIN = 16
 testMode = False
 
 
