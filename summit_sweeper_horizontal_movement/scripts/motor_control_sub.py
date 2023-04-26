@@ -31,7 +31,7 @@ FRONT_LEFT_SPEEDS = {
 }
 
 MID_RIGHT_SPEEDS = {
-    'right': 225,
+    'right': 250,
     'left': 180,
     'forward': 100,
     'reverse': 100,
@@ -47,7 +47,7 @@ MID_LEFT_SPEEDS = {
 }
 
 REAR_RIGHT_SPEEDS = {
-    'right': 120,
+    'right': 180,
     'left': 250,
     'forward': 100,
     'reverse': 100,

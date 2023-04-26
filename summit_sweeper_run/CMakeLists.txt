@@ -11,5 +11,6 @@ include_directories(
 catkin_install_python(PROGRAMS
   scripts/summit_sweeper.py
   scripts/test_step.py
+  scripts/test_horizontal.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
