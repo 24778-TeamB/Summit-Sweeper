@@ -31,32 +31,32 @@ FRONT_LEFT_SPEEDS = {
 }
 
 MID_RIGHT_SPEEDS = {
-    'right': 250,
-    'left': 180,
+    'right': 200,
+    'left': 200,
     'forward': 100,
     'reverse': 100,
     'stop': 0
 }
 
 MID_LEFT_SPEEDS = {
-    'right': 120,
-    'left': 250,
+    'right': 200,
+    'left': 200,
     'forward': 100,
     'reverse': 100,
     'stop': 0
 }
 
 REAR_RIGHT_SPEEDS = {
-    'right': 180,
-    'left': 250,
+    'right': 200,
+    'left': 200,
     'forward': 100,
     'reverse': 100,
     'stop': 0
 }
 
 REAR_LEFT_SPEEDS = {
-    'right': 250,
-    'left': 180,
+    'right': 200,
+    'left': 200,
     'forward': 100,
     'reverse': 100,
     'stop': 0

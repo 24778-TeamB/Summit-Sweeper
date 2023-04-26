@@ -76,7 +76,7 @@ class stepStateMachine:
         self.mtx2.acquire()
         if up:
             if self.currentState == self.climbState.CLEAN:
-                self.vacuum.publish(Int8(data=VACUUM['off']))
+                self.vacuum.publish(VACUUM['off'])
                 self.currentState = self.climbState.LIFT_MIDDLE
                 self.vert_movement1.publish(self.frontTargets['low'])
                 self.vert_movement2.publish(self.rearTargets['low'])
@@ -119,8 +119,8 @@ class cleanStateMachine:
 
     def __init__(self, up: bool = True):
         self.up = up
-        self.current_state = self.currentState.INITIALIZATION
-        self.lastRun = self.currentState.CLEAN_LEFT
+        self.current_state = self.currentState.STEP
+        self.lastRun = self.currentState.CLEAN_RIGHT
 
         self.sensor_mtx = threading.Lock()
         self.readings = []
@@ -137,15 +137,15 @@ class cleanStateMachine:
     def _wait_for_subscribers(self):
         i = 0
         while not rospy.is_shutdown() and (
-                self.horizontal_pub.get_num_connections() == 0 or self.vertical_pub1.get_num_connections() == 0 or
-                self.vertical_pub2.get_num_connections() == 0 or self.vacuum_pub.get_num_connections() == 0):
+                self.horizontal_movement.get_num_connections() == 0 or self.step.vert_movement1.get_num_connections() == 0 or
+                self.step.vert_movement2.get_num_connections() == 0 or self.vacuum_pub.get_num_connections() == 0):
             if i == 4:
-                if self.horizontal_pub.get_num_connections() == 0:
-                    rospy.loginfo(f'Waiting for subscriber to connect to {self.horizontal_pub.name}')
-                if self.vertical_pub1.get_num_connections() == 0:
-                    rospy.loginfo(f'Waiting for subscriber to connect to {self.vertical_pub1.name}')
-                if self.vertical_pub2.get_num_connections() == 0:
-                    rospy.loginfo(f'Waiting for subscriber to connect to {self.vertical_pub2.name}')
+                if self.horizontal_movement.get_num_connections() == 0:
+                    rospy.loginfo(f'Waiting for subscriber to connect to {self.horizontal_movement.name}')
+                if self.step.vert_movement1.get_num_connections() == 0:
+                    rospy.loginfo(f'Waiting for subscriber to connect to {self.step.vert_movement1.name}')
+                if self.step.vert_movement2.get_num_connections() == 0:
+                    rospy.loginfo(f'Waiting for subscriber to connect to {self.step.vert_movement2.name}')
                 if self.vacuum_pub.get_num_connections() == 0:
                     rospy.loginfo(f'Waiting for subscriber to connect to {self.vacuum_pub.name}')
             rospy.Rate(10).sleep()
