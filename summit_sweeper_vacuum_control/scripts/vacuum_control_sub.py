@@ -3,7 +3,7 @@ from std_msgs.msg import Int8
 import rospy
 
 
-VACUUM_PIN = 10
+VACUUM_PIN = 12
 LED_PIN = 16
 testMode = False
 
