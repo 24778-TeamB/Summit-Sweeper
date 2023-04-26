@@ -12,8 +12,8 @@ SENSOR_INDEX = {
             'center-right': 0,
             'rear-left': 3,
             'rear-right': 2,
-            'side-left': 5,
-            'side-right': 4
+            'side-left': 4,
+            'side-right': 5
         }
 
 DC_MOTOR = {
@@ -60,6 +60,7 @@ def cleanLeft(readings, motorPub):
 def main():
     global Readings
     global ir_mutex
+    rospy.init_node('horizontal_test')
     rospy.Subscriber('ir_sensor', UInt8MultiArray, _sensor_callback)
     time.sleep(1)
     horizontal_movement = rospy.Publisher('horizontal_control', Int8, queue_size=4)
@@ -76,7 +77,7 @@ def main():
         else:
             result = cleanLeft(readings, horizontal_movement)
             state = result == -1
-        rospy.Rate(10).sleep()
+        rospy.Rate(1).sleep()
 
 
 if __name__ == '__main__':
