@@ -80,7 +80,6 @@ bool setMotorSpeed(uint8_t motor, uint8_t Speed)
 void moveForward()
 {
   updateSpeed();
-  
 	digitalWrite(RIGHT_IN1, HIGH);
 	digitalWrite(RIGHT_IN2, LOW);
 	digitalWrite(RIGHT_IN3, LOW);
@@ -119,6 +118,8 @@ void moveReverse()
 
 void moveLeft()
 {
+
+
   updateSpeed();
   
 	digitalWrite(RIGHT_IN1, LOW);
@@ -134,6 +135,7 @@ void moveLeft()
 
 void moveRight()
 {
+
   updateSpeed();
 
   analogWrite(FRONT_EN_A, 0);
