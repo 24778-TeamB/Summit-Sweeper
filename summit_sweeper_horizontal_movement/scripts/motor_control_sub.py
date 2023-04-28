@@ -17,48 +17,48 @@ MOVEMENT = {
 FRONT_RIGHT_SPEEDS = {
     'right': 0,
     'left': 0,
-    'forward': 100,
-    'reverse': 100,
+    'forward': 255,
+    'reverse': 255,
     'stop': 0
 }
 
 FRONT_LEFT_SPEEDS = {
     'right': 0,
     'left': 0,
-    'forward': 100,
-    'reverse': 100,
+    'forward': 255,
+    'reverse': 255,
     'stop': 0
 }
 
 MID_RIGHT_SPEEDS = {
     'right': 255,
     'left': 255,
-    'forward': 100,
-    'reverse': 100,
+    'forward': 255,
+    'reverse': 255,
     'stop': 0
 }
 
 MID_LEFT_SPEEDS = {
     'right': 255,
     'left': 255,
-    'forward': 100,
-    'reverse': 100,
+    'forward': 255,
+    'reverse': 255,
     'stop': 0
 }
 
 REAR_RIGHT_SPEEDS = {
     'right': 255,
     'left': 255,
-    'forward': 100,
-    'reverse': 100,
+    'forward': 255,
+    'reverse': 255,
     'stop': 0
 }
 
 REAR_LEFT_SPEEDS = {
     'right': 255,
     'left': 255,
-    'forward': 100,
-    'reverse': 100,
+    'forward': 255,
+    'reverse': 255,
     'stop': 0
 }
 

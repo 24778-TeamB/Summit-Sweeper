@@ -230,6 +230,8 @@ def main():
     while not rospy.is_shutdown() and not finished:
         refresh, finished = clean.next()
         rospy.Rate(refresh).sleep()
+    clean.horizontal_movement.publish(DC_MOTOR['stop'])
+    clean.vacuum_pub.publish(Int8(data=VACUUM['off']))
 
     rospy.loginfo('Summit Sweeper done cleaning')
     rospy.spin()
