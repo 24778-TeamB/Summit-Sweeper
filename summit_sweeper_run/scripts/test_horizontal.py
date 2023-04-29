@@ -79,7 +79,7 @@ def main():
     global Readings
     global ir_mutex
     try:
-        frequency = sys.argv[1]
+        frequency = float(sys.argv[1])
     except:
         print('USAGE [frequency]')
         return
@@ -100,7 +100,7 @@ def main():
         else:
             result = cleanLeft(readings, horizontal_movement)
             state = result == -1
-        rospy.Rate(1).sleep()
+        rospy.Rate(frequency).sleep()
 
 
 if __name__ == '__main__':
