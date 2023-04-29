@@ -5,6 +5,7 @@ from std_msgs.msg import Int32, Int8, Float32MultiArray, UInt8MultiArray
 import enum
 import threading
 import time
+import sys
 
 
 SENSOR_INDEX = {
@@ -21,7 +22,9 @@ DC_MOTOR = {
         'reverse': Int8(data=4),
         'left': Int8(data=1),
         'right': Int8(data=2),
-        'stop': Int8(data=0)
+        'stop': Int8(data=0),
+        'cw': Int8(data=5),
+        'ccw': Int8(data=6)
         }
 
 ir_mutex = threading.Lock()
@@ -37,7 +40,7 @@ def _sensor_callback(ir: UInt8MultiArray):
 
 def cleanRight(readings, motorPub):
     if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
-        motorPub.publish(DC_MOTOR['forward'])
+        motorPub.publish(DC_MOTOR['ccw'])
         return 1
     elif not readings[SENSOR_INDEX['side-right']]:
         motorPub.publish(DC_MOTOR['stop'])
@@ -48,7 +51,7 @@ def cleanRight(readings, motorPub):
 
 def cleanLeft(readings, motorPub):
     if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
-        motorPub.publish(DC_MOTOR['forward'])
+        motorPub.publish(DC_MOTOR['cw'])
         return 1
     elif not readings[SENSOR_INDEX['side-left']]:
         motorPub.publish(DC_MOTOR['stop'])
@@ -60,6 +63,11 @@ def cleanLeft(readings, motorPub):
 def main():
     global Readings
     global ir_mutex
+    try:
+        frequency = sys.argv[1]
+    except:
+        print('USAGE [frequency]')
+        return
     rospy.init_node('horizontal_test')
     rospy.Subscriber('ir_sensor', UInt8MultiArray, _sensor_callback)
     time.sleep(1)
