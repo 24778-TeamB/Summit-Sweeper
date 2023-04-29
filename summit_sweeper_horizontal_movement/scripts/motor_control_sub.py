@@ -7,59 +7,73 @@ port = None
 lastState = 0
 
 MOVEMENT = {
-        0: 'stop',
-        1: 'left',
-        2: 'right',
-        3: 'forward',
-        4: 'reverse'
+        0: 'motor stop',
+        1: 'motor left',
+        2: 'motor right',
+        3: 'motor forward',
+        4: 'motor reverse',
+        5: 'rotate cw',
+        6: 'rotate ccw'
         }
 
 FRONT_RIGHT_SPEEDS = {
-    'right': 0,
-    'left': 0,
-    'forward': 255,
-    'reverse': 255,
-    'stop': 0
+    'motor right': 0,
+    'motor left': 0,
+    'motor forward': 255,
+    'motor reverse': 255,
+    'motor stop': 0,
+    'rotate cw': 0,
+    'rotate ccw': 0
 }
 
 FRONT_LEFT_SPEEDS = {
-    'right': 0,
-    'left': 0,
-    'forward': 255,
-    'reverse': 255,
-    'stop': 0
+    'motor right': 0,
+    'motor left': 0,
+    'motor forward': 255,
+    'motor reverse': 255,
+    'motor stop': 0,
+    'rotate cw': 0,
+    'rotate ccw': 0
 }
 
 MID_RIGHT_SPEEDS = {
-    'right': 255,
-    'left': 255,
-    'forward': 255,
-    'reverse': 255,
-    'stop': 0
+    'motor right': 255,
+    'motor left': 255,
+    'motor forward': 255,
+    'motor reverse': 255,
+    'motor stop': 0,
+    'rotate cw': 0,
+    'rotate ccw': 255,
 }
 
 MID_LEFT_SPEEDS = {
-    'right': 255,
-    'left': 255,
-    'forward': 255,
-    'reverse': 255,
-    'stop': 0
+    'motor right': 255,
+    'motor left': 255,
+    'motor forward': 255,
+    'motor reverse': 255,
+    'motor stop': 0,
+    'rotate cw': 255,
+    'rotate ccw': 0
 }
 
 REAR_RIGHT_SPEEDS = {
-    'right': 255,
-    'left': 255,
-    'forward': 255,
-    'reverse': 255,
-    'stop': 0
+    'motor right': 255,
+    'motor left': 255,
+    'motor forward': 255,
+    'motor reverse': 255,
+    'motor stop': 0,
+    'rotate cw': 0,
+    'rotate ccw': 255
 }
 
 REAR_LEFT_SPEEDS = {
-    'right': 255,
-    'left': 255,
-    'forward': 255,
-    'reverse': 255,
-    'stop': 0
+    'motor right': 255,
+    'motor left': 255,
+    'motor forward': 255,
+    'motor reverse': 255,
+    'motor stop': 0,
+    'rotate cw': 255,
+    'rotate ccw': 0
 }
 
 FRONT_RIGHT_SPEED = 125
@@ -75,7 +89,7 @@ def issueMovement(msg: Int8):
     global lastState
     movement = msg.data
     try:
-        rospy.loginfo(f'Moving {MOVEMENT[movement]}')
+        rospy.loginfo(MOVEMENT[movement]})
     except KeyError:
         rospy.logerr(f'Invalid movement command: {movement} does to correlate with any of the valid movements')
         return
@@ -84,16 +98,16 @@ def issueMovement(msg: Int8):
         if port is None:
             rospy.logerr('Unable to write to motor controller: port is closed!')
             return
-        Movement = MOVEMENT[movement]
-        if lastState != movement:
-            port.write(f'set speed r1 {MID_RIGHT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
-            port.write(f'set speed r2 {REAR_RIGHT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
-            port.write(f'set speed r3 {FRONT_RIGHT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
-            port.write(f'set speed l1 {MID_LEFT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
-            port.write(f'set speed l2 {REAR_LEFT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
-            port.write(f'set speed l3 {FRONT_LEFT_SPEEDS[Movement]}\r\n'.encode('UTF-8'))
-            port.write(f'motor {Movement}\r\n'.encode('UTF-8'))
-        lastState = movement
+        if MOVEMENT[movement].startswith('motor'):
+            port.write(f'{MOVEMENT[movement]}\r\n'.encode('UTF-8'))
+        else:
+            port.write(f'set speed r1 {MID_RIGHT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed r2 {REAR_RIGHT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed r3 {FRONT_RIGHT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed l1 {MID_LEFT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed l2 {MID_LEFT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed l3 {MID_LEFT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
+            port.write(b'motor forward\r\n')
     except serial.SerialTimeoutException:
         rospy.logerr('Horizontal Motor Controller Timed out!')
     return
@@ -123,7 +137,7 @@ def main():
     rospy.Subscriber('horizontal_control', Int8, issueMovement)
     rospy.loginfo('Starting horizontal control')
     rospy.spin()
-    port.write(b'motor stop\r\n')
+    port.write(b'motor motor stop\r\n')
     return
 
 
