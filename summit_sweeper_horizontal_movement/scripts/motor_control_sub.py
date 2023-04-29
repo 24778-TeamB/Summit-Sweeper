@@ -89,7 +89,7 @@ def issueMovement(msg: Int8):
     global lastState
     movement = msg.data
     try:
-        rospy.loginfo(MOVEMENT[movement]})
+        rospy.loginfo(MOVEMENT[movement])
     except KeyError:
         rospy.logerr(f'Invalid movement command: {movement} does to correlate with any of the valid movements')
         return
