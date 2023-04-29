@@ -99,6 +99,12 @@ def issueMovement(msg: Int8):
             rospy.logerr('Unable to write to motor controller: port is closed!')
             return
         if MOVEMENT[movement].startswith('motor'):
+            port.write(f'set speed r1 {MID_RIGHT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed r2 {REAR_RIGHT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed r3 {FRONT_RIGHT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed l1 {MID_LEFT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed l2 {MID_LEFT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
+            port.write(f'set speed l3 {MID_LEFT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
             port.write(f'{MOVEMENT[movement]}\r\n'.encode('UTF-8'))
         else:
             port.write(f'set speed r1 {MID_RIGHT_SPEEDS[MOVEMENT[movement]]}\r\n'.encode('UTF-8'))
