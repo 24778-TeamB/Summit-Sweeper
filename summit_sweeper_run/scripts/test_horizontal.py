@@ -27,6 +27,8 @@ DC_MOTOR = {
         'ccw': Int8(data=6)
         }
 
+lastMovement = DC_MOTOR['stop']
+
 ir_mutex = threading.Lock()
 Readings = []
 
@@ -39,26 +41,39 @@ def _sensor_callback(ir: UInt8MultiArray):
     ir_mutex.release()
 
 def cleanRight(readings, motorPub):
+    global lastMovement
     if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
+        newMovement = DC_MOTOR['ccw']
         motorPub.publish(DC_MOTOR['ccw'])
-        return 1
+        retVal = 1
     elif not readings[SENSOR_INDEX['side-right']]:
+        newMovement = DC_MOTOR['stop']
         motorPub.publish(DC_MOTOR['stop'])
-        return -1
+        retVal = -1
     else:
+        newMovement = DC_MOTOR['right']
         motorPub.publish(DC_MOTOR['right'])
-    return 0
+        retVal = 0
+    if newMovement != lastMovement:
+        motorPub.publish(newMovement)
+        lastMovement = newMovement
+    return retVal
 
 def cleanLeft(readings, motorPub):
+    global lastMovement
     if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
-        motorPub.publish(DC_MOTOR['cw'])
-        return 1
+        newMovement = DC_MOTOR['cw']
+        retVal = 1
     elif not readings[SENSOR_INDEX['side-left']]:
-        motorPub.publish(DC_MOTOR['stop'])
-        return -1
+        newMovement = DC_MOTOR['stop']
+        retVal = -1
     else:
-        motorPub.publish(DC_MOTOR['left'])
-    return 0
+        newMovement = DC_MOTOR['left']
+        retVal = 0
+    if newMovement != lastMovement:
+        motorPub.publish(newMovement)
+        lastMovement = newMovement
+    return retVal
 
 def main():
     global Readings
