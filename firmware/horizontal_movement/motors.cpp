@@ -55,7 +55,6 @@ static void updateSpeed()
 bool setMotorSpeed(uint8_t motor, uint8_t Speed)
 {
   bool success = true;
-  moveStop();
 
   switch(motor)
   {
@@ -72,6 +71,7 @@ bool setMotorSpeed(uint8_t motor, uint8_t Speed)
     case LEFT_3: left3_speed = Speed;
       break;
     default: success = false;
+		moveStop();
   }
 
   return success;
