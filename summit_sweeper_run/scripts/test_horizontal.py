@@ -33,6 +33,109 @@ ir_mutex = threading.Lock()
 Readings = []
 
 
+class HorizontalMovement:
+    class Direction(enum.Enum):
+        STOP = 0x0
+        FORWARD = 0x1
+        LEFT = 0x2
+        RIGHT = 0x3
+        CW = 0x4
+        CCW = 0x5
+
+    def __init__(self, dcMotorPub, startingPosLeft: bool):
+        self.direction = self.Direction.STOP
+        self._completedStates = {'left': False, 'right': False}
+        self.dc_motors = dcMotorPub
+        self.lastMovement = self.Direction.STOP
+        self._newStep = True
+        if startingPosLeft:
+            self._startPos = self.Direction.LEFT
+        else:
+            self._startPos = self.Direction.RIGHT
+        self._cleanDirection = self._startPos
+
+    def _correctOrientation(self, readings):
+        # Both sensors are off the wall, move forward
+        if readings[SENSOR_INDEX['center-left']] and readings[SENSOR_INDEX['center-right']]:
+            self.direction = self.Direction.FORWARD
+            if self.direction != self.lastMovement:
+                self.lastMovement = self.Direction.FORWARD
+                self.dc_motors.publish(DC_MOTOR['forward'])
+        # Right sensor off the wall, rotate CCW
+        elif readings[SENSOR_INDEX['center-right']] and not readings[SENSOR_INDEX['center-left']]:
+            self.direction = self.Direction.CCW
+            if self.direction != self.lastMovement:
+                self.lastMovement = self.Direction.CCW
+                self.dc_motors.publish(DC_MOTOR['ccw'])
+        # Left sensor off the wall, rotate CW
+        elif not readings[SENSOR_INDEX['center-right']] and readings[SENSOR_INDEX['center-left']]:
+            self.direction = self.Direction.CW
+            if self.direction != self.lastMovement:
+                self.lastMovement = self.Direction.CW
+                self.dc_motors.publish(DC_MOTOR['cw'])
+        return
+
+    def _cleanRight(self, readings) -> bool:
+        if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
+            self._correctOrientation(readings)
+            return False
+        elif not readings[SENSOR_INDEX['side-right']]:
+            self.direction = self.Direction.STOP
+            if self.direction != self.lastMovement:
+                self.lastMovement = self.Direction.STOP
+                self.dc_motors.publish(DC_MOTOR['stop'])
+            self._completedStates['right'] = True
+            return True
+        self.direction = self.Direction.RIGHT
+        if self.direction != self.lastMovement:
+            self.lastMovement = self.Direction.RIGHT
+            self.dc_motors.publish(DC_MOTOR['right'])
+        return False
+
+    def _cleanLeft(self, readings) -> bool:
+        if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
+            self._correctOrientation(readings)
+            return False
+        elif not readings[SENSOR_INDEX['side-left']]:
+            self.direction = self.Direction.STOP
+            if self.direction != self.lastMovement:
+                self.lastMovement = self.Direction.STOP
+                self.dc_motors.publish(DC_MOTOR['stop'])
+            self._completedStates['left'] = True
+            return True
+        self.direction = self.Direction.LEFT
+        if self.direction != self.lastMovement:
+            self.lastMovement = self.Direction.LEFT
+            self.dc_motors.publish(DC_MOTOR['left'])
+        return False
+
+    def resetStateMachine(self) -> None:
+        self.dc_motors.publish(DC_MOTOR['stop'])
+        self.direction = self.Direction.STOP
+        self.lastMovement = self.Direction.STOP
+        self._completedStates['left'] = False
+        self._completedStates['right'] = False
+        self._newStep = True
+        return
+
+    def next(self, readings) -> bool:
+        if self._newStep:
+            self._newStep = False
+            if self._startPos == self.Direction.LEFT:
+                self._cleanDirection = self.Direction.LEFT
+            else:
+                self._cleanDirection = self.Direction.RIGHT
+        if self._cleanDirection == self.Direction.LEFT:
+            if self._cleanLeft(readings):
+                self._cleanDirection = self.Direction.RIGHT
+        elif self._cleanDirection == self.Direction.RIGHT:
+            if self._cleanRight(readings):
+                self._cleanDirection = self.Direction.LEFT
+        else:
+            rospy.logerr(f'Invalid horizontal movement state: {self._cleanDirection}')
+        return self._completedStates['right'] and self._completedStates['left']
+
+
 def _sensor_callback(ir: UInt8MultiArray):
     global ir_mutex
     global Readings
