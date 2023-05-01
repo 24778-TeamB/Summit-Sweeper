@@ -49,10 +49,10 @@ class HorizontalMovement:
         self.lastMovement = self.Direction.STOP
         self._newStep = True
         if startingPosLeft:
-            self._startPos = self.Direction.LEFT
+            self._startDirection = self.Direction.RIGHT
         else:
-            self._startPos = self.Direction.RIGHT
-        self._cleanDirection = self._startPos
+            self._startDirection = self.Direction.LEFT
+        self._cleanDirection = self._startDirection
 
     def _correctOrientation(self, readings):
         # Both sensors are off the wall, move forward
@@ -121,7 +121,7 @@ class HorizontalMovement:
     def next(self, readings) -> bool:
         if self._newStep:
             self._newStep = False
-            if self._startPos == self.Direction.LEFT:
+            if self._startDirection == self.Direction.LEFT:
                 self._cleanDirection = self.Direction.LEFT
             else:
                 self._cleanDirection = self.Direction.RIGHT
@@ -162,6 +162,7 @@ def main():
         while not stateMachine.next(Readings) and not rospy.is_shutdown():
             rospy.loginfo(stateMachine.direction)
             rospy.Rate(frequency).sleep()
+        rospy.loginfo('Completed step')
         stateMachine.resetStateMachine()
 
 
