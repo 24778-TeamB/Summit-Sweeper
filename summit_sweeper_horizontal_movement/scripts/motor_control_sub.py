@@ -76,12 +76,7 @@ REAR_LEFT_SPEEDS = {
     'rotate ccw': 0
 }
 
-FRONT_RIGHT_SPEED = 125
-FRONT_LEFT_SPEED = 125
-MID_RIGHT_SPEED = 125
-MID_LEFT_SPEED = 125
-REAR_RIGHT_SPEED = 125
-REAR_LEFT_SPEED = 125
+INITIAL_SPEED = 128
 
 
 def issueMovement(msg: Int8):
@@ -133,12 +128,12 @@ def main():
     rospy.loginfo(f'Connecting to {port_name} with a baud of {baud}')
     port = serial.Serial(port_name, baud)
     rospy.loginfo('Calibrating speeds')
-    port.write(f'set speed r1 {MID_RIGHT_SPEED}\r\n'.encode('UTF-8'))
-    port.write(f'set speed r2 {REAR_RIGHT_SPEED}\r\n'.encode('UTF-8'))
-    port.write(f'set speed r3 {FRONT_RIGHT_SPEED}\r\n'.encode('UTF-8'))
-    port.write(f'set speed l1 {MID_LEFT_SPEED}\r\n'.encode('UTF-8'))
-    port.write(f'set speed l2 {REAR_LEFT_SPEED}\r\n'.encode('UTF-8'))
-    port.write(f'set speed l3 {FRONT_LEFT_SPEED}\r\n'.encode('UTF-8'))
+    port.write(f'set speed r1 {INITIAL_SPEED}\r\n'.encode('UTF-8'))
+    port.write(f'set speed r2 {INITIAL_SPEED}\r\n'.encode('UTF-8'))
+    port.write(f'set speed r3 {INITIAL_SPEED}\r\n'.encode('UTF-8'))
+    port.write(f'set speed l1 {INITIAL_SPEED}\r\n'.encode('UTF-8'))
+    port.write(f'set speed l2 {INITIAL_SPEED}\r\n'.encode('UTF-8'))
+    port.write(f'set speed l3 {INITIAL_SPEED}\r\n'.encode('UTF-8'))
 
     rospy.Subscriber('horizontal_control', Int8, issueMovement)
     rospy.loginfo('Starting horizontal control')
