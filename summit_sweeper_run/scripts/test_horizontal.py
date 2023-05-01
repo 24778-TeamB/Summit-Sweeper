@@ -116,6 +116,7 @@ class HorizontalMovement:
         self._completedStates['left'] = False
         self._completedStates['right'] = False
         self._newStep = True
+        rospy.loginfo('Reset state machine')
         return
 
     def next(self, readings) -> bool:
