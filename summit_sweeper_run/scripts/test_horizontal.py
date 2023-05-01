@@ -60,12 +60,14 @@ class HorizontalMovement:
             self.direction = self.Direction.FORWARD
             if self.direction != self.lastMovement:
                 self.lastMovement = self.Direction.FORWARD
+                rospy.loginfo('Forward')
                 self.dc_motors.publish(DC_MOTOR['forward'])
         # Right sensor off the wall, rotate CCW
         elif readings[SENSOR_INDEX['center-right']] and not readings[SENSOR_INDEX['center-left']]:
             self.direction = self.Direction.CW
             if self.direction != self.lastMovement:
                 self.lastMovement = self.Direction.CW
+                rospy.loginfo('cw')
                 self.dc_motors.publish(DC_MOTOR['cw'])
         # Left sensor off the wall, rotate CW
         elif not readings[SENSOR_INDEX['center-right']] and readings[SENSOR_INDEX['center-left']]:
@@ -73,6 +75,7 @@ class HorizontalMovement:
             if self.direction != self.lastMovement:
                 self.lastMovement = self.Direction.CCW
                 self.dc_motors.publish(DC_MOTOR['ccw'])
+                rospy.loginfo('ccw')
         return
 
     def _cleanRight(self, readings) -> bool:
@@ -84,12 +87,14 @@ class HorizontalMovement:
             if self.direction != self.lastMovement:
                 self.lastMovement = self.Direction.STOP
                 self.dc_motors.publish(DC_MOTOR['stop'])
+                rospy.loginfo('stop')
             self._completedStates['right'] = True
             return True
         self.direction = self.Direction.RIGHT
         if self.direction != self.lastMovement:
             self.lastMovement = self.Direction.RIGHT
             self.dc_motors.publish(DC_MOTOR['right'])
+            rospy.loginfo('right')
         return False
 
     def _cleanLeft(self, readings) -> bool:
@@ -101,12 +106,14 @@ class HorizontalMovement:
             if self.direction != self.lastMovement:
                 self.lastMovement = self.Direction.STOP
                 self.dc_motors.publish(DC_MOTOR['stop'])
+                rospy.loginfo('stop')
             self._completedStates['left'] = True
             return True
         self.direction = self.Direction.LEFT
         if self.direction != self.lastMovement:
             self.lastMovement = self.Direction.LEFT
             self.dc_motors.publish(DC_MOTOR['left'])
+            rospy.loginfo('left')
         return False
 
     def resetStateMachine(self) -> None:
@@ -122,10 +129,7 @@ class HorizontalMovement:
     def next(self, readings) -> bool:
         if self._newStep:
             self._newStep = False
-            if self._startDirection == self.Direction.LEFT:
-                self._cleanDirection = self.Direction.LEFT
-            else:
-                self._cleanDirection = self.Direction.RIGHT
+            self.direction = self._startDirection
         if self._cleanDirection == self.Direction.LEFT:
             if self._cleanLeft(readings):
                 self._cleanDirection = self.Direction.RIGHT
