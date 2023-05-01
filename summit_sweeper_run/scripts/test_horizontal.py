@@ -160,6 +160,7 @@ def main():
 
     while not rospy.is_shutdown():
         while stateMachine.next(Readings):
+            rospy.loginfo(stateMachine.direction)
             rospy.Rate(frequency).sleep()
         stateMachine.resetStateMachine()
 
