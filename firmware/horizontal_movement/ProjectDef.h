@@ -1,8 +1,8 @@
 #ifndef PROJECT_DEF_H
 #define PROJECT_DEF_H
 
-#include <stdint.h>
 #include <Arduino.h>
+#include <stdint.h>
 
 #define CMD_LINE_BUF_SIZE 256
 #define NUMTOKENS 20
