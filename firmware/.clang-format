@@ -6,6 +6,8 @@ BreakBeforeBraces: Allman
 #IndentCaseLabels: false
 #ColumnLimit: 80
 Language: Cpp
+AlignConsecutiveMacros: AcrossEmptyLines
+Cpp11BracedListStyle: false
 
 # ---
 

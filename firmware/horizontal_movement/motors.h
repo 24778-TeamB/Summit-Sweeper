@@ -7,9 +7,9 @@
 #define RIGHT_1 0x00
 #define RIGHT_2 0x01
 #define RIGHT_3 0x02
-#define LEFT_1 0x10
-#define LEFT_2 0x11
-#define LEFT_3 0x12
+#define LEFT_1  0x10
+#define LEFT_2  0x11
+#define LEFT_3  0x12
 
 // Configuration routines
 void setupMotors();
@@ -21,6 +21,8 @@ void moveReverse();
 void moveLeft();
 void moveRight();
 void moveStop();
+
+void pulseMotors(uint32_t time, void (*callback)(void));
 
 #if ROTATE_TESTING
 // Rotations

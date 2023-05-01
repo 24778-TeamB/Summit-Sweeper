@@ -187,3 +187,10 @@ void moveStop()
     digitalWrite(LEFT_IN3, LOW);
     digitalWrite(LEFT_IN4, LOW);
 }
+
+void pulseMotors(uint32_t time, void (*callback)(void))
+{
+    callback();
+    delay(time);
+    moveStop();
+}

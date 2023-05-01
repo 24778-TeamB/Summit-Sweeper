@@ -6,11 +6,14 @@
 #include "utils.h"
 #include <stdio.h>
 
-const struct cmd_str Cmd_Array[] = {{CMDSHOW, CmdShow},
-                                    {CMDMOTOR, CmdMotor},
-                                    {CMDROTATE, CmdRotate},
-                                    {CMDSET, CmdSet},
-                                    {OPTINVALID, NULL}};
+const struct cmd_str Cmd_Array[] = {
+    { CMDSHOW, CmdShow },     //
+    { CMDMOTOR, CmdMotor },   //
+    { CMDROTATE, CmdRotate }, //
+    { CMDSET, CmdSet },       //
+    { CMDPULSE, CmdPulse },   //
+    { OPTINVALID, NULL },
+};
 
 int8_t CmdShow(char *cmdBuf, uint16_t bufSize, uint16_t argc,
                char const *const *argv)
@@ -115,6 +118,46 @@ int8_t CmdSet(char *cmdBuf, uint16_t bufSize, uint16_t argc,
         Speed = (uint8_t)atoi(argv[3]);
         success = setMotorSpeed(motor, Speed);
         retVal = success ? RET_OK : RET_ERROR;
+        break;
+    }
+
+    return retVal;
+}
+
+int8_t CmdPulse(char *cmdBuf, uint16_t bufSize, uint16_t argc,
+                char const *const *argv)
+{
+    int8_t retVal = RET_ERROR;
+    uint16_t token;
+    uint32_t time;
+
+    if (argc < 3)
+    {
+        return retVal;
+    }
+
+    token = TokenToNum(argv[1]);
+
+    if (!isInteger(argv[2]))
+    {
+        return retVal;
+    }
+
+    time = (uint32_t)atoi(argv[2]);
+
+    switch (token)
+    {
+    case OPTFORWARD:
+        pulseMotors(time, moveForward);
+        break;
+    case OPTLEFT:
+        pulseMotors(time, moveLeft);
+        break;
+    case OPTRIGHT:
+        pulseMotors(time, moveRight);
+        break;
+    case OPTREVERSE:
+        pulseMotors(time, moveReverse);
         break;
     }
 

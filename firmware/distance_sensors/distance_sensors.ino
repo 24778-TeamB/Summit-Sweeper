@@ -11,7 +11,7 @@ ros::NodeHandle nh;
 std_msgs::UInt8MultiArray arr_msg;
 ros::Publisher dist("ir_sensor", &arr_msg);
 
-uint8_t distance[NUM_SENSORS] = {0};
+uint8_t distance[NUM_SENSORS] = { 0 };
 
 void setup(void)
 {

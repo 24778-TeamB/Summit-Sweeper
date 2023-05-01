@@ -5,8 +5,8 @@
 #if 0
 
 #define V_SOUND_INV 29.1
-#define HIGH_TIME 10
-#define LOW_TIME 2
+#define HIGH_TIME   10
+#define LOW_TIME    2
 
 float head_right_avg[SENSOR_BUF_SIZE] = { 0 };
 float head_left_avg[SENSOR_BUF_SIZE] = { 0 };
