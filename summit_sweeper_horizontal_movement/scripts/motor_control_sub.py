@@ -1,9 +1,10 @@
 import rospy
 from std_msgs.msg import Int8
 import serial
+from typing import Optional
 import sys
 
-port = None
+port: Optional[serial.Serial] = None
 lastState = 0
 
 MOVEMENT = {
@@ -111,6 +112,8 @@ def issueMovement(msg: Int8):
             port.write(b'motor forward\r\n')
     except serial.SerialTimeoutException:
         rospy.logerr('Horizontal Motor Controller Timed out!')
+    except ValueError:
+        rospy.logerr('Bad serial object')
     return
 
 
