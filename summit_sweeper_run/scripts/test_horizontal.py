@@ -63,16 +63,16 @@ class HorizontalMovement:
                 self.dc_motors.publish(DC_MOTOR['forward'])
         # Right sensor off the wall, rotate CCW
         elif readings[SENSOR_INDEX['center-right']] and not readings[SENSOR_INDEX['center-left']]:
-            self.direction = self.Direction.CCW
-            if self.direction != self.lastMovement:
-                self.lastMovement = self.Direction.CCW
-                self.dc_motors.publish(DC_MOTOR['ccw'])
-        # Left sensor off the wall, rotate CW
-        elif not readings[SENSOR_INDEX['center-right']] and readings[SENSOR_INDEX['center-left']]:
             self.direction = self.Direction.CW
             if self.direction != self.lastMovement:
                 self.lastMovement = self.Direction.CW
                 self.dc_motors.publish(DC_MOTOR['cw'])
+        # Left sensor off the wall, rotate CW
+        elif not readings[SENSOR_INDEX['center-right']] and readings[SENSOR_INDEX['center-left']]:
+            self.direction = self.Direction.CCW
+            if self.direction != self.lastMovement:
+                self.lastMovement = self.Direction.CCW
+                self.dc_motors.publish(DC_MOTOR['ccw'])
         return
 
     def _cleanRight(self, readings) -> bool:
@@ -159,7 +159,7 @@ def main():
     stateMachine = HorizontalMovement(horizontal_movement, True)
 
     while not rospy.is_shutdown():
-        while not stateMachine.next(Readings):
+        while not stateMachine.next(Readings) and not rospy.is_shutdown():
             rospy.loginfo(stateMachine.direction)
             rospy.Rate(frequency).sleep()
         stateMachine.resetStateMachine()
