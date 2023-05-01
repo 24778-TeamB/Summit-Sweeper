@@ -11,6 +11,7 @@ MAPPINGS = {
 def parse_serial_number(hwid: str) -> str:
     return hwid.split(' ')[2].split('=')[1]
 
+
 def find_port(FTDI_SN: str) -> str:
     ports = comports()
     for port in ports:
@@ -19,9 +20,11 @@ def find_port(FTDI_SN: str) -> str:
             return port.device
     raise Exception(f'Port not found for {FTDI_SN}')
 
+
 def print_usage() -> None:
     print('USAGE: python3 map-arduinos.py [sensors | motors]')
     sys.exit()
+
 
 def main(mapping):
     if mapping not in MAPPINGS.keys():
@@ -29,6 +32,7 @@ def main(mapping):
     port = find_port(MAPPINGS[mapping])
     print(port)
     return
+
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
