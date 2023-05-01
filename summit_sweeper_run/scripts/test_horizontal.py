@@ -159,7 +159,7 @@ def main():
     stateMachine = HorizontalMovement(horizontal_movement, True)
 
     while not rospy.is_shutdown():
-        while stateMachine.next(Readings):
+        while not stateMachine.next(Readings):
             rospy.loginfo(stateMachine.direction)
             rospy.Rate(frequency).sleep()
         stateMachine.resetStateMachine()
