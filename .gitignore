@@ -1,2 +1,3 @@
 *.swp
 /firmware/*/_build
+.idea/

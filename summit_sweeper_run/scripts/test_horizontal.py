@@ -143,40 +143,6 @@ def _sensor_callback(ir: UInt8MultiArray):
     Readings = ir.data
     ir_mutex.release()
 
-def cleanRight(readings, motorPub):
-    global lastMovement
-    if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
-        newMovement = DC_MOTOR['ccw']
-        motorPub.publish(DC_MOTOR['ccw'])
-        retVal = 1
-    elif not readings[SENSOR_INDEX['side-right']]:
-        newMovement = DC_MOTOR['stop']
-        motorPub.publish(DC_MOTOR['stop'])
-        retVal = -1
-    else:
-        newMovement = DC_MOTOR['right']
-        motorPub.publish(DC_MOTOR['right'])
-        retVal = 0
-    if newMovement != lastMovement:
-        motorPub.publish(newMovement)
-        lastMovement = newMovement
-    return retVal
-
-def cleanLeft(readings, motorPub):
-    global lastMovement
-    if readings[SENSOR_INDEX['center-right']] or readings[SENSOR_INDEX['center-left']]:
-        newMovement = DC_MOTOR['cw']
-        retVal = 1
-    elif not readings[SENSOR_INDEX['side-left']]:
-        newMovement = DC_MOTOR['stop']
-        retVal = -1
-    else:
-        newMovement = DC_MOTOR['left']
-        retVal = 0
-    if newMovement != lastMovement:
-        motorPub.publish(newMovement)
-        lastMovement = newMovement
-    return retVal
 
 def main():
     global Readings
@@ -190,20 +156,12 @@ def main():
     rospy.Subscriber('ir_sensor', UInt8MultiArray, _sensor_callback)
     time.sleep(1)
     horizontal_movement = rospy.Publisher('horizontal_control', Int8, queue_size=4)
-    cleanRight(Readings, horizontal_movement)
-    state = True
+    stateMachine = HorizontalMovement(horizontal_movement, True)
 
     while not rospy.is_shutdown():
-        ir_mutex.acquire()
-        readings = copy.deepcopy(Readings)
-        ir_mutex.release()
-        if state:
-            result = cleanRight(readings, horizontal_movement)
-            state = result != -1
-        else:
-            result = cleanLeft(readings, horizontal_movement)
-            state = result == -1
-        rospy.Rate(frequency).sleep()
+        while stateMachine.next(Readings):
+            rospy.Rate(frequency).sleep()
+        stateMachine.resetStateMachine()
 
 
 if __name__ == '__main__':
