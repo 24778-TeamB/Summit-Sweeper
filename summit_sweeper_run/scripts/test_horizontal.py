@@ -130,6 +130,10 @@ class HorizontalMovement:
         if self._newStep:
             self._newStep = False
             self.direction = self._startDirection
+            if self.direction == self.Direction.RIGHT:
+                self.dc_motors.publish(DC_MOTOR['right'])
+            else:
+                self.dc_motors.publish(DC_MOTOR['left'])
         if self._cleanDirection == self.Direction.LEFT:
             if self._cleanLeft(readings):
                 self._cleanDirection = self.Direction.RIGHT
