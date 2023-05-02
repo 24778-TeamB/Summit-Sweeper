@@ -138,6 +138,11 @@ void moveLeft()
     digitalWrite(RIGHT_IN4, HIGH);
     digitalWrite(LEFT_IN1, LOW);
     digitalWrite(LEFT_IN2, HIGH);
+
+	digitalWrite(FRONT_IN1, HIGH);
+	digitalWrite(FRONT_IN2, LOW);
+	digitalWrite(FRONT_IN3, HIGH);
+	digitalWrite(FRONT_IN4, LOW);
 }
 
 void moveRight()
@@ -161,6 +166,11 @@ void moveRight()
     digitalWrite(RIGHT_IN4, LOW);
     digitalWrite(LEFT_IN1, HIGH);
     digitalWrite(LEFT_IN2, LOW);
+
+	digitalWrite(FRONT_IN1, HIGH);
+	digitalWrite(FRONT_IN2, LOW);
+	digitalWrite(FRONT_IN3, HIGH);
+	digitalWrite(FRONT_IN4, LOW);
 }
 
 void moveStop()
