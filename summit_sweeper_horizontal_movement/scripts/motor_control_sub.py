@@ -58,7 +58,7 @@ MID_LEFT_SPEEDS = {
 }
 
 REAR_RIGHT_SPEEDS = {
-    'motor right': 200,
+    'motor right': 128,
     'motor left': 255,
     'motor forward': 255,
     'motor reverse': 255,
