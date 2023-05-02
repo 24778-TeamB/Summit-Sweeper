@@ -163,6 +163,10 @@ def wait_for_subscribers(horizontal):
     return
 
 
+def on_shutdown():
+    
+
+
 def main():
     global Readings
     global ir_mutex
