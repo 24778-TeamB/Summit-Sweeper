@@ -39,7 +39,7 @@ FRONT_LEFT_SPEEDS = {
 
 MID_RIGHT_SPEEDS = {
     'motor right': 255,
-    'motor left': 255,
+    'motor left': 200,
     'motor forward': 255,
     'motor reverse': 255,
     'motor stop': 0,
@@ -48,7 +48,7 @@ MID_RIGHT_SPEEDS = {
 }
 
 MID_LEFT_SPEEDS = {
-    'motor right': 255,
+    'motor right': 200,
     'motor left': 255,
     'motor forward': 255,
     'motor reverse': 255,
@@ -58,7 +58,7 @@ MID_LEFT_SPEEDS = {
 }
 
 REAR_RIGHT_SPEEDS = {
-    'motor right': 255,
+    'motor right': 200,
     'motor left': 255,
     'motor forward': 255,
     'motor reverse': 255,
@@ -69,7 +69,7 @@ REAR_RIGHT_SPEEDS = {
 
 REAR_LEFT_SPEEDS = {
     'motor right': 255,
-    'motor left': 255,
+    'motor left': 200,
     'motor forward': 255,
     'motor reverse': 255,
     'motor stop': 0,
