@@ -7,7 +7,7 @@
 #define CMD_LINE_BUF_SIZE 256
 #define NUMTOKENS         20
 
-#define BAUD              9600
+#define BAUD              115200
 
 // Pin Definitions
 #define RIGHT_EN_A 4

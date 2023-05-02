@@ -124,7 +124,7 @@ def main():
     rospy.init_node('summit_sweeper_horizontal_movement')
 
     port_name = rospy.get_param('~port', '/dev/ttyACM0')
-    baud = int(rospy.get_param('~baud', '9600'))
+    baud = int(rospy.get_param('~baud', '115200'))
     rospy.on_shutdown(shutdown_hook)
 
     sys.argv = rospy.myargv(argv=sys.argv)
