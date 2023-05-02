@@ -31,6 +31,21 @@
 #define FRONT_IN3  30
 #define FRONT_IN4  31
 
+#define FRONT_RIGHT 0
+#define FRONT_LEFT 1
+#define MID_RIGHT 2
+#define MID_LEFT 3
+#define REAR_RIGHT 4
+#define REAR_LEFT 5
+
+#define NUM_MOTORS 6
+
+#define MOVE_STOP 0
+#define MOVE_RIGHT 1
+#define MOVE_LEFT 2
+#define MOVE_FORWARD 3
+#define MOVE_REVERSE 4
+
 // Events
 #define E_NO_EVENT      0x00000000
 #define E_SERIAL_ACTIVE 0x00000001
@@ -43,7 +58,5 @@ const char projectTeam[] = "Team B";
 #define MAJOR_VER 0
 #define MINOR_VER 0
 #define BUILD     0
-
-extern volatile uint32_t gEvents;
 
 #endif // !PROJECT_DEF_H

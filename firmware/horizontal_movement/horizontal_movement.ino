@@ -1,47 +1,42 @@
-#include "CommandInterface.h"
-#include "Commands.h"
-#include "ProjectDef.h"
 #include "motors.h"
+#include "ProjectDef.h"
 #include <stdint.h>
+#include <ros.h>
+#include <std_msgs/UInt8MultiArray.h>
 
-volatile uint32_t gEvents;
-uint16_t transfer_status;
+ros::NodeHandle nh;
+
+void motorsCallback(const std_msgs::UInt8MultiArray & motorSpeeds)
+{
+	uint8_t speed[NUM_MOTORS];
+	uint8_t direction;
+
+	if (motorSpeeds.data_length != (NUM_MOTORS + 1))
+	{
+		return;
+	}
+
+	direction = motorSpeeds.data[0];
+
+	for (uint16_t i = 1; i < NUM_MOTORS; i++)
+	{
+		speed[i - 1] = motorSpeeds.data[i];
+	}
+
+	updateMotors(direction, speed);
+}
+
+ros::Subscriber<std_msgs::UInt8MultiArray> sub("horizontal_control", &motorsCallback);
+
 
 void setup(void)
 {
-    // Configure Serial
-    Serial.begin(BAUD);
-    CIClear();
-
-    // Configure motors
-    setupMotors();
-    // setMotorSpeed(255);
-
-    gEvents = E_NO_EVENT;
+	nh.initNode();
+	nh.subscribe(sub);
 }
 
 void loop(void)
 {
-    if (gEvents & E_SERIAL_ACTIVE)
-    {
-        transfer_status = GetCommand();
-        if (transfer_status == RX_COMPLETE)
-        {
-            DispatchCommand();
-        }
-        else if (transfer_status >= RX_OVERFLOW)
-        {
-            Serial.write("Receive Buffer Overflowed!");
-            CIClear();
-        }
-        gEvents &= ~E_SERIAL_ACTIVE;
-    }
-}
-
-void serialEvent(void)
-{
-    if (Serial.available())
-    {
-        gEvents |= E_SERIAL_ACTIVE;
-    }
+	nh.spinOnce();
+	delay(1);
 }

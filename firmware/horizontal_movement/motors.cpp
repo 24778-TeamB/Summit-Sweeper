@@ -85,6 +85,30 @@ bool setMotorSpeed(uint8_t motor, uint8_t Speed)
     return success;
 }
 
+void updateMotors(uint8_t movement, uint8_t *speeds)
+{
+	right3_speed = speeds[FRONT_RIGHT];
+	right2_speed = speeds[REAR_RIGHT];
+	right1_speed = speeds[MID_RIGHT];
+	left3_speed = speeds[FRONT_LEFT];
+	left2_speed = speeds[REAR_LEFT];
+	left1_speed = speeds[MID_LEFT];
+
+	switch (movement)
+	{
+	case MOVE_STOP: moveStop();
+		break;
+	case MOVE_FORWARD: moveForward();
+		break;
+	case MOVE_REVERSE: moveReverse();
+		break;
+	case MOVE_RIGHT: moveRight();
+		break;
+	case MOVE_LEFT: moveLeft();
+		break;
+	}
+}
+
 void moveForward()
 {
     updateSpeed();

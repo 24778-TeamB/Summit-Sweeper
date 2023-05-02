@@ -15,6 +15,8 @@
 void setupMotors();
 bool setMotorSpeed(uint8_t motor, uint8_t Speed);
 
+void updateMotors(uint8_t movement, uint8_t *speeds);
+
 // Movements
 void moveForward();
 void moveReverse();
