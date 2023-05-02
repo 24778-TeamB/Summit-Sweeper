@@ -5,36 +5,40 @@ import threading
 import time
 
 DC_MOTOR = {
-        'forward': 3,
-        'reverse': 4,
-        'left': 1,
-        'right': 2,
-        'stop': 0
-        }
+    'forward': 3,
+    'reverse': 4,
+    'left': 1,
+    'right': 2,
+    'stop': 0,
+    'cw': 5,
+    'ccw': 6,
+    'climb': 7
+}
 
 VACUUM = {
-        'on': 1,
-        'off': 0,
-        'test': 2
-        }
+    'on': 1,
+    'off': 0,
+    'test': 2
+}
 
 CLEAN_STATE = {
-        'no-state': -1,
-        'left': 0,
-        'right': 1,
-        'step': 2
-        }
+    'no-state': -1,
+    'left': 0,
+    'right': 1,
+    'step': 2
+}
 
 SENSOR_INDEX = {
-            'center-left': 1,
-            'center-right': 0,
-            'rear-left': 3,
-            'rear-right': 2,
-            'side-left': 5,
-            'side-right': 4
-        }
+    'center-left': 1,
+    'center-right': 0,
+    'rear-left': 3,
+    'rear-right': 2,
+    'side-left': 5,
+    'side-right': 4
+}
 
 READINGS = []
+
 
 class stepStateMachine:
     class climbState(enum.Enum):
@@ -44,13 +48,9 @@ class stepStateMachine:
         LIFT_ENDS = 0x3
         FORWARD2 = 0X4
 
-    def __init__(self, dc_motor_pub, vacuum, frontL = 0, rearL = 0, frontH = 1, rearH = 1):
-        self.frontTargets = {}
-        self.rearTargets = {}
-        self.frontTargets['low'] = Int32(data=frontL)
-        self.frontTargets['high'] = Int32(data=frontH)
-        self.rearTargets['low'] = Int32(data=rearL)
-        self.rearTargets['high'] = Int32(data=rearH)
+    def __init__(self, dc_motor_pub, vacuum, frontL=0, rearL=0, frontH=1, rearH=1):
+        self.frontTargets = {'low': Int32(data=frontL), 'high': Int32(data=frontH)}
+        self.rearTargets = {'low': Int32(data=rearL), 'high': Int32(data=rearH)}
         self.mtx1 = threading.Lock()
         self.mtx2 = threading.Lock()
         self.frontPos = 0
@@ -98,7 +98,7 @@ class stepStateMachine:
                     self.vert_movement1.publish(self.frontTargets['high'])
                     self.vert_movement2.publish(self.rearTargets['high'])
                 else:
-                    self.dc_pub.publish(DC_MOTOR['forward'])
+                    self.dc_pub.publish(DC_MOTOR['climb'])
             elif self.currentState == self.climbState.LIFT_ENDS:
                 if self.frontPos == self.frontTargets['high'].data and self.rearPos == self.rearTargets['high'].data:
                     self.currentState = self.climbState.FORWARD2
@@ -109,7 +109,7 @@ class stepStateMachine:
                     self.vacuum.publish(VACUUM['on'])
                     finished = True
                 else:
-                    self.dc_pub.publish(DC_MOTOR['forward'])
+                    self.dc_pub.publish(DC_MOTOR['climb'])
         else:
             rospy.logerr('Not implemented')
         self.mtx1.release()
@@ -119,7 +119,8 @@ class stepStateMachine:
 
 def wait_for_subscribers(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pub):
     i = 0
-    while not rospy.is_shutdown() and (horizontal_pub.get_num_connections() == 0 or vertical_pub1.get_num_connections() == 0 or vertical_pub2.get_num_connections() == 0 or vacuum_pub.get_num_connections() == 0):
+    while not rospy.is_shutdown() and (
+            horizontal_pub.get_num_connections() == 0 or vertical_pub1.get_num_connections() == 0 or vertical_pub2.get_num_connections() == 0 or vacuum_pub.get_num_connections() == 0):
         if i == 4:
             if horizontal_pub.get_num_connections() == 0:
                 rospy.loginfo(f'Waiting for subscriber to connect to {horizontal_pub.name}')
@@ -136,19 +137,19 @@ def wait_for_subscribers(horizontal_pub, vertical_pub1, vertical_pub2, vacuum_pu
 
 def _sensors_callback(data: UInt8MultiArray):
     global READINGS
-    #sensor_mtx.acquire()
+    # sensor_mtx.acquire()
     READINGS = data.data
-    #sensor_mtx.release()
+    # sensor_mtx.release()
     return
 
 
 def main():
     global READINGS
     rospy.init_node('step_test')
-    vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size = 1)
-    horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size = 8)
+    vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size=1)
+    horizontal_pub = rospy.Publisher('horizontal_control', Int8, queue_size=8)
     rospy.Subscriber('ir_sensor', UInt8MultiArray, _sensors_callback)
-    step = stepStateMachine(horizontal_pub, vacuum_pub, frontL = -16700, rearL = -16700, frontH=0, rearH=0)
+    step = stepStateMachine(horizontal_pub, vacuum_pub, frontL=-16700, rearL=-16700, frontH=0, rearH=0)
     wait_for_subscribers(horizontal_pub, step.vert_movement1, step.vert_movement2, vacuum_pub)
     done = False
     while not done and not rospy.is_shutdown():
@@ -159,4 +160,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
