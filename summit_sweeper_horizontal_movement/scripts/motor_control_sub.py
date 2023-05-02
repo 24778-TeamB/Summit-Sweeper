@@ -25,7 +25,7 @@ FRONT_RIGHT_SPEEDS = {
     'motor reverse': 255,
     'motor stop': 0,
     'rotate cw': 0,
-    'rotate ccw': 0,
+    'rotate ccw': 255,
     'climb': 128
 }
 
@@ -35,7 +35,7 @@ FRONT_LEFT_SPEEDS = {
     'motor forward': 255,
     'motor reverse': 255,
     'motor stop': 0,
-    'rotate cw': 0,
+    'rotate cw': 255,
     'rotate ccw': 0,
     'climb': 128
 }
