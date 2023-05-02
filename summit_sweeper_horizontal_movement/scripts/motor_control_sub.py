@@ -111,12 +111,21 @@ def issueMovement(msg: Int8):
     return
 
 
+def shutdown_hook():
+    global port
+    if port is not None:
+        if not port.closed:
+            port.write(b'motor stop\r\n')
+            port.close()
+
+
 def main():
     global port
     rospy.init_node('summit_sweeper_horizontal_movement')
 
     port_name = rospy.get_param('~port', '/dev/ttyACM0')
     baud = int(rospy.get_param('~baud', '9600'))
+    rospy.on_shutdown(shutdown_hook)
 
     sys.argv = rospy.myargv(argv=sys.argv)
     if len(sys.argv) >= 2:
@@ -135,7 +144,6 @@ def main():
     rospy.Subscriber('horizontal_control', Int8, issueMovement)
     rospy.loginfo('Starting horizontal control')
     rospy.spin()
-    port.write(b'motor motor stop\r\n')
     return
 
 
