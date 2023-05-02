@@ -130,10 +130,6 @@ class HorizontalMovement:
         if self._newStep:
             self._newStep = False
             self.direction = self._startDirection
-            if self.direction == self.Direction.RIGHT:
-                self.dc_motors.publish(DC_MOTOR['right'])
-            else:
-                self.dc_motors.publish(DC_MOTOR['left'])
         if self._cleanDirection == self.Direction.LEFT:
             if self._cleanLeft(readings):
                 self._cleanDirection = self.Direction.RIGHT
@@ -153,6 +149,20 @@ def _sensor_callback(ir: UInt8MultiArray):
     ir_mutex.release()
 
 
+def wait_for_subscribers(horizontal):
+    i = 0
+    while not rospy.is_shutdown() and horizontal.get_num_connections() == 0:
+        if i == 4:
+            if horizontal.get_num_connections() == 0:
+                rospy.loginfo(f'Waiting for subscriber to connect to {horizontal.name}')
+        rospy.Rate(10).sleep()
+        i += 1
+        i %= 5
+    if rospy.is_shutdown():
+        raise Exception('Got shutdown request before subscribers could connect')
+    return
+
+
 def main():
     global Readings
     global ir_mutex
@@ -165,6 +175,7 @@ def main():
     rospy.Subscriber('ir_sensor', UInt8MultiArray, _sensor_callback)
     time.sleep(1)
     horizontal_movement = rospy.Publisher('horizontal_control', Int8, queue_size=4)
+    wait_for_subscribers(horizontal_movement)
     stateMachine = HorizontalMovement(horizontal_movement, True)
 
     while not rospy.is_shutdown():
