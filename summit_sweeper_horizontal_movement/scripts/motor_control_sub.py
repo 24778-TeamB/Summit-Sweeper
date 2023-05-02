@@ -8,14 +8,15 @@ port: Optional[serial.Serial] = None
 lastState = 0
 
 MOVEMENT = {
-        0: 'motor stop',
-        1: 'motor left',
-        2: 'motor right',
-        3: 'motor forward',
-        4: 'motor reverse',
-        5: 'rotate cw',
-        6: 'rotate ccw'
-        }
+    0: 'motor stop',
+    1: 'motor left',
+    2: 'motor right',
+    3: 'motor forward',
+    4: 'motor reverse',
+    5: 'rotate cw',
+    6: 'rotate ccw',
+    7: 'climb'
+}
 
 FRONT_RIGHT_SPEEDS = {
     'motor right': 0,
@@ -24,7 +25,8 @@ FRONT_RIGHT_SPEEDS = {
     'motor reverse': 255,
     'motor stop': 0,
     'rotate cw': 0,
-    'rotate ccw': 0
+    'rotate ccw': 0,
+    'climb': 128
 }
 
 FRONT_LEFT_SPEEDS = {
@@ -34,7 +36,8 @@ FRONT_LEFT_SPEEDS = {
     'motor reverse': 255,
     'motor stop': 0,
     'rotate cw': 0,
-    'rotate ccw': 0
+    'rotate ccw': 0,
+    'climb': 128
 }
 
 MID_RIGHT_SPEEDS = {
@@ -45,6 +48,7 @@ MID_RIGHT_SPEEDS = {
     'motor stop': 0,
     'rotate cw': 0,
     'rotate ccw': 255,
+    'climb': 128
 }
 
 MID_LEFT_SPEEDS = {
@@ -54,7 +58,8 @@ MID_LEFT_SPEEDS = {
     'motor reverse': 255,
     'motor stop': 0,
     'rotate cw': 255,
-    'rotate ccw': 0
+    'rotate ccw': 0,
+    'climb': 128
 }
 
 REAR_RIGHT_SPEEDS = {
@@ -64,7 +69,8 @@ REAR_RIGHT_SPEEDS = {
     'motor reverse': 255,
     'motor stop': 0,
     'rotate cw': 0,
-    'rotate ccw': 255
+    'rotate ccw': 255,
+    'climb': 128
 }
 
 REAR_LEFT_SPEEDS = {
@@ -74,7 +80,8 @@ REAR_LEFT_SPEEDS = {
     'motor reverse': 255,
     'motor stop': 0,
     'rotate cw': 255,
-    'rotate ccw': 0
+    'rotate ccw': 0,
+    'climb': 128
 }
 
 INITIAL_SPEED = 128
@@ -149,4 +156,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
