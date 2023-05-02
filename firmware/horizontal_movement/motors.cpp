@@ -139,23 +139,16 @@ void moveLeft()
     digitalWrite(LEFT_IN1, LOW);
     digitalWrite(LEFT_IN2, HIGH);
 
-	digitalWrite(FRONT_IN1, HIGH);
-	digitalWrite(FRONT_IN2, LOW);
-	digitalWrite(FRONT_IN3, HIGH);
-	digitalWrite(FRONT_IN4, LOW);
+    digitalWrite(FRONT_IN1, HIGH);
+    digitalWrite(FRONT_IN2, LOW);
+    digitalWrite(FRONT_IN3, HIGH);
+    digitalWrite(FRONT_IN4, LOW);
 }
 
 void moveRight()
 {
 
     updateSpeed();
-
-    analogWrite(FRONT_EN_A, 0);
-    analogWrite(FRONT_EN_B, 0);
-    digitalWrite(FRONT_IN1, LOW);
-    digitalWrite(FRONT_IN2, LOW);
-    digitalWrite(FRONT_IN3, LOW);
-    digitalWrite(FRONT_IN4, LOW);
 
     digitalWrite(RIGHT_IN1, HIGH);
     digitalWrite(RIGHT_IN2, LOW);
@@ -167,10 +160,10 @@ void moveRight()
     digitalWrite(LEFT_IN1, HIGH);
     digitalWrite(LEFT_IN2, LOW);
 
-	digitalWrite(FRONT_IN1, HIGH);
-	digitalWrite(FRONT_IN2, LOW);
-	digitalWrite(FRONT_IN3, HIGH);
-	digitalWrite(FRONT_IN4, LOW);
+    digitalWrite(FRONT_IN1, HIGH);
+    digitalWrite(FRONT_IN2, LOW);
+    digitalWrite(FRONT_IN3, HIGH);
+    digitalWrite(FRONT_IN4, LOW);
 }
 
 void moveStop()
