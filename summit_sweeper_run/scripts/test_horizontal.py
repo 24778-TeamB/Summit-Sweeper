@@ -1,7 +1,7 @@
 import copy
 
 import rospy
-from std_msgs.msg import Int32, Int8, Float32MultiArray, UInt8MultiArray
+from std_msgs.msg import UInt8MultiArray
 import enum
 import threading
 import time
