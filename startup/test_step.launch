@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
 <launch>
 	<node pkg="summit_sweeper_run" type="test_step.py" name="step_test" output="screen"></node>
-	<node pkg="summit_sweeper_run" type="test_horizontal.py" name="horizontal_test" args="1" output="screen"></node>
 	<node name="serial_node1" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0"></node>
 	<node name="serial_node2" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM1"></node>
-	<node pkg="summit_sweeper_stepper_control" type="vertical_control.py" name="summit_sweeper_vertical_control" output="screen"></node>
-	<node pkg="summit_sweeper_vacuum_control" type="vacuum_control_sub.py" name="summit_sweeper_vacuum_control" output="screen"></node>
+	<node pkg="summit_sweeper_stepper_control" type="vertical_control.py" name="summit_sweeper_vertical_control"></node>
+	<node pkg="summit_sweeper_vacuum_control" type="vacuum_control_sub.py" name="summit_sweeper_vacuum_control"></node>
 </launch>
