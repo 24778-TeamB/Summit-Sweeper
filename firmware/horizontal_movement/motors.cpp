@@ -45,6 +45,8 @@ void setupMotors()
 
 static void updateSpeed()
 {
+	moveStop();
+	delay(100);
     analogWrite(RIGHT_EN_A, right1_speed);
     analogWrite(RIGHT_EN_B, right2_speed);
     analogWrite(LEFT_EN_B, left1_speed);
