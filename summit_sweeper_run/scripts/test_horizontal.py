@@ -6,6 +6,7 @@ import enum
 import threading
 import time
 import sys
+from horizontal_speed import horizontalSpeeds
 
 
 SENSOR_INDEX = {
@@ -17,17 +18,7 @@ SENSOR_INDEX = {
             'side-right': 5
         }
 
-DC_MOTOR = {
-        'forward': Int8(data=3),
-        'reverse': Int8(data=4),
-        'left': Int8(data=1),
-        'right': Int8(data=2),
-        'stop': Int8(data=0),
-        'cw': Int8(data=5),
-        'ccw': Int8(data=6)
-        }
-
-lastMovement = DC_MOTOR['stop']
+DC_MOTOR = horizontalSpeeds('https://raw.githubusercontent.com/24778-TeamB/motor-speeds/master/speeds.json')
 
 ir_mutex = threading.Lock()
 Readings = []

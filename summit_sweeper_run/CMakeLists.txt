@@ -12,5 +12,6 @@ catkin_install_python(PROGRAMS
   scripts/summit_sweeper.py
   scripts/test_step.py
   scripts/test_horizontal.py
+  scripts/horizontal_speed.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
