@@ -241,7 +241,6 @@ def main():
         return
     rospy.init_node('horizontal_test', disable_signals=True)
     rospy.Subscriber('ir_sensor', UInt8MultiArray, _sensor_callback)
-    time.sleep(1)
     horizontal_movement = rospy.Publisher('horizontal_control', UInt8MultiArray, queue_size=4)
     wait_for_subscribers(horizontal_movement)
     stateMachine = HorizontalMovement(horizontal_movement, True)
