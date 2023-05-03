@@ -218,6 +218,19 @@ def wait_for_subscribers(horizontal):
     return
 
 
+def wait_for_readings():
+    global Readings
+    i = 0
+    while not rospy.is_shutdown() and not Readings:
+        if i == 4:
+            rospy.Rate(10).sleep()
+            i += 1
+            i %= 5
+    if rospy.is_shutdown():
+        raise Exception('Got shutdown request before reading sensors')
+    return
+
+
 def main():
     global Readings
     global ir_mutex
@@ -232,6 +245,7 @@ def main():
     horizontal_movement = rospy.Publisher('horizontal_control', UInt8MultiArray, queue_size=4)
     wait_for_subscribers(horizontal_movement)
     stateMachine = HorizontalMovement(horizontal_movement, True)
+    wait_for_readings()
 
     while not rospy.is_shutdown():
         try:
