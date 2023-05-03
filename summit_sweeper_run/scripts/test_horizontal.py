@@ -132,23 +132,6 @@ class HorizontalMovement:
         return self._completedStates['right'] and self._completedStates['left']
 
 
-# https://stackoverflow.com/a/21919644/11854714
-class DelayedKeyboardInterrupt:
-
-    def __enter__(self):
-        self.signal_received = False
-        self.old_handler = signal.signal(signal.SIGINT, self.handler)
-
-    def handler(self, sig, frame):
-        self.signal_received = (sig, frame)
-        logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
-
-    def __exit__(self, type, value, traceback):
-        signal.signal(signal.SIGINT, self.old_handler)
-        if self.signal_received:
-            self.old_handler(*self.signal_received)
-
-
 def _sensor_callback(ir: UInt8MultiArray):
     global ir_mutex
     global Readings
