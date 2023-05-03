@@ -2,18 +2,10 @@ import rospy
 from std_msgs.msg import Int32, Int8, Float32MultiArray, UInt8MultiArray
 import enum
 import threading
+from horizontal_speed import horizontalSpeeds
 import time
 
-DC_MOTOR = {
-    'forward': 3,
-    'reverse': 4,
-    'left': 1,
-    'right': 2,
-    'stop': 0,
-    'cw': 5,
-    'ccw': 6,
-    'climb': 7
-}
+DC_MOTOR = horizontalSpeeds('https://raw.githubusercontent.com/24778-TeamB/motor-speeds/master/speeds.json')
 
 VACUUM = {
     'on': 1,
