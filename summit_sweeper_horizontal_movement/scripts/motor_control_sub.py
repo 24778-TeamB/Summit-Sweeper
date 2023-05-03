@@ -20,7 +20,7 @@ MOVEMENT = {
 
 FRONT_RIGHT_SPEEDS = {
     'motor right': 255,
-    'motor left': 255,
+    'motor left': 128,
     'motor forward': 255,
     'motor reverse': 255,
     'motor stop': 0,
@@ -30,7 +30,7 @@ FRONT_RIGHT_SPEEDS = {
 }
 
 FRONT_LEFT_SPEEDS = {
-    'motor right': 255,
+    'motor right': 128,
     'motor left': 255,
     'motor forward': 255,
     'motor reverse': 255,
