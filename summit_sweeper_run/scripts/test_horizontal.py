@@ -4,7 +4,6 @@ import rospy
 from std_msgs.msg import UInt8MultiArray
 import enum
 import threading
-import time
 import sys
 import requests
 from typing import Tuple, Dict
