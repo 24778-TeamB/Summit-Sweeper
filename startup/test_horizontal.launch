@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-	<node pkg="summit_sweeper_run" type="test_horizontal.py" name="horizontal_test" output="screen"></node>
-	<node ns="arduino1" name="arduino1" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0"></node>
-	<node ns="arduino2" name="arduino2" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM1"></node>
+	<node pkg="summit_sweeper_run" type="test_horizontal.py" name="horizontal_test" args="1" output="screen"></node>
+	<node name="serial_node1" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0"></node>
+	<node name="serial_node2" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM1"></node>
 </launch>
