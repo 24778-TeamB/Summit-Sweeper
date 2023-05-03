@@ -147,25 +147,23 @@ class stepStateMachine:
             elif self.currentState == self.climbState.LIFT_MIDDLE:
                 if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
                     self.currentState = self.climbState.FORWARD1
+                    self.dc_pub.publish(DC_MOTOR['climb'])
             elif self.currentState == self.climbState.FORWARD1:
                 if not readings[SENSOR_INDEX['rear-right']] and not readings[SENSOR_INDEX['rear-left']]:
                     self.dc_pub.publish(DC_MOTOR['stop'])
                     self.currentState = self.climbState.LIFT_ENDS
                     self.vert_movement1.publish(self.frontTargets['high'])
                     self.vert_movement2.publish(self.rearTargets['high'])
-                else:
-                    self.dc_pub.publish(DC_MOTOR['climb'])
             elif self.currentState == self.climbState.LIFT_ENDS:
                 if self.frontPos == self.frontTargets['high'].data and self.rearPos == self.rearTargets['high'].data:
                     self.currentState = self.climbState.FORWARD2
+                    self.dc_pub.publish(DC_MOTOR['climb'])
             elif self.currentState == self.climbState.FORWARD2:
                 if not readings[SENSOR_INDEX['center-right']] and not readings[SENSOR_INDEX['center-left']]:
                     self.dc_pub.publish(DC_MOTOR['stop'])
                     self.currentState = self.climbState.CLEAN
                     self.vacuum.publish(VACUUM['on'])
                     finished = True
-                else:
-                    self.dc_pub.publish(DC_MOTOR['climb'])
         else:
             rospy.logerr('Not implemented')
         self.mtx1.release()
