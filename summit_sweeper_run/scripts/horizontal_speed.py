@@ -1,6 +1,6 @@
 import requests
 from typing import Tuple, Dict
-from std_msgs import UInt8MultiArray
+from std_msgs.msg import UInt8MultiArray
 
 class horizontalSpeeds(dict):
     def __init__(self, url: str):
