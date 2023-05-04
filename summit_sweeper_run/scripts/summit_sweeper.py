@@ -194,7 +194,8 @@ class HorizontalMovement:
         else:
             rospy.logerr(f'Invalid horizontal movement state: {self._cleanDirection}')
         return (self._completedStates['right'] and self._completedStates['left']) or \
-            (self._completedStates['right'] and self._roundTrip) or (self._completedStates['left'] and self._roundTrip)
+            (self._completedStates['right'] and not self._roundTrip) or (self._completedStates['left'] and
+                                                                       not self._roundTrip)
 
 
 class stepStateMachine:
@@ -337,7 +338,7 @@ class cleanStateMachine:
         return
 
     def next(self):
-        refreshRate = 1
+        refreshRate = 1.25
         self.sensor_mtx.acquire()
         readings = copy.deepcopy(self.readings)
         self.sensor_mtx.release()
