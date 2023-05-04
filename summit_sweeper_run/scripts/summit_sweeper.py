@@ -205,7 +205,8 @@ class stepStateMachine:
         LIFT_ENDS = 0x3
         FORWARD2 = 0X4
 
-    def __init__(self, dc_motor_pub, speed_profile: horizontalSpeeds, vacuum, frontL=0, rearL=0, frontH=1, rearH=1):
+    def __init__(self, dc_motor_pub, speed_profile: horizontalSpeeds, vacuum, frontL=0, rearL=0, frontH=1, rearH=1,
+                 stopStage1: bool = False, stopStage2: bool = False):
         self.frontTargets = {'low': Int32(data=frontL), 'high': Int32(data=frontH)}
         self.rearTargets = {'low': Int32(data=rearL), 'high': Int32(data=rearH)}
         self.mtx1 = threading.Lock()
@@ -221,6 +222,8 @@ class stepStateMachine:
         rospy.Subscriber('rear_tic', Int32, self._stepper2_position)
         self.dc_pub = dc_motor_pub
         self.vacuum = vacuum
+        self.stage1Stop = stopStage1
+        self.stage2Stop = stopStage2
         return
 
     def _stepper1_position(self, data: Int32):
@@ -253,6 +256,8 @@ class stepStateMachine:
                 self.vert_movement2.publish(self.rearTargets['low'])
             elif self.currentState == self.climbState.LIFT_MIDDLE:
                 if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
+                    while self.stage1Stop:
+                        pass
                     self.currentState = self.climbState.FORWARD1
                     self.dc_pub.publish(self.dc_movement['climb'])
             elif self.currentState == self.climbState.FORWARD1:
@@ -263,6 +268,8 @@ class stepStateMachine:
                     self.vert_movement2.publish(self.rearTargets['high'])
             elif self.currentState == self.climbState.LIFT_ENDS:
                 if self.frontPos == self.frontTargets['high'].data and self.rearPos == self.rearTargets['high'].data:
+                    while self.stage2Stop:
+                        pass
                     self.currentState = self.climbState.FORWARD2
                     self.dc_pub.publish(self.dc_movement['climb'])
             elif self.currentState == self.climbState.FORWARD2:
