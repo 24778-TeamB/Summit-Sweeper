@@ -298,7 +298,7 @@ class cleanStateMachine:
 
         self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub, frontL = -16920,
                                      rearL = -16920, frontH=0, rearH=0)
-        self.horizontal = HorizontalMovement(self.horizontal_movement, startingLeft, speed_profile)
+        self.horizontal = HorizontalMovement(self.horizontal_movement, startingLeft, speed_profile, False)
 
         self._wait_for_subscribers()
 
@@ -354,7 +354,7 @@ class cleanStateMachine:
 def main():
     rospy.init_node('summit_sweeper_main_run', disable_signals=True)
     dc_speeds = horizontalSpeeds('https://raw.githubusercontent.com/24778-TeamB/motor-speeds/master/speeds.json')
-    clean = cleanStateMachine(dc_speeds)
+    clean = cleanStateMachine(dc_speeds, startingLeft=False)
 
     finished = False
 
