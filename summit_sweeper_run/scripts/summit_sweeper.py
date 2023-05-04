@@ -235,6 +235,11 @@ class stepStateMachine:
         self.mtx2.release()
         return
 
+    def reset(self):
+        self.vert_movement1.publish(self.frontTargets['high'])
+        self.vert_movement2.publish(self.rearTargets['high'])
+        self.vacuum.publish(VACUUM['off'])
+
     def next(self, readings, up: bool = True) -> bool:
         rospy.loginfo(readings)
         finished = False
@@ -347,20 +352,22 @@ class cleanStateMachine:
 
 
 def main():
-    rospy.init_node('summit_sweeper_main_run')
+    rospy.init_node('summit_sweeper_main_run', disable_signals=True)
     dc_speeds = horizontalSpeeds('https://raw.githubusercontent.com/24778-TeamB/motor-speeds/master/speeds.json')
     clean = cleanStateMachine(dc_speeds)
 
     finished = False
 
-    while not rospy.is_shutdown() and not finished:
-        refresh, finished = clean.next()
-        rospy.Rate(refresh).sleep()
-    clean.horizontal_movement.publish(DC_MOTOR['stop'])
-    clean.vacuum_pub.publish(Int8(data=VACUUM['off']))
-
-    rospy.loginfo('Summit Sweeper done cleaning')
-    rospy.spin()
+    try:
+        while not rospy.is_shutdown() and not finished:
+            refresh, finished = clean.next()
+            rospy.Rate(refresh).sleep()
+    except KeyboardInterrupt:
+        clean.step.reset()
+        clean.horizontal.resetStateMachine()
+    finally:
+        rospy.signal_shutdown('Shutting down node')
+    return
 
 
 if __name__ == '__main__':
