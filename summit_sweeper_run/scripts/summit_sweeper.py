@@ -6,21 +6,20 @@ import enum
 from typing import Dict, Tuple
 import requests
 
-
 VACUUM = {
-        'on': Int8(data=1),
-        'off': Int8(data=0),
-        'test': Int8(data=2)
-        }
+    'on': Int8(data=1),
+    'off': Int8(data=0),
+    'test': Int8(data=2)
+}
 
 SENSOR_INDEX = {
-            'center-left': 1,
-            'center-right': 0,
-            'rear-left': 3,
-            'rear-right': 2,
-            'side-left': 4,
-            'side-right': 5
-        }
+    'center-left': 1,
+    'center-right': 0,
+    'rear-left': 3,
+    'rear-right': 2,
+    'side-left': 4,
+    'side-right': 5
+}
 
 
 class horizontalSpeeds(dict):
@@ -48,7 +47,8 @@ class horizontalSpeeds(dict):
         self.__dict__ = _preparedMessages
 
     @staticmethod
-    def _load_speed_configs(url) -> Tuple[Dict[str, int], Dict[str, int], Dict[str, int], Dict[str, int], Dict[str, int], Dict[str, int]]:
+    def _load_speed_configs(url) -> Tuple[
+        Dict[str, int], Dict[str, int], Dict[str, int], Dict[str, int], Dict[str, int], Dict[str, int]]:
         frontRight = {}
         frontLeft = {}
         midRight = {}
@@ -195,7 +195,7 @@ class HorizontalMovement:
             rospy.logerr(f'Invalid horizontal movement state: {self._cleanDirection}')
         return (self._completedStates['right'] and self._completedStates['left']) or \
             (self._completedStates['right'] and not self._roundTrip) or (self._completedStates['left'] and
-                                                                       not self._roundTrip)
+                                                                         not self._roundTrip)
 
 
 class stepStateMachine:
@@ -304,8 +304,8 @@ class cleanStateMachine:
         self.vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size=1)
         self.horizontal_movement = rospy.Publisher('horizontal_control', UInt8MultiArray, queue_size=4)
 
-        self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub, frontL = -16920,
-                                     rearL = -16920, frontH=0, rearH=0)
+        self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub, frontL=-16920,
+                                     rearL=-16920, frontH=0, rearH=0)
         self.horizontal = HorizontalMovement(self.horizontal_movement, startingLeft, speed_profile, False)
 
         self._wait_for_subscribers()
@@ -313,7 +313,8 @@ class cleanStateMachine:
     def _wait_for_subscribers(self):
         i = 0
         while not rospy.is_shutdown() and (
-                self.horizontal_movement.get_num_connections() == 0 or self.step.vert_movement1.get_num_connections() == 0 or
+                self.horizontal_movement.get_num_connections() == 0 or self.step.vert_movement1.get_num_connections()
+                == 0 or
                 self.step.vert_movement2.get_num_connections() == 0 or self.vacuum_pub.get_num_connections() == 0):
             if i == 4:
                 if self.horizontal_movement.get_num_connections() == 0:
