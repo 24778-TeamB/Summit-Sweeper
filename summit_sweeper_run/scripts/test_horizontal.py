@@ -170,6 +170,13 @@ class HorizontalMovement:
             rospy.loginfo('left')
         return False
 
+    def _pulseBack(self, readings):
+        self._correctOrientation(readings)
+        self.dc_motors.publish(DC_MOTOR['stop'])
+        self.dc_motors.publish(DC_MOTOR['reverse'])
+        rospy.Rate(10).sleep()
+        self.dc_motors.publish(DC_MOTOR['stop'])
+
     def resetStateMachine(self) -> None:
         self.dc_motors.publish(DC_MOTOR['stop'])
         self.direction = self.Direction.STOP
