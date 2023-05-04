@@ -294,7 +294,7 @@ class cleanStateMachine:
 
         rospy.Subscriber('ir_sensor', UInt8MultiArray, self._sensors_callback)
         self.vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size=1)
-        self.horizontal_movement = rospy.Publisher('horizontal_control', Int8, queue_size=4)
+        self.horizontal_movement = rospy.Publisher('horizontal_control', UInt8MultiArray, queue_size=4)
 
         self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub, frontL = -16920,
                                      rearL = -16920, frontH=0, rearH=0)
