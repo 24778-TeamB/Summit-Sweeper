@@ -304,8 +304,8 @@ class cleanStateMachine:
         self.vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size=1)
         self.horizontal_movement = rospy.Publisher('horizontal_control', UInt8MultiArray, queue_size=4)
 
-        self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub, frontL=-16920,
-                                     rearL=-16920, frontH=0, rearH=0)
+        self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub, frontL=-16250,
+                                     rearL=-16810, frontH=0, rearH=0)
         self.horizontal = HorizontalMovement(self.horizontal_movement, startingLeft, speed_profile, False)
 
         self._wait_for_subscribers()
