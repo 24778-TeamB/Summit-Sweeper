@@ -205,7 +205,7 @@ def main():
     vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size=1)
     horizontal_pub = rospy.Publisher('horizontal_control', UInt8MultiArray, queue_size=4)
     rospy.Subscriber('ir_sensor', UInt8MultiArray, _sensors_callback)
-    step = stepStateMachine(horizontal_pub, vacuum_pub, frontL=-16500, rearL=-16810, frontH=0, rearH=0)
+    step = stepStateMachine(horizontal_pub, vacuum_pub, frontL=-16350, rearL=-16810, frontH=0, rearH=0)
     wait_for_subscribers(horizontal_pub, step.vert_movement1, step.vert_movement2, vacuum_pub)
     done = False
     while not done and not rospy.is_shutdown():
