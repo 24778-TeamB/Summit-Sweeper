@@ -215,7 +215,7 @@ def main():
     step = stepStateMachine(horizontal_pub, vacuum_pub, frontL=-16250, rearL=-16810, frontH=0, rearH=0)
     wait_for_subscribers(horizontal_pub, step.vert_movement1, step.vert_movement2, vacuum_pub)
     done = False
-    while not done and not rospy.is_shutdown():
+    while not rospy.is_shutdown():
         done = step.next(READINGS)
         rospy.Rate(10).sleep()
     rospy.spin()
