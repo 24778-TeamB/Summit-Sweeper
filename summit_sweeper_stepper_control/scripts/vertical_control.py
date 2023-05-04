@@ -29,9 +29,6 @@ class DelayedKeyboardInterrupt:
         if self.signal_received:
             self.old_handler(*self.signal_received)
 
-def shutdown_hook():
-    pass
-
 
 def callbackSetPos1(pos: std_msgs.msg.Int32):
     global mtx1
