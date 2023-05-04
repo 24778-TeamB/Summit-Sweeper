@@ -143,6 +143,7 @@ class HorizontalMovement:
                 self.dc_motors.publish(DC_MOTOR['stop'])
                 rospy.loginfo('stop')
             self._completedStates['right'] = True
+            self._pulseBack()
             return True
         self.direction = self.Direction.RIGHT
         if self.direction != self.lastMovement:
@@ -162,6 +163,7 @@ class HorizontalMovement:
                 self.dc_motors.publish(DC_MOTOR['stop'])
                 rospy.loginfo('stop')
             self._completedStates['left'] = True
+            self._pulseBack()
             return True
         self.direction = self.Direction.LEFT
         if self.direction != self.lastMovement:
@@ -170,8 +172,7 @@ class HorizontalMovement:
             rospy.loginfo('left')
         return False
 
-    def _pulseBack(self, readings):
-        self._correctOrientation(readings)
+    def _pulseBack(self):
         self.dc_motors.publish(DC_MOTOR['stop'])
         self.dc_motors.publish(DC_MOTOR['reverse'])
         rospy.Rate(10).sleep()
