@@ -247,7 +247,7 @@ class stepStateMachine:
         self.mtx2.acquire()
         if up:
             if self.currentState == self.climbState.CLEAN:
-                self.vacuum.publish(Int8(data=VACUUM['off']))
+                self.vacuum.publish(VACUUM['off'])
                 self.currentState = self.climbState.LIFT_MIDDLE
                 self.vert_movement1.publish(self.frontTargets['low'])
                 self.vert_movement2.publish(self.rearTargets['low'])
