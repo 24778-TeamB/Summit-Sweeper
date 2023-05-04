@@ -86,7 +86,6 @@ class horizontalSpeeds(dict):
         return repr(self.__dict__)
 
 
-# TODO Update this to do one trip
 class HorizontalMovement:
     class Direction(enum.Enum):
         STOP = 0x0
@@ -96,12 +95,13 @@ class HorizontalMovement:
         CW = 0x4
         CCW = 0x5
 
-    def __init__(self, dcMotorPub, startingPosLeft: bool, speed_profile: horizontalSpeeds):
+    def __init__(self, dcMotorPub, startingPosLeft: bool, speed_profile: horizontalSpeeds, roundTrip: bool):
         self.direction = self.Direction.STOP
         self._completedStates = {'left': False, 'right': False}
         self.dc_motors = dcMotorPub
         self.lastMovement = self.Direction.STOP
         self._newStep = True
+        self._roundTrip = roundTrip
         if startingPosLeft:
             self._startDirection = self.Direction.RIGHT
         else:
@@ -193,7 +193,8 @@ class HorizontalMovement:
                 self._cleanDirection = self.Direction.LEFT
         else:
             rospy.logerr(f'Invalid horizontal movement state: {self._cleanDirection}')
-        return self._completedStates['right'] and self._completedStates['left']
+        return (self._completedStates['right'] and self._completedStates['left']) or \
+            (self._completedStates['right'] and self._roundTrip) or (self._completedStates['left'] and self._roundTrip)
 
 
 class stepStateMachine:
@@ -335,6 +336,7 @@ class cleanStateMachine:
         elif self.current_state == self.currentState.CLEAN:
             if self.horizontal.next(readings):
                 self.current_state = self.currentState.STEP
+                self.horizontal.resetStateMachine()
         elif self.current_state == self.currentState.STEP:
             if self.step.next(readings, self.up):
                 # TODO: Figure out when to stop
