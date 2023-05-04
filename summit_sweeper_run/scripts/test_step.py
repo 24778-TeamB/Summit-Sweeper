@@ -147,6 +147,8 @@ class stepStateMachine:
             elif self.currentState == self.climbState.LIFT_MIDDLE:
                 if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
                     self.currentState = self.climbState.FORWARD1
+                    while not True:
+                        pass
                     self.dc_pub.publish(DC_MOTOR['climb'])
             elif self.currentState == self.climbState.FORWARD1:
                 if not readings[SENSOR_INDEX['rear-right']] and not readings[SENSOR_INDEX['rear-left']]:
@@ -203,7 +205,7 @@ def main():
     vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size=1)
     horizontal_pub = rospy.Publisher('horizontal_control', UInt8MultiArray, queue_size=4)
     rospy.Subscriber('ir_sensor', UInt8MultiArray, _sensors_callback)
-    step = stepStateMachine(horizontal_pub, vacuum_pub, frontL=-16700, rearL=-16700, frontH=0, rearH=0)
+    step = stepStateMachine(horizontal_pub, vacuum_pub, frontL=-16920, rearL=-16920, frontH=0, rearH=0)
     wait_for_subscribers(horizontal_pub, step.vert_movement1, step.vert_movement2, vacuum_pub)
     done = False
     while not done and not rospy.is_shutdown():
