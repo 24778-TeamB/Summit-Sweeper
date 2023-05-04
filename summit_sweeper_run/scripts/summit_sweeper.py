@@ -353,7 +353,7 @@ class cleanStateMachine:
             if self.step.next(readings, self.up):
                 # TODO: Figure out when to stop
                 self.current_state = self.currentState.CLEAN
-            refreshRate = 10
+            refreshRate = 20
 
         return refreshRate, self.current_state == self.currentState.FINISHED
 
