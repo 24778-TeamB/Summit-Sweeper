@@ -133,6 +133,13 @@ class stepStateMachine:
         self.mtx2.release()
         return
 
+    def _correctOrientation(self):
+        self.dc_pub.publish(DC_MOTOR['forward'])
+        rospy.Rate(2).sleep()
+        self.dc_pub.publish(DC_MOTOR['reverse'])
+        rospy.Rate(10).sleep()
+        self.dc_pub.publish(DC_MOTOR['stop'])
+
     def next(self, readings, up: bool = True) -> bool:
         rospy.loginfo(readings)
         finished = False
