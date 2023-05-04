@@ -149,6 +149,7 @@ class stepStateMachine:
             if self.currentState == self.climbState.CLEAN:
                 self.vacuum.publish(Int8(data=VACUUM['off']))
                 self.currentState = self.climbState.LIFT_MIDDLE
+                self._correctOrientation()
                 self.vert_movement1.publish(self.frontTargets['low'])
                 self.vert_movement2.publish(self.rearTargets['low'])
             elif self.currentState == self.climbState.LIFT_MIDDLE:
