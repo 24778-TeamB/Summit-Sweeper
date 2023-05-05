@@ -12,7 +12,7 @@ mtx2 = threading.Lock()
 frontTic = TicUSB(serial_number='00414637')
 rearTic = TicUSB(serial_number='00414631')
 
-CURRENT_LIMIT = 10
+CURRENT_LIMIT = 9
 
 
 # https://stackoverflow.com/a/21919644/11854714
