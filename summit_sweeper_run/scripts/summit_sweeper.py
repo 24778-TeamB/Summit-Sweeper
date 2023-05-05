@@ -201,10 +201,11 @@ class HorizontalMovement:
 class stepStateMachine:
     class climbState(enum.Enum):
         CLEAN = 0x0
-        LIFT_MIDDLE = 0X1
-        FORWARD1 = 0X2
-        LIFT_ENDS = 0x3
-        FORWARD2 = 0X4
+        RESET_FRONT = 0x1
+        LIFT_MIDDLE = 0X2
+        FORWARD1 = 0X3
+        LIFT_ENDS = 0x4
+        FORWARD2 = 0X5
 
     def __init__(self,
                  dc_motor_pub,
@@ -260,13 +261,17 @@ class stepStateMachine:
         if up:
             if self.currentState == self.climbState.CLEAN:
                 self.vacuum.publish(VACUUM['off'])
-                self.vert_movement1.publish(self.frontTargets['low'])
-                self.vert_movement2.publish(self.rearTargets['low'])
-                self.currentState = self.climbState.LIFT_MIDDLE
+                self.vert_movement1.publish(self.frontTargets['home'])
+                self.currentState = self.climbState.RESET_FRONT
+            elif self.currentState == self.climbState.RESET_FRONT:
+                if self.frontPos == self.frontTargets['home'].data:
+                    self.vert_movement1.publish(self.frontTargets['low'])
+                    self.vert_movement2.publish(self.rearTargets['low'])
+                    self.currentState = self.climbState.LIFT_MIDDLE
             elif self.currentState == self.climbState.LIFT_MIDDLE:
                 if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
-                    while self.stage1Stop:
-                        pass
+                    if self.stage1Stop:
+                        return False
                     self.currentState = self.climbState.FORWARD1
                     self.dc_pub.publish(self.dc_movement['climb'])
             elif self.currentState == self.climbState.FORWARD1:
@@ -277,8 +282,8 @@ class stepStateMachine:
                     self.vert_movement2.publish(self.rearTargets['high'])
             elif self.currentState == self.climbState.LIFT_ENDS:
                 if self.frontPos == self.frontTargets['high'].data and self.rearPos == self.rearTargets['high'].data:
-                    while self.stage2Stop:
-                        pass
+                    if self.stage2Stop:
+                        return False
                     self.currentState = self.climbState.FORWARD2
                     self.dc_pub.publish(self.dc_movement['climb'])
             elif self.currentState == self.climbState.FORWARD2:
