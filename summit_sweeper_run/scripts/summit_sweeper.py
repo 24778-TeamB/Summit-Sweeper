@@ -278,6 +278,7 @@ class stepStateMachine:
                     self.dc_pub.publish(self.dc_movement['stop'])
                     self.currentState = self.climbState.CLEAN
                     self.vacuum.publish(VACUUM['on'])
+                    rospy.Rate(1).sleep()
                     finished = True
         else:
             rospy.logerr('Not implemented')
@@ -304,7 +305,7 @@ class cleanStateMachine:
         self.vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size=1)
         self.horizontal_movement = rospy.Publisher('horizontal_control', UInt8MultiArray, queue_size=4)
 
-        self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub, frontL=-16500,
+        self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub, frontL=-16600,
                                      rearL=-16810, frontH=0, rearH=0)
         self.horizontal = HorizontalMovement(self.horizontal_movement, startingLeft, speed_profile, False)
 
