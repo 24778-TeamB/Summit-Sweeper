@@ -59,6 +59,7 @@ def main():
             rospy.logdebug('Vacuums off')
             toggleVacuum(False)
         rospy.Rate(10).sleep()
+    toggleVacuum(False)
 
 
 if __name__ == '__main__':
