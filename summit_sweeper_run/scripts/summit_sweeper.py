@@ -265,6 +265,7 @@ class stepStateMachine:
                 self.currentState = self.climbState.RESET_FRONT
             elif self.currentState == self.climbState.RESET_FRONT:
                 if self.frontPos == self.frontTargets['home'].data:
+                    rospy.Rate(1).sleep()
                     self.vert_movement1.publish(self.frontTargets['low'])
                     self.vert_movement2.publish(self.rearTargets['low'])
                     self.currentState = self.climbState.LIFT_MIDDLE
