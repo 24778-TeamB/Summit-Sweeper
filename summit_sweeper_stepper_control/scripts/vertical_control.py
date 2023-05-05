@@ -12,6 +12,8 @@ mtx2 = threading.Lock()
 frontTic = TicUSB(serial_number='00414637')
 rearTic = TicUSB(serial_number='00414631')
 
+CURRENT_LIMIT = 10
+
 
 # https://stackoverflow.com/a/21919644/11854714
 class DelayedKeyboardInterrupt:
@@ -65,6 +67,8 @@ def main():
     global rearTic
 
     # Initialize TICs
+    frontTic.set_current_limit(CURRENT_LIMIT)
+    rearTic.set_current_limit(CURRENT_LIMIT)
     frontTic.halt_and_set_position(0)
     rearTic.halt_and_set_position(0)
 
