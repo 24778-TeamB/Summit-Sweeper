@@ -250,18 +250,6 @@ class stepStateMachine:
     def reset(self):
         self.vert_movement1.publish(self.frontTargets['home'])
         self.vert_movement2.publish(self.rearTargets['home'])
-        self.mtx1.acquire()
-        while self.frontPos != self.frontTargets['home']:
-            self.mtx1.release()
-            rospy.Rate(10).sleep()
-            self.mtx1.acquire()
-        self.mtx1.release()
-        self.mtx2.acquire()
-        while self.rearPos != self.rearTargets['home']:
-            self.mtx2.release()
-            rospy.Rate(10).sleep()
-            self.mtx2.acquire()
-        self.mtx2.release()
         self.vacuum.publish(VACUUM['off'])
 
     def next(self, readings, up: bool = True) -> bool:
