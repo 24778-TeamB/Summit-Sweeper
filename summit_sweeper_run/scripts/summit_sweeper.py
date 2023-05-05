@@ -201,7 +201,7 @@ class HorizontalMovement:
 class stepStateMachine:
     class climbState(enum.Enum):
         CLEAN = 0x0
-        RESET_FRONT = 0x1
+        RESET_ENDS = 0x1
         LIFT_MIDDLE = 0X2
         FORWARD1 = 0X3
         LIFT_ENDS = 0x4
@@ -262,9 +262,10 @@ class stepStateMachine:
             if self.currentState == self.climbState.CLEAN:
                 self.vacuum.publish(VACUUM['off'])
                 self.vert_movement1.publish(self.frontTargets['home'])
-                self.currentState = self.climbState.RESET_FRONT
-            elif self.currentState == self.climbState.RESET_FRONT:
-                if self.frontPos == self.frontTargets['home'].data:
+                self.vert_movement2.publish(self.rearTargets['home'])
+                self.currentState = self.climbState.RESET_ENDS
+            elif self.currentState == self.climbState.RESET_ends:
+                if self.frontPos == self.frontTargets['home'].data and self.rearPos == self.rearTargets['home'].data:
                     rospy.Rate(1).sleep()
                     self.vert_movement1.publish(self.frontTargets['low'])
                     self.vert_movement2.publish(self.rearTargets['low'])
@@ -321,7 +322,7 @@ class cleanStateMachine:
         self.horizontal_movement = rospy.Publisher('horizontal_control', UInt8MultiArray, queue_size=4)
 
         self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub, frontL=-16600,
-                                     rearL=-16810, frontH=750, rearH=0, stopStage1=True)
+                                     rearL=-16810, frontH=900, rearH=300, stopStage1=False)
         self.horizontal = HorizontalMovement(self.horizontal_movement, startingLeft, speed_profile, False)
 
         self._wait_for_subscribers()
@@ -379,7 +380,7 @@ class cleanStateMachine:
 def main():
     rospy.init_node('summit_sweeper_main_run', disable_signals=True)
     dc_speeds = horizontalSpeeds('https://raw.githubusercontent.com/24778-TeamB/motor-speeds/master/speeds.json')
-    clean = cleanStateMachine(dc_speeds, startingLeft=False)
+    clean = cleanStateMachine(dc_speeds, startingLeft=True)
 
     finished = False
 
