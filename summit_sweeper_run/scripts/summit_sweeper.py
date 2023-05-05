@@ -274,6 +274,7 @@ class stepStateMachine:
                 self.vacuum.publish(VACUUM['off'])
                 self.vert_movement1.publish(self.frontTargets['low'])
                 self.vert_movement2.publish(self.rearTargets['low'])
+                self.currentState = self.climbState.LIFT_MIDDLE
             elif self.currentState == self.climbState.LIFT_MIDDLE:
                 if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
                     while self.stage1Stop:
