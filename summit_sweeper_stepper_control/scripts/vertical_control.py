@@ -5,6 +5,7 @@ from ticlib import TicUSB, TIC_36v4
 from time import sleep
 import signal
 import logging
+import requests
 
 mtx1 = threading.Lock()
 mtx2 = threading.Lock()
@@ -12,7 +13,7 @@ mtx2 = threading.Lock()
 frontTic = TicUSB(serial_number='00414637')
 rearTic = TicUSB(serial_number='00414631')
 
-CURRENT_LIMIT = 9
+URL = 'https://raw.githubusercontent.com/24778-TeamB/motor-speeds/master/stepper.json'
 
 
 # https://stackoverflow.com/a/21919644/11854714
@@ -30,6 +31,17 @@ class DelayedKeyboardInterrupt:
         signal.signal(signal.SIGINT, self.old_handler)
         if self.signal_received:
             self.old_handler(*self.signal_received)
+
+
+def load_stepper_settings(url: str):
+    global frontTic
+    global rearTic
+    f = requests.get(url)
+    data = f.json()
+    frontTic.set_current_limit(data['stepper-current'])
+    rearTic.set_current_limit(data['stepper-current'])
+    frontTic.set_max_speed(int(data['stepper-speed'] * 1000))
+    rearTic.set_max_speed(int(data['stepper-speed'] * 1000))
 
 
 def callbackSetPos1(pos: std_msgs.msg.Int32):
@@ -67,8 +79,7 @@ def main():
     global rearTic
 
     # Initialize TICs
-    frontTic.set_current_limit(CURRENT_LIMIT)
-    rearTic.set_current_limit(CURRENT_LIMIT)
+    load_stepper_settings(URL)
     frontTic.halt_and_set_position(0)
     rearTic.halt_and_set_position(0)
 
