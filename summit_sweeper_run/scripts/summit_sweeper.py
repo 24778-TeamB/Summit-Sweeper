@@ -277,6 +277,7 @@ class stepStateMachine:
                 if not readings[SENSOR_INDEX['center-right']] and not readings[SENSOR_INDEX['center-left']]:
                     self.dc_pub.publish(self.dc_movement['stop'])
                     self.currentState = self.climbState.CLEAN
+                    rospy.Rate(1).sleep()
                     self.vacuum.publish(VACUUM['on'])
                     rospy.Rate(1).sleep()
                     finished = True
