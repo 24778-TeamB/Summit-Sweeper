@@ -135,9 +135,9 @@ class stepStateMachine:
 
     def _correctOrientation(self):
         self.dc_pub.publish(DC_MOTOR['forward'])
-        rospy.Rate(2).sleep()
+        rospy.Rate(1.5).sleep()
         self.dc_pub.publish(DC_MOTOR['reverse'])
-        rospy.Rate(10).sleep()
+        rospy.Rate(2).sleep()
         self.dc_pub.publish(DC_MOTOR['stop'])
 
     def next(self, readings, up: bool = True) -> bool:
