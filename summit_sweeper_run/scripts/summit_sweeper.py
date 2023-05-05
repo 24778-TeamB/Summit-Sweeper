@@ -270,8 +270,8 @@ class stepStateMachine:
                     self.currentState = self.climbState.LIFT_MIDDLE
             elif self.currentState == self.climbState.LIFT_MIDDLE:
                 if self.frontPos == self.frontTargets['low'].data and self.rearPos == self.rearTargets['low'].data:
-                    while self.stage1Stop:
-                        pass
+                    if self.stage1Stop:
+                        return False
                     self.currentState = self.climbState.FORWARD1
                     self.dc_pub.publish(self.dc_movement['climb'])
             elif self.currentState == self.climbState.FORWARD1:
@@ -282,8 +282,8 @@ class stepStateMachine:
                     self.vert_movement2.publish(self.rearTargets['high'])
             elif self.currentState == self.climbState.LIFT_ENDS:
                 if self.frontPos == self.frontTargets['high'].data and self.rearPos == self.rearTargets['high'].data:
-                    while self.stage2Stop:
-                        pass
+                    if self.stage2Stop:
+                        return False
                     self.currentState = self.climbState.FORWARD2
                     self.dc_pub.publish(self.dc_movement['climb'])
             elif self.currentState == self.climbState.FORWARD2:
