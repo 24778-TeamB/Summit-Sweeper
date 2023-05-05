@@ -200,16 +200,24 @@ class HorizontalMovement:
 
 class stepStateMachine:
     class climbState(enum.Enum):
-        CLEAN = 0X0
+        CLEAN = 0x0
         LIFT_MIDDLE = 0X1
         FORWARD1 = 0X2
         LIFT_ENDS = 0x3
         FORWARD2 = 0X4
 
-    def __init__(self, dc_motor_pub, speed_profile: horizontalSpeeds, vacuum, frontL=0, rearL=0, frontH=1, rearH=1,
-                 stopStage1: bool = False, stopStage2: bool = False):
-        self.frontTargets = {'low': Int32(data=frontL), 'high': Int32(data=frontH)}
-        self.rearTargets = {'low': Int32(data=rearL), 'high': Int32(data=rearH)}
+    def __init__(self,
+                 dc_motor_pub,
+                 speed_profile: horizontalSpeeds,
+                 vacuum,
+                 frontL=0,
+                 rearL=0,
+                 frontH=1,
+                 rearH=1,
+                 stopStage1: bool = False,
+                 stopStage2: bool = False):
+        self.frontTargets = {'low': Int32(data=frontL), 'high': Int32(data=frontH), 'home': Int32(data=0)}
+        self.rearTargets = {'low': Int32(data=rearL), 'high': Int32(data=rearH), 'home': Int32(data=0)}
         self.mtx1 = threading.Lock()
         self.mtx2 = threading.Lock()
         self.frontPos = 0
@@ -240,8 +248,20 @@ class stepStateMachine:
         return
 
     def reset(self):
-        self.vert_movement1.publish(self.frontTargets['high'])
-        self.vert_movement2.publish(self.rearTargets['high'])
+        self.vert_movement1.publish(self.frontTargets['home'])
+        self.vert_movement2.publish(self.rearTargets['home'])
+        self.mtx1.acquire()
+        while self.frontPos != self.frontTargets['home']:
+            self.mtx1.release()
+            rospy.Rate(10).sleep()
+            self.mtx1.acquire()
+        self.mtx1.release()
+        self.mtx2.acquire()
+        while self.rearPos != self.rearTargets['home']:
+            self.mtx2.release()
+            rospy.Rate(10).sleep()
+            self.mtx2.acquire()
+        self.mtx2.release()
         self.vacuum.publish(VACUUM['off'])
 
     def next(self, readings, up: bool = True) -> bool:
@@ -252,7 +272,6 @@ class stepStateMachine:
         if up:
             if self.currentState == self.climbState.CLEAN:
                 self.vacuum.publish(VACUUM['off'])
-                self.currentState = self.climbState.LIFT_MIDDLE
                 self.vert_movement1.publish(self.frontTargets['low'])
                 self.vert_movement2.publish(self.rearTargets['low'])
             elif self.currentState == self.climbState.LIFT_MIDDLE:
@@ -307,7 +326,7 @@ class cleanStateMachine:
         self.horizontal_movement = rospy.Publisher('horizontal_control', UInt8MultiArray, queue_size=4)
 
         self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub, frontL=-16600,
-                                     rearL=-16810, frontH=0, rearH=0)
+                                     rearL=-16810, frontH=500, rearH=0)
         self.horizontal = HorizontalMovement(self.horizontal_movement, startingLeft, speed_profile, False)
 
         self._wait_for_subscribers()
