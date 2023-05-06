@@ -219,7 +219,7 @@ class stepStateMachine:
                  stopStage2: bool = False):
         self.frontTargets = {'low': Int32(data=frontL), 'high': Int32(data=frontH), 'home': Int32(data=0)}
         self.rearTargets = {'low': Int32(data=rearL), 'high': Int32(data=rearH), 'home': Int32(data=0)}
-        self.speed = {'reset': Int32(data=600), 'normal': Int32(data=1500)}
+        self.speed = {'reset': Int32(data=600), 'normal': Int32(data=1200)}
         self.mtx1 = threading.Lock()
         self.mtx2 = threading.Lock()
         self.frontPos = 0
