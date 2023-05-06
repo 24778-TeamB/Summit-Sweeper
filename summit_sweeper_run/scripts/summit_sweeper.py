@@ -90,6 +90,12 @@ class verticalSpeeds(dict):
     def __init__(self, url):
         super().__init__()
 
+    @staticmethod
+    def _load_configs(url: str):
+        f = requests.get(url)
+        data = f.json()
+        return data
+
 
 
 class HorizontalMovement:
@@ -273,16 +279,16 @@ class stepStateMachine:
         if up:
             if self.currentState == self.climbState.CLEAN:
                 self.vacuum.publish(VACUUM['off'])
-                self.vert_speed1.publish(self.speed['reset'])
-                self.vert_speed2.publish(self.speed['reset'])
+                #self.vert_speed1.publish(self.speed['reset'])
+                #self.vert_speed2.publish(self.speed['reset'])
                 rospy.Rate(10).sleep()
                 self.vert_movement1.publish(self.frontTargets['home'])
                 self.vert_movement2.publish(self.rearTargets['home'])
                 self.currentState = self.climbState.RESET_ENDS
             elif self.currentState == self.climbState.RESET_ENDS:
                 if self.frontPos == self.frontTargets['home'].data and self.rearPos == self.rearTargets['home'].data:
-                    self.vert_speed1.publish(self.speed['normal'])
-                    self.vert_speed2.publish(self.speed['normal'])
+                    #self.vert_speed1.publish(self.speed['normal'])
+                    #self.vert_speed2.publish(self.speed['normal'])
                     rospy.Rate(1).sleep()
                     self.vert_movement1.publish(self.frontTargets['low'])
                     self.vert_movement2.publish(self.rearTargets['low'])
