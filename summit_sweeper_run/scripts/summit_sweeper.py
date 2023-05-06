@@ -264,7 +264,7 @@ class stepStateMachine:
                 self.vert_movement1.publish(self.frontTargets['home'])
                 self.vert_movement2.publish(self.rearTargets['home'])
                 self.currentState = self.climbState.RESET_ENDS
-            elif self.currentState == self.climbState.RESET_ends:
+            elif self.currentState == self.climbState.RESET_ENDS:
                 if self.frontPos == self.frontTargets['home'].data and self.rearPos == self.rearTargets['home'].data:
                     rospy.Rate(1).sleep()
                     self.vert_movement1.publish(self.frontTargets['low'])
