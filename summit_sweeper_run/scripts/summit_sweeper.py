@@ -90,6 +90,7 @@ class verticalSpeeds(dict):
     def __init__(self, url):
         super().__init__()
 
+
     @staticmethod
     def _load_configs(url: str):
         f = requests.get(url)
@@ -264,8 +265,8 @@ class stepStateMachine:
         return
 
     def reset(self):
-        self.vert_speed1.publish(self.speed['reset'])
-        self.vert_speed2.publish(self.speed['reset'])
+        # self.vert_speed1.publish(self.speed['reset'])
+        # self.vert_speed2.publish(self.speed['reset'])
         rospy.Rate(10).sleep()
         self.vert_movement1.publish(self.frontTargets['home'])
         self.vert_movement2.publish(self.rearTargets['home'])

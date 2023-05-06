@@ -66,7 +66,7 @@ def callbackSetSpeed1(speed: std_msgs.msg.Int32):
     global mtx1
     global frontTic
     mtx1.acquire()
-    frontTic.set_max_speed(speed.data * 100000)
+    frontTic.set_max_speed(speed.data * 10000)
     mtx1.release()
 
 
@@ -74,7 +74,7 @@ def callbackSetSpeed2(speed: std_msgs.msg.Int32):
     global mtx2
     global rearTic
     mtx2.acquire()
-    rearTic.set_max_speed(speed.data * 100000)
+    rearTic.set_max_speed(speed.data * 10000)
     mtx2.release()
 
 
