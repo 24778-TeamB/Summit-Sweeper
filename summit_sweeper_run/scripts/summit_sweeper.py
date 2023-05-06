@@ -380,7 +380,7 @@ class cleanStateMachine:
 def main():
     rospy.init_node('summit_sweeper_main_run', disable_signals=True)
     dc_speeds = horizontalSpeeds('https://raw.githubusercontent.com/24778-TeamB/motor-speeds/master/speeds.json')
-    clean = cleanStateMachine(dc_speeds, startingLeft=True)
+    clean = cleanStateMachine(dc_speeds, startingLeft=False)
 
     finished = False
 
