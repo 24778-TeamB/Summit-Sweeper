@@ -60,6 +60,22 @@ def callbackSetPos2(pos: std_msgs.msg.Int32):
     mtx2.release()
 
 
+def callbackSetSpeed1(speed: std_msgs.msg.Int32):
+    global mtx1
+    global frontTic
+    mtx1.acquire()
+    frontTic.set_max_speed(speed.data * 100000)
+    mtx1.release()
+
+
+def callbackSetSpeed2(speed: std_msgs.msg.Int32):
+    global mtx2
+    global rearTic
+    mtx2.acquire()
+    rearTic.set_max_speed(speed.data * 100000)
+    mtx2.release()
+
+
 def enableTic(tic: TicUSB):
     errors = tic.get_error_status()
     errors = errors[0]
@@ -90,6 +106,8 @@ def main():
     rearTargetPub = rospy.Publisher('rear_target', std_msgs.msg.Int32, queue_size=4)
     rospy.Subscriber('front_vert_control', std_msgs.msg.Int32, callbackSetPos1)
     rospy.Subscriber('rear_vert_control', std_msgs.msg.Int32, callbackSetPos2)
+    rospy.Subscriber('front_speed', std_msgs.msg.Int32, callbackSetSpeed1)
+    rospy.Subscriber('rear_speed', std_msgs.msg.Int32, callbackSetSpeed2)
     rospy.loginfo('Starting vertical control')
 
     while not rospy.is_shutdown():
