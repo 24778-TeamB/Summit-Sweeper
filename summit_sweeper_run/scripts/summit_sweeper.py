@@ -232,6 +232,7 @@ class stepStateMachine:
                  dc_motor_pub,
                  speed_profile: horizontalSpeeds,
                  vacuum,
+                 url,
                  frontL=0,
                  rearL=0,
                  frontH=1,
@@ -240,7 +241,7 @@ class stepStateMachine:
                  stopStage2: bool = False):
         self.frontTargets = {'low': Int32(data=frontL), 'high': Int32(data=frontH), 'home': Int32(data=0)}
         self.rearTargets = {'low': Int32(data=rearL), 'high': Int32(data=rearH), 'home': Int32(data=0)}
-        self.speed = {'reset': Int32(data=600), 'normal': Int32(data=700)}
+        self.speed = verticalSpeeds(url)
         self.mtx1 = threading.Lock()
         self.mtx2 = threading.Lock()
         self.frontPos = 0
@@ -353,8 +354,9 @@ class cleanStateMachine:
         self.vacuum_pub = rospy.Publisher('vacuum_control_sub', Int8, queue_size=1)
         self.horizontal_movement = rospy.Publisher('horizontal_control', UInt8MultiArray, queue_size=4)
 
-        self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub, frontL=-16600,
-                                     rearL=-16810, frontH=900, rearH=300, stopStage1=False)
+        self.step = stepStateMachine(self.horizontal_movement, speed_profile, self.vacuum_pub,
+                                     url='https://raw.githubusercontent.com/24778-TeamB/motor-speeds/master/stepper.json',
+                                     frontL=-16600, rearL=-16810, frontH=900, rearH=300, stopStage1=False)
         self.horizontal = HorizontalMovement(self.horizontal_movement, startingLeft, speed_profile, False)
 
         self._wait_for_subscribers()
