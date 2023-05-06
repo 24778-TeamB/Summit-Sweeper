@@ -219,6 +219,7 @@ class stepStateMachine:
                  stopStage2: bool = False):
         self.frontTargets = {'low': Int32(data=frontL), 'high': Int32(data=frontH), 'home': Int32(data=0)}
         self.rearTargets = {'low': Int32(data=rearL), 'high': Int32(data=rearH), 'home': Int32(data=0)}
+        self.speed = {'reset': Int32(data=600), 'normal': Int32(data=1500)}
         self.mtx1 = threading.Lock()
         self.mtx2 = threading.Lock()
         self.frontPos = 0
@@ -228,6 +229,8 @@ class stepStateMachine:
 
         self.vert_movement1 = rospy.Publisher('front_vert_control', Int32, queue_size=8)
         self.vert_movement2 = rospy.Publisher('rear_vert_control', Int32, queue_size=8)
+        self.vert_speed1 = rospy.Publisher('front_speed', Int32, queue_size=8)
+        self.vert_speed2 = rospy.Publisher('rear_speed', Int32, queue_size=8)
         rospy.Subscriber('front_tic', Int32, self._stepper1_position)
         rospy.Subscriber('rear_tic', Int32, self._stepper2_position)
         self.dc_pub = dc_motor_pub
@@ -249,6 +252,9 @@ class stepStateMachine:
         return
 
     def reset(self):
+        self.vert_speed1.publish(self.speed['reset'])
+        self.vert_speed2.publish(self.speed['reset'])
+        rospy.Rate(10).sleep()
         self.vert_movement1.publish(self.frontTargets['home'])
         self.vert_movement2.publish(self.rearTargets['home'])
         self.vacuum.publish(VACUUM['off'])
@@ -261,11 +267,16 @@ class stepStateMachine:
         if up:
             if self.currentState == self.climbState.CLEAN:
                 self.vacuum.publish(VACUUM['off'])
+                self.vert_speed1.publish(self.speed['reset'])
+                self.vert_speed2.publish(self.speed['reset'])
+                rospy.Rate(10).sleep()
                 self.vert_movement1.publish(self.frontTargets['home'])
                 self.vert_movement2.publish(self.rearTargets['home'])
                 self.currentState = self.climbState.RESET_ENDS
             elif self.currentState == self.climbState.RESET_ENDS:
                 if self.frontPos == self.frontTargets['home'].data and self.rearPos == self.rearTargets['home'].data:
+                    self.vert_speed1.publish(self.speed['normal'])
+                    self.vert_speed2.publish(self.speed['normal'])
                     rospy.Rate(1).sleep()
                     self.vert_movement1.publish(self.frontTargets['low'])
                     self.vert_movement2.publish(self.rearTargets['low'])
