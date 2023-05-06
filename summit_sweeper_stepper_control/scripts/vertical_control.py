@@ -40,8 +40,8 @@ def load_stepper_settings(url: str):
     data = f.json()
     frontTic.set_current_limit(data['stepper-current'])
     rearTic.set_current_limit(data['stepper-current'])
-    frontTic.set_max_speed(int(data['stepper-speed'] * 1000))
-    rearTic.set_max_speed(int(data['stepper-speed'] * 1000))
+    frontTic.set_max_speed(int(data['stepper-speed'] * 10000))
+    rearTic.set_max_speed(int(data['stepper-speed'] * 10000))
 
 
 def callbackSetPos1(pos: std_msgs.msg.Int32):
@@ -139,7 +139,7 @@ def main():
         print('Resetting stepper motors')
         frontTic.set_target_position(0)
         rearTic.set_target_position(0)
-        while ((frontTic.get_current_position() != frontTic.get_target_position()) or (rearTic.get_current_position() != rearTic.get_target_position())):
+        while (frontTic.get_current_position() != frontTic.get_target_position()) or (rearTic.get_current_position() != rearTic.get_target_position()):
             sleep(0.1)
             enableTic(frontTic)
             enableTic(rearTic)
