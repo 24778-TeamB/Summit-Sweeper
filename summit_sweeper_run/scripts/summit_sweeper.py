@@ -89,7 +89,10 @@ class horizontalSpeeds(dict):
 class verticalSpeeds(dict):
     def __init__(self, url):
         super().__init__()
-
+        data = self._load_configs(url)
+        _prep = {'reset': data['stepper-reset']}
+        _prep = {'normal': data['stepper-speed']}
+        self.__dict__ = _prep
 
     @staticmethod
     def _load_configs(url: str):
@@ -97,6 +100,11 @@ class verticalSpeeds(dict):
         data = f.json()
         return data
 
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        return repr(self.__dict__)
 
 
 class HorizontalMovement:
@@ -265,8 +273,8 @@ class stepStateMachine:
         return
 
     def reset(self):
-        # self.vert_speed1.publish(self.speed['reset'])
-        # self.vert_speed2.publish(self.speed['reset'])
+        self.vert_speed1.publish(self.speed['reset'])
+        self.vert_speed2.publish(self.speed['reset'])
         rospy.Rate(10).sleep()
         self.vert_movement1.publish(self.frontTargets['home'])
         self.vert_movement2.publish(self.rearTargets['home'])
@@ -280,16 +288,16 @@ class stepStateMachine:
         if up:
             if self.currentState == self.climbState.CLEAN:
                 self.vacuum.publish(VACUUM['off'])
-                #self.vert_speed1.publish(self.speed['reset'])
-                #self.vert_speed2.publish(self.speed['reset'])
+                self.vert_speed1.publish(self.speed['reset'])
+                self.vert_speed2.publish(self.speed['reset'])
                 rospy.Rate(10).sleep()
                 self.vert_movement1.publish(self.frontTargets['home'])
                 self.vert_movement2.publish(self.rearTargets['home'])
                 self.currentState = self.climbState.RESET_ENDS
             elif self.currentState == self.climbState.RESET_ENDS:
                 if self.frontPos == self.frontTargets['home'].data and self.rearPos == self.rearTargets['home'].data:
-                    #self.vert_speed1.publish(self.speed['normal'])
-                    #self.vert_speed2.publish(self.speed['normal'])
+                    self.vert_speed1.publish(self.speed['normal'])
+                    self.vert_speed2.publish(self.speed['normal'])
                     rospy.Rate(1).sleep()
                     self.vert_movement1.publish(self.frontTargets['low'])
                     self.vert_movement2.publish(self.rearTargets['low'])
